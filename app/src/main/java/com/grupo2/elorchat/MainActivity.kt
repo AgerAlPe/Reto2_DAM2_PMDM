@@ -1,6 +1,7 @@
 package com.grupo2.elorchat
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import androidx.appcompat.app.AppCompatActivity
@@ -8,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.grupo2.elorchat.ui.users.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,6 +24,10 @@ class MainActivity : AppCompatActivity() {
 
             if (connection) {
                 Toast.makeText(this, "there is connection", Toast.LENGTH_LONG).show()
+                val intent = Intent(applicationContext, LoginActivity::class.java)
+                intent.putExtra("isConnected", connection)
+                startActivity(intent)
+                finish()
             }else {
                 Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
             }

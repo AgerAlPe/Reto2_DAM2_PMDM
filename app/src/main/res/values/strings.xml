@@ -1,3 +1,44 @@
 <resources>
     <string name="app_name">ElorChat</string>
+    <string name="nav_open">Open Navigator Drawer</string>
+    <string name="nav_close">Close Navigator Drawer</string>
+
+    <string name="filter">Filtrate</string>
+    <string name="views">Views</string>
+    <string name="forgottenPassword">He olvidado la contraseña</string>
+
+    <string name="emailString">EMAIL</string>
+    <string name="phoneString">PHONE</string>
+    <string name="dniString">DNI</string>
+    <string name="directionString">DIRECCIÓN</string>
+    <string name="passString">PASSWORD</string>
+    <string name="repeatPassString">REPEAT PASSWORD</string>
+    <string name="rememberMe">Remember Me</string>
+    <string name="acceptButtonString">Accept</string>
+    <string name="registerButtonString">Register</string>
+    <string name="nameString">NAME</string>
+    <string name="surnameString">SURNAME</string>
+    <string name="login">Login</string>
+    <string name="home">Home</string>
+    <string name="favorite">Favorite</string>
+    <string name="email_change">Change Email</string>
+    <string name="pass_change">Change Password</string>
+    <string name="returnToLogin">Return</string>
+    <string name="find">Find</string>
+    <string name="current_email">Current Email</string>
+    <string name="new_email">New Email</string>
+    <string name="confirm_email">Confirm New Email</string>
+    <string name="btn_change_email">Change Email</string>
+    <string name="password_input_description">Password input field</string>
+    <string name="login_icon_description">Login icon</string>
+    <string name="email_input_description">Description for email input</string>
+    <string name="views_count_label">Views:</string>
+    <string name="song_description">Song portrait</string>
+    <string name="song_name">Song Name</string>
+    <string name="song_author">Song Author</string>
+    <string name="favorite_button_description">Add to Favorites</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_password">Confirm New Password</string>
+    <string name="change_password">Change Password</string>
 </resources>
