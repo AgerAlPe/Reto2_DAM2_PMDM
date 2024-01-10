@@ -5,14 +5,18 @@
 
     <string name="filter">Filtrate</string>
     <string name="views">Views</string>
-    <string name="forgottenPassword">He olvidado la contraseña</string>
+    <string name="forgottenPassword">I have forgotten my password</string>
 
     <string name="emailString">EMAIL</string>
     <string name="phoneString">PHONE</string>
     <string name="dniString">DNI</string>
-    <string name="directionString">DIRECCIÓN</string>
+    <string name="directionString">DIRECTION</string>
+    <string name="confirmButtonString">CONFIRM</string>
     <string name="passString">PASSWORD</string>
     <string name="repeatPassString">REPEAT PASSWORD</string>
+    <string name="cycleString">CYCLE</string>
+    <string name="courseString">COURSE</string>
+    <string name="fctDualString">FCT/DUAL</string>
     <string name="rememberMe">Remember Me</string>
     <string name="acceptButtonString">Accept</string>
     <string name="registerButtonString">Register</string>
@@ -41,4 +45,5 @@
     <string name="new_password">New Password</string>
     <string name="confirm_password">Confirm New Password</string>
     <string name="change_password">Change Password</string>
+
 </resources>
