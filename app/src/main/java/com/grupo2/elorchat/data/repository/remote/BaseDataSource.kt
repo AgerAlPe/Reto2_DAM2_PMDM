@@ -1,7 +1,7 @@
-package com.grupo2.speakr.data.repository.remote
+package com.grupo2.elorchat.data.repository.remote
 
 import android.util.Log
-import com.grupo2.speakr.utils.Resource
+import com.grupo2.elorchat.utils.Resource
 import retrofit2.Response
 
 abstract class BaseDataSource {

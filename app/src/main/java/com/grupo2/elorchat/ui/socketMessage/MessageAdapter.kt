@@ -6,11 +6,12 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Message
+import com.grupo2.elorchat.databinding.GroupBinding
 
 class MessageAdapter() : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
-        val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MessageViewHolder(binding)
     }
 
@@ -19,12 +20,12 @@ class MessageAdapter() : ListAdapter<Message, MessageAdapter.MessageViewHolder>(
         holder.bind(message)
     }
 
-    inner class MessageViewHolder(private val binding: ItemMessageBinding) :
+    inner class MessageViewHolder(private val binding: GroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.textViewMessage.text = message.text
-            binding.textViewAuthor.text = message.authorName
+            binding.GroupName.text = message.room
+            binding.LastMessage.text = message.text
         }
     }
 

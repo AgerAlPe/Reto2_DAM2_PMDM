@@ -1,6 +1,6 @@
-package com.grupo2.speakr.data.repository.remote
+package com.grupo2.elorchat.data.repository.remote
 
-import com.grupo2.speakr.Speaker
+import com.grupo2.elorchat.ElorChat
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Retrofit
@@ -14,7 +14,7 @@ object RetrofitClient {
     private const val API_URI = "http://10.5.7.156:8080/api/"
 
     var client = OkHttpClient.Builder().addInterceptor { chain ->
-        val authToken = Speaker.userPreferences.fetchAuthToken()
+        val authToken = ElorChat.userPreferences.fetchAuthToken()
         val newRequest: Request = chain.request().newBuilder()
             .addHeader("Authorization", "Bearer $authToken")
             .build()

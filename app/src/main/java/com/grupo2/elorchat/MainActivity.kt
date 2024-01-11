@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import com.grupo2.elorchat.ui.socketMessage.SocketActivity
 import com.grupo2.elorchat.ui.users.login.LoginActivity
 
 class MainActivity : AppCompatActivity() {
@@ -21,7 +22,6 @@ class MainActivity : AppCompatActivity() {
 
         findViewById<Button>(R.id.loginButton).setOnClickListener{
             connection = isOnline(this)
-
             if (connection) {
                 Toast.makeText(this, "there is connection", Toast.LENGTH_LONG).show()
                 val intent = Intent(applicationContext, LoginActivity::class.java)
@@ -31,6 +31,12 @@ class MainActivity : AppCompatActivity() {
             }else {
                 Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
             }
+        }
+        findViewById<Button>(R.id.socketMessagin).setOnClickListener{
+            //ESTO EXPLOTA
+            val intent = Intent(applicationContext, SocketActivity::class.java)
+            startActivity(intent)
+            finish()
         }
     }
 

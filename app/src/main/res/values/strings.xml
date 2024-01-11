@@ -15,6 +15,9 @@
     <string name="passString">PASSWORD</string>
     <string name="repeatPassString">REPEAT PASSWORD</string>
     <string name="cycleString">CYCLE</string>
+    <string name="btn_connect">CONNECT</string>
+    <string name="btn_send_message">SEND</string>
+    <string name="inputMessage">INPUT YOUR MESSAGE</string>
     <string name="courseString">COURSE</string>
     <string name="fctDualString">FCT/DUAL</string>
     <string name="rememberMe">Remember Me</string>
