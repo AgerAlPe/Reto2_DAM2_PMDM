@@ -16,7 +16,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    buildFeatures {
+        // ADD para que automaticamente asocie clases a vistas xml "MainActivityBinding" etc
+        viewBinding = true
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -45,4 +48,15 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    // by viewmodels entre otros
+    implementation("androidx.activity:activity-compose:1.8.2")
+    // para las listas
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    // sockets
+    implementation("io.socket:socket.io-client:2.0.0")
+    // viewmodels
+    api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    // conversiones
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }

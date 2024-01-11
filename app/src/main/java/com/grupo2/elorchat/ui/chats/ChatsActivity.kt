@@ -21,10 +21,6 @@ class ChatsActivity : AppCompatActivity() {
 
         adapter = FragmentPageAdapter(supportFragmentManager, lifecycle)
 
-        tabLayout.addTab(tabLayout.newTab().setText("First"))
-        tabLayout.addTab(tabLayout.newTab().setText("Second"))
-        tabLayout.addTab(tabLayout.newTab().setText("Third"))
-
         viewPager2.adapter = adapter
 
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {

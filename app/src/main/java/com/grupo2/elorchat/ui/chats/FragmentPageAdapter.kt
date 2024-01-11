@@ -16,9 +16,9 @@ class FragmentPageAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return if(position == 0) {
-            PublicChatsFragment()
-        }else if (position == 1) {
             PrivateChatsFragment()
+        }else if (position == 1) {
+            PublicChatsFragment()
         }else {
             SettingsFragment()
         }

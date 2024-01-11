@@ -12,6 +12,7 @@ class SettingsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_scrolling_register, container, false)
+        //El codigo debe de ir antes de que se devuelva la view
+        return inflater.inflate(R.layout.fragment_settings, container, false)
     }
 }
