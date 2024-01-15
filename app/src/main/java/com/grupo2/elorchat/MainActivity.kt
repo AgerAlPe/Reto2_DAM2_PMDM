@@ -29,11 +29,12 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }else {
+                //TODO hay que hacer que cuando no haya conexión y el usuario ya se haya logueado, que directamente inicie sesión.
                 Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
             }
         }
         findViewById<Button>(R.id.socketMessagin).setOnClickListener{
-            //ESTO EXPLOTA
+            //ESTO EXPLOTA Y NO TENGO CLARO POR QUÉ
             val intent = Intent(applicationContext, SocketActivity::class.java)
             startActivity(intent)
             finish()
