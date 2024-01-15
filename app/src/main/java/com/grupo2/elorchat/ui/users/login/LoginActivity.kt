@@ -52,28 +52,30 @@ class LoginActivity : AppCompatActivity() {
         val chBox = findViewById<CheckBox>(R.id.checkBox)
         var deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-        if (deviceCode.isNullOrEmpty()) {
-            deviceCode = "testphone"
-        }
-
-        var loginUser = LoginUser("email","password", deviceCode)
+        var loginUser = LoginUser("","", "")
 
         btnLogin.setOnClickListener{
-
-            //RECOGE LOS DATOS GUARDADOS
+            //RECOGE LOS DATOS GUARDADOS Y LOS ESCRIBE EN LOS CAMPOS
             lifecycleScope.launch(Dispatchers.IO) {
                 getSavedValues().collect {
-                    Log.i("name",it.email)
-                    Log.i("password", it.password)
                     Log.i("chbox", it.chbox.toString())
-                    if(it.email.isNotEmpty() && it.password.isNotEmpty() && it.chbox.toString() == "true") {
+                    if(!(it.email.isNullOrEmpty() or it.password.isNullOrEmpty()) and it.chbox == true) {
                         email.setText(it.email)
                         pass.setText(it.password)
                         chBox.isChecked = it.chbox
                     }
-                    loginUser = LoginUser(it.email, it.password, deviceCode)
+                    Log.i("name",it.email)
+                    Log.i("password", it.password)
+                    Log.i("chbox", it.chbox.toString())
                 }
             }
+            if(!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
+                loginUser = LoginUser(email.text.toString(),pass.text.toString(), deviceCode)
+            }else {
+                Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña validos")
+                Toast.makeText(this, "The login or password provided are blank", Toast.LENGTH_SHORT).show()
+            }
+            Log.i("user", loginUser.toString())
             viewModel.loginOfUser(loginUser)
 
             viewModel.loggedUser.observe(this) { result ->
