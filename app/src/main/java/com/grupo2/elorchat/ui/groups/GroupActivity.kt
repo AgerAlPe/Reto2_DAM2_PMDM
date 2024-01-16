@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.chats
+package com.grupo2.elorchat.ui.groups
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
 
-class ChatsActivity : AppCompatActivity() {
+class GroupsActivity : AppCompatActivity() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager2: ViewPager2

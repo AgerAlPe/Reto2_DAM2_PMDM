@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.chats
+package com.grupo2.elorchat.ui.groups
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.grupo2.elorchat.R
-
-class PublicChatsFragment : Fragment() {
+class PrivateGroupsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         //El codigo debe de ir antes de que se devuelva la view
-        return inflater.inflate(R.layout.fragment_public_chats, container, false)
+        return inflater.inflate(R.layout.fragment_private_chats, container, false)
     }
 }

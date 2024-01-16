@@ -4,7 +4,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.grupo2.elorchat.ui.socketMessage.SocketActivity
 
 class FragmentPageAdapter(
     fragmentManager: FragmentManager,
@@ -17,9 +16,9 @@ class FragmentPageAdapter(
 
     override fun createFragment(position: Int): Fragment {
         return if(position == 0) {
-            PrivateChatsFragment()
+            PrivateGroupsFragment()
         }else if (position == 1) {
-            PublicChatsFragment()
+            PublicGroupsFragment()
         }else {
             SettingsFragment()
         }

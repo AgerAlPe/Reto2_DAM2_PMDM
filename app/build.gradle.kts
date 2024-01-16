@@ -39,6 +39,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        // ADD para que automaticamente asocie clases a vistas xml "MainActivityBinding" etc
+        viewBinding = true
+    }
 }
 
 dependencies {

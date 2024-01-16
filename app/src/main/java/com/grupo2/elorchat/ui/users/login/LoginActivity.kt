@@ -2,7 +2,6 @@ package com.grupo2.elorchat.ui.users.login
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
@@ -22,35 +21,32 @@ import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.preferences.UserProfile
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
+import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-val Context.dataStore by preferencesDataStore(name = "USER_PREFERENCES_NAME")
-private const val PREFS_FILENAME = "LoginPrefs"
 
 class LoginActivity : AppCompatActivity() {
+
+    val Context.dataStore by preferencesDataStore(name = "USER_PREFERENCES_NAME")
+
     private val userRepository = RemoteUserDataSource()
     private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(
         userRepository
     ) }
 
-    // private lateinit var sharedPreferences: SharedPreferences
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        // sharedPreferences = getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
 
         val btnLogin = findViewById<Button>(R.id.buttonAccept)
         val email = findViewById<EditText>(R.id.emailAddress)
         val pass = findViewById<EditText>(R.id.password)
         val chBox = findViewById<CheckBox>(R.id.checkBox)
-        var deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+        val deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
         var loginUser = LoginUser("","", "")
 
@@ -58,12 +54,6 @@ class LoginActivity : AppCompatActivity() {
             //RECOGE LOS DATOS GUARDADOS Y LOS ESCRIBE EN LOS CAMPOS
             lifecycleScope.launch(Dispatchers.IO) {
                 getSavedValues().collect {
-                    Log.i("chbox", it.chbox.toString())
-                    if(!(it.email.isNullOrEmpty() or it.password.isNullOrEmpty()) and it.chbox == true) {
-                        email.setText(it.email)
-                        pass.setText(it.password)
-                        chBox.isChecked = it.chbox
-                    }
                     Log.i("name",it.email)
                     Log.i("password", it.password)
                     Log.i("chbox", it.chbox.toString())
@@ -73,7 +63,6 @@ class LoginActivity : AppCompatActivity() {
                 loginUser = LoginUser(email.text.toString(),pass.text.toString(), deviceCode)
             }else {
                 Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña validos")
-                Toast.makeText(this, "The login or password provided are blank", Toast.LENGTH_SHORT).show()
             }
             Log.i("user", loginUser.toString())
             viewModel.loginOfUser(loginUser)
@@ -81,18 +70,29 @@ class LoginActivity : AppCompatActivity() {
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {
                     Resource.Status.SUCCESS -> {
-                        Log.i("QueryStatus", result.data.toString())
                         // Handle successful login
                         result.data?.let { data ->
-                            ElorChat.userPreferences.saveAuthToken(data.accessToken)
-                            //GUARDAR LOS DATOS INTRODUCIDOS
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
-                            }
+                            if (data.token != null) {
+                                ElorChat.userPreferences.saveAuthToken(data.token)
 
-                            val intent = Intent(applicationContext, RegisterActivity::class.java)
-                            startActivity(intent)
-                            finish()
+                                //GUARDAR LOS DATOS INTRODUCIDOS
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
+                                }
+
+                                if(loginUser.password.equals("Elorrieta00")){
+                                    val intent = Intent(applicationContext, RegisterActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }else {
+                                    val intent = Intent(applicationContext, GroupActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
+                                }
+                            }else {
+                                Log.d("tokenNull","the token to access is null")
+                                Toast.makeText(this, "The has been an error, please try again", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                     Resource.Status.ERROR -> {
@@ -101,7 +101,6 @@ class LoginActivity : AppCompatActivity() {
                     }
                     Resource.Status.LOADING -> {
                         // Handle loading state (optional)
-                        // You can show a loading indicator or perform other actions while waiting
                     }
                 }
             }
@@ -123,6 +122,11 @@ class LoginActivity : AppCompatActivity() {
             password = preferences[stringPreferencesKey("password")].orEmpty(),
             chbox = preferences[booleanPreferencesKey("checked")] ?: false
         )
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.loggedUser.removeObservers(this)
     }
 
 }
