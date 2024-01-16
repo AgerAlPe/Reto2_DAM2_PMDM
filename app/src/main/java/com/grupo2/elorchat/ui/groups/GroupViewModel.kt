@@ -8,97 +8,64 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class GroupViewModel(private val songRepository: CommonSongRepository) : ViewModel() {
+class GroupViewModel(private val songRepository: CommonGroupRepository) : ViewModel() {
 
-    private val _items = MutableLiveData<Resource<List<Song>>?>()
+    private val _items = MutableLiveData<Resource<List<Group>>?>()
 
-    private var originalSongs: List<Song> = emptyList()
+    private var originalSongs: List<Group> = emptyList()
 
     private val _delete = MutableLiveData<Resource<Int>?>()
 
     private val _create = MutableLiveData<Resource<Int>?>()
 
-    private val _favs = MutableLiveData<Resource<List<Song>>?>()
-
-    val favs: MutableLiveData<Resource<List<Song>>?> get() = _favs
-
     val delete : MutableLiveData<Resource<Int>?> get() = _delete
 
     val create : MutableLiveData<Resource<Int>?> get() = _create
 
-    val items: MutableLiveData<Resource<List<Song>>?> get() = _items
+    val items: MutableLiveData<Resource<List<Group>>?> get() = _items
 
     init {
         updateSongList()
-        getFavs()
-
     }
 
-    private fun compareFavs() {
-        if (_items.value != null && _favs.value != null) {
-            for(fav : Song in _favs.value!!.data!!) {
-                for (song: Song in _items.value!!.data!!) {
-                    if (fav.id == song.id) {
-                        song.favorite = true
-                    }
-                }
-            }
-        }
-    }
     private fun updateSongList() {
         viewModelScope.launch {
             val repoResponse = getSongsFromRepository()
             _items.value = repoResponse
             originalSongs = repoResponse?.data.orEmpty() // Guarda la lista original
-            compareFavs()
         }
     }
+//      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
+//    fun filterSongsTitle(query: String) {
+//        val currentSongs = originalSongs.toMutableList()
+//
+//        // Realiza el filtrado basado en la consulta
+//        if (query.isNotBlank()) {
+//            currentSongs.retainAll { song ->
+//                song.title.contains(query, ignoreCase = true)
+//            }
+//        }
+//        _items.value = Resource.success(currentSongs)
+//    }
+//
+//    fun filterSongsAuthor(query: String) {
+//        val currentSongs = originalSongs.toMutableList()
+//
+//        // Realiza el filtrado basado en la consulta
+//        if (query.isNotBlank()) {
+//            currentSongs.retainAll { song ->
+//                song.author.contains(query, ignoreCase = true)
+//            }
+//        }
+//        _items.value = Resource.success(currentSongs)
+//    }
 
-    fun filterSongsTitle(query: String) {
-        val currentSongs = originalSongs.toMutableList()
-
-        // Realiza el filtrado basado en la consulta
-        if (query.isNotBlank()) {
-            currentSongs.retainAll { song ->
-                song.title.contains(query, ignoreCase = true)
-            }
-        }
-        _items.value = Resource.success(currentSongs)
-    }
-
-    fun filterSongsAuthor(query: String) {
-        val currentSongs = originalSongs.toMutableList()
-
-        // Realiza el filtrado basado en la consulta
-        if (query.isNotBlank()) {
-            currentSongs.retainAll { song ->
-                song.author.contains(query, ignoreCase = true)
-            }
-        }
-        _items.value = Resource.success(currentSongs)
-    }
-
-    fun toggleFavourite(song: Song, context: Context) {
-        val toastMessage = if (song.favorite) {
-            deleteFav(song.id)
-            song.favorite = false
-            "${song.title}, Removed from favorites"
-        } else {
-            createFav(song.id)
-            song.favorite = true
-            "${song.title}, Added to favorites"
-        }
-        Log.i("mikel","2")
-        val currentSongs = originalSongs.toMutableList()
-        _items.value = Resource.success(currentSongs)
-        // compareFavs()
-        // Show a Toast message
-        Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
-    }
     private fun createFav(idSong: Int) {
         val id : Int = idSong
         viewModelScope.launch {
@@ -110,14 +77,6 @@ class GroupViewModel(private val songRepository: CommonSongRepository) : ViewMod
         val id : Int = idSong
         viewModelScope.launch {
             _delete.value = deleteFavouriteSong(id)
-        }
-    }
-
-    private fun getFavs() {
-        viewModelScope.launch {
-            val repoResponse = getFavourites()
-            _favs.value = repoResponse
-            compareFavs()
         }
     }
 
@@ -135,13 +94,7 @@ class GroupViewModel(private val songRepository: CommonSongRepository) : ViewMod
         }
     }
 
-    private suspend fun getFavourites(): Resource<List<Song>>? {
-        return withContext(Dispatchers.IO) {
-            songRepository.getFavouriteSongsFromUser()
-        }
-    }
-
-    private suspend fun getSongsFromRepository(): Resource<List<Song>>? {
+    private suspend fun getSongsFromRepository(): Resource<List<Group>>? {
         return withContext(Dispatchers.IO) {
             songRepository.getSongs()
         }
