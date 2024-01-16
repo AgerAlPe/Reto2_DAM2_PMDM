@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.groups
+package com.grupo2.elorchat.ui.groups.privategroups
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

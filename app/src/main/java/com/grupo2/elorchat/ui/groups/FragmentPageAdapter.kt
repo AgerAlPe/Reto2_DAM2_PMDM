@@ -1,9 +1,12 @@
-package com.grupo2.elorchat.ui.chats
+package com.grupo2.elorchat.ui.groups
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.grupo2.elorchat.ui.groups.privategroups.PrivateGroupsFragment
+import com.grupo2.elorchat.ui.groups.publicgroups.PublicGroupsFragment
+import com.grupo2.elorchat.ui.groups.settings.SettingsFragment
 
 class FragmentPageAdapter(
     fragmentManager: FragmentManager,

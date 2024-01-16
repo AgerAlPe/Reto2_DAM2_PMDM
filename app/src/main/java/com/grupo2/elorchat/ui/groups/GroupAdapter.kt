@@ -6,14 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.databinding.GroupBinding
 
-class GroupsAdapter(
+class GroupAdapter(
     private val onClickListener: (Group) -> Unit,
     private val onImageButtonClick: (Group) -> Unit // Define a new click listener for the ImageButton
-) : ListAdapter<Group, GroupsAdapter.SongViewHolder>(SongDiffCallback()) {
+) : ListAdapter<Group, GroupAdapter.SongViewHolder>(SongDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
         val binding = ItemSongsBinding.inflate(LayoutInflater.from(parent.context), parent, false)

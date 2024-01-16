@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import com.grupo2.elorchat.R
 import androidx.fragment.app.Fragment
-import com.grupo2.elorchat.ui.chats.ChatsActivity
+import com.grupo2.elorchat.ui.groups.GroupActivity
 
 class ScrollingFragmentRegister : Fragment() {
     override fun onCreateView(
@@ -19,7 +19,7 @@ class ScrollingFragmentRegister : Fragment() {
         val view: View = inflater!!.inflate(R.layout.fragment_scrolling_register, container, false)
 
         view.findViewById<Button>(R.id.registerAcceptButton).setOnClickListener{
-            view.context.startActivity(Intent(view.context, ChatsActivity::class.java))
+            view.context.startActivity(Intent(view.context, GroupActivity::class.java))
         }
 
         return view

@@ -6,7 +6,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
 
-class GroupsActivity : AppCompatActivity() {
+class GroupActivity : AppCompatActivity() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager2: ViewPager2

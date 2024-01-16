@@ -1,7 +1,12 @@
 package com.grupo2.elorchat.data
 
-data class Message(
-    val room: String,
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+class Message (
+    val id: Int,
     val text: String,
-    val authorName: String
-)
+    val userId: Int,
+    val groupId: Int,
+): Parcelable
