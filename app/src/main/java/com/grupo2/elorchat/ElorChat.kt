@@ -3,7 +3,9 @@ package com.grupo2.elorchat
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class ElorChat : Application() {
     companion object {
         lateinit var context: Context;

@@ -4,6 +4,7 @@ plugins {
 
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -87,4 +88,15 @@ dependencies {
     api("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     // conversiones
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // room
+    implementation("androidx.room:room-ktx:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    //dagger hilt
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
