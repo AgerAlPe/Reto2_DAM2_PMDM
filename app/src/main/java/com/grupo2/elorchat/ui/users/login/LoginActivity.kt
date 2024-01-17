@@ -48,7 +48,7 @@ class LoginActivity : AppCompatActivity() {
         val chBox = findViewById<CheckBox>(R.id.checkBox)
         val deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-        var loginUser = LoginUser("","", "")
+        var loginUser = LoginUser("","")
 
         btnLogin.setOnClickListener{
             //RECOGE LOS DATOS GUARDADOS Y LOS ESCRIBE EN LOS CAMPOS
@@ -60,7 +60,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             if(!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
-                loginUser = LoginUser(email.text.toString(),pass.text.toString(), deviceCode)
+                loginUser = LoginUser(email.text.toString(),pass.text.toString())
             }else {
                 Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña validos")
             }
@@ -72,8 +72,8 @@ class LoginActivity : AppCompatActivity() {
                     Resource.Status.SUCCESS -> {
                         // Handle successful login
                         result.data?.let { data ->
-                            if (data.token != null) {
-                                ElorChat.userPreferences.saveAuthToken(data.token)
+                            if (data.accessToken != null) {
+                                ElorChat.userPreferences.saveAuthToken(data.accessToken)
 
                                 //GUARDAR LOS DATOS INTRODUCIDOS
                                 lifecycleScope.launch(Dispatchers.IO) {

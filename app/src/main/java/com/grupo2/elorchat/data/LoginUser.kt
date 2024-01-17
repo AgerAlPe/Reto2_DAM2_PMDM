@@ -8,5 +8,5 @@ import kotlinx.parcelize.Parcelize
 data class LoginUser(
     val email: String,
     val password: String,
-    val device: String,
+   // val device: String,
 ): Parcelable

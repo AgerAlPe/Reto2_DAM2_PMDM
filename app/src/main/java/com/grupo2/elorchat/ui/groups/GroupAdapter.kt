@@ -11,33 +11,27 @@ import com.grupo2.elorchat.databinding.GroupBinding
 
 class GroupAdapter(
     private val onClickListener: (Group) -> Unit,
-    private val onImageButtonClick: (Group) -> Unit // Define a new click listener for the ImageButton
-) : ListAdapter<Group, GroupAdapter.SongViewHolder>(SongDiffCallback()) {
+) : ListAdapter<Group, GroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongViewHolder {
-        val binding = ItemSongsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SongViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
+        val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return GroupViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SongViewHolder, position: Int) {
-        val song = getItem(position)
-        holder.bind(song)
+    override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
+        val group = getItem(position)
+        holder.bind(group)
         holder.itemView.setOnClickListener {
-            onClickListener(song)
+            onClickListener(group)
         }
     }
 
-    inner class SongViewHolder(private val binding: GroupBinding) :
+    inner class GroupViewHolder(private val binding: GroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(group: Group) {
             binding.GroupName.text = group.name
 
-            binding.itemButton.setOnClickListener {
-                onImageButtonClick(group) // Call the provided function
-                Log.i("mikel","1")
-
-            }
             if (group.private) {
                 //TODO
                 //CAMBIAR ESTO PARA QUE, DEPENDIENDO DESDE DONDE SE LE LLAME, SE MUESTRE EL GRUPO
@@ -48,7 +42,7 @@ class GroupAdapter(
         }
     }
 
-    class SongDiffCallback : DiffUtil.ItemCallback<Group>() {
+    class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
 
         override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
             return oldItem.id == newItem.id

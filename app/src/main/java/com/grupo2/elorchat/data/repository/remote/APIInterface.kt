@@ -11,11 +11,11 @@ import retrofit2.http.POST
 
 
 interface APIInterface {
-    @POST("login")
+    @POST("auth/login")
     suspend fun loginUser(@Body user: LoginUser) : Response<AuthenticationResponse>
 
     //ESTA PARTE ESTA SIN CONECTAR, YA QUE NO SE SABE A QUE SECCIÓN VA
     //HASTA NUEVO AVISO NO TOCAR
-    @GET("UNA URL MU' LOCA")
-    suspend fun getGroups(@Body group: Group) : Response<List<Group>>
+    @GET("chats")
+    suspend fun getGroups(): Response<List<Group>>
 }
