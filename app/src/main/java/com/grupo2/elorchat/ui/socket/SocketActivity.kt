@@ -78,11 +78,14 @@ class SocketActivity : ComponentActivity() {
     }
 
     private fun buttonsListeners(binding: ActivitySocketBinding) {
-        binding.btnConnect.setOnClickListener() {
+        binding.btnConnect.setOnClickListener {
+            Log.d("ButtonClickListener", "Connect button clicked")
             viewModel.startSocket()
         }
-        binding.btnSendMessage.setOnClickListener() {
-            val message = binding.inputMessage.text.toString();
+
+        binding.btnSendMessage.setOnClickListener {
+            Log.d("ButtonClickListener", "Send Message button clicked")
+            val message = binding.inputMessage.text.toString()
             binding.inputMessage.setText("")
             viewModel.onSendMessage(message)
         }
