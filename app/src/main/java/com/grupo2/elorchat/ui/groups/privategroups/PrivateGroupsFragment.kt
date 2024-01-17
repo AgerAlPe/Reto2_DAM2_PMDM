@@ -53,6 +53,7 @@ class PrivateGroupsFragment : Fragment() {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
                         if (it.data != null) {
+                            //SE DEBERÍAN MOSTRAR LOS GRUPOS PRIVADOS
                             groupListAdapter.submitList(it.data)
                         }
                     }
@@ -74,10 +75,10 @@ class PrivateGroupsFragment : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
-//        val intent = Intent(this, RegisterActivity::class.java).apply {
-//            putExtra("idGroup", group.id)
-//        }
-//        startActivity(intent)
+        val intent = Intent(requireContext(), RegisterActivity::class.java).apply {
+            putExtra("idGroup", group.id)
+        }
+        startActivity(intent)
     }
 }
 
