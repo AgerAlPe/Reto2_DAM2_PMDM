@@ -14,7 +14,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="15dp"
-            android:orientation="vertical"></LinearLayout>
+            android:orientation="vertical"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -70,7 +70,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/email"
+                        android:id="@+id/registerEmail"
                         style="drawable/edit_text_style.xml"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -80,6 +80,8 @@
                         android:inputType="none"
                         android:minHeight="48dp"
                         android:textColorHint="#8D6E63"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,7 +100,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/name"
+                        android:id="@+id/registerName"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -119,37 +121,11 @@
                     app:boxBackgroundColor="#ECEFF1"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm first surname"
+                    app:helperText="Confirm your surnames"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/surname"
-                        style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:autofillHints=""
-                        android:ems="10"
-                        android:hint="@string/surnameString"
-                        android:inputType="textPersonName"
-                        android:minHeight="48dp"
-                        android:text=""
-                        android:textColor="#000000"
-                        android:textColorHint="#8D6E63"
-                        tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/surname2Layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:boxBackgroundColor="#ECEFF1"
-                    app:boxStrokeColor="#78909C"
-                    app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm last surname"
-                    app:hintTextColor="#546E7A">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/surname2"
+                        android:id="@+id/registerSurname"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -179,7 +155,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phone"
+                        android:id="@+id/registerPhone"
                         style="drawable/edit_text_style.xml"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -207,7 +183,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/dni"
+                        android:id="@+id/registerDni"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -236,7 +212,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/direction"
+                        android:id="@+id/registerDirection"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -324,7 +300,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/cycle"
+                        android:id="@+id/registerCycle"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -353,7 +329,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/course"
+                        android:id="@+id/registerCourse"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -382,7 +358,7 @@
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/fctDual"
+                        android:id="@+id/registerFctDual"
                         style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

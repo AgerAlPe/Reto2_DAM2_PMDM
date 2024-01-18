@@ -2,20 +2,26 @@ package com.grupo2.elorchat.data.repository.remote
 
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
-
+import retrofit2.http.PUT
+import retrofit2.http.Path
 
 
 interface APIInterface {
     @POST("auth/login")
     suspend fun loginUser(@Body user: LoginUser) : Response<AuthenticationResponse>
 
-    //ESTA PARTE ESTA SIN CONECTAR, YA QUE NO SE SABE A QUE SECCIÓN VA
-    //HASTA NUEVO AVISO NO TOCAR
     @GET("chats")
     suspend fun getGroups(): Response<List<Group>>
+
+    @GET("users/byEmail/{email}")
+    suspend fun getUserByEmail(@Path("email") userEmail : String): Response<User>
+
+    @PUT("users/{id}")
+    suspend fun updateRegisteredUser(@Path("id") userId : Int): Response<Int>
 }

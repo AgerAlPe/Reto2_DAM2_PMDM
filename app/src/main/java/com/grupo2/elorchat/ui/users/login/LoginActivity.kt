@@ -11,7 +11,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.text.set
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -26,8 +25,10 @@ import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -98,9 +99,10 @@ class LoginActivity : AppCompatActivity() {
 
                                 if(loginUser.password.equals("Elorrieta00")){
                                     val intent = Intent(applicationContext, RegisterActivity::class.java)
+                                    intent.putExtra("userEmail", loginUser.email)
                                     startActivity(intent)
                                     finish()
-                                }else {
+                                } else {
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
                                     startActivity(intent)
                                     finish()
@@ -132,7 +134,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSavedValues() = dataStore.data.map { preferences ->
+    fun getSavedValues() = dataStore.data.map { preferences ->
         UserProfile(
             email = preferences[stringPreferencesKey("name")].orEmpty(),
             password = preferences[stringPreferencesKey("password")].orEmpty(),
