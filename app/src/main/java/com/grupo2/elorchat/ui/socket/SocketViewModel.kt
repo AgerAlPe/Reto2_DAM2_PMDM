@@ -36,7 +36,7 @@ class SocketViewModel (
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
-    private val SOCKET_HOST = "http://10.5.7.39:8085/"
+    private val SOCKET_HOST = "http://10.0.2.2:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private lateinit var mSocket: Socket
@@ -45,22 +45,27 @@ class SocketViewModel (
     private val SOCKET_ROOM = "default-room"
 
     fun startSocket() {
-        val socketOptions = createSocketOptions();
-        mSocket = IO.socket(SOCKET_HOST, socketOptions);
+        Log.i("SocketViewModel", "Starting socket")
+
+        val socketOptions = createSocketOptions()
+        mSocket = IO.socket(SOCKET_HOST, socketOptions)
 
         mSocket.on(SocketEvents.ON_CONNECT.value, onConnect())
         mSocket.on(SocketEvents.ON_DISCONNECT.value, onDisconnect())
-
         mSocket.on(SocketEvents.ON_MESSAGE_RECEIVED.value, onNewMessage())
 
         viewModelScope.launch {
+            Log.i("SocketViewModel", "Connecting to the socket")
             connect()
+            Log.i("SocketViewModel", "connect fun3")
         }
     }
 
     private suspend fun connect() {
         withContext(Dispatchers.IO) {
+            Log.i("SocketViewModel", "connect fun")
             mSocket.connect();
+            Log.i("SocketViewModel", "connect fun2")
         }
     }
 
