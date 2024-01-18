@@ -31,8 +31,10 @@ class SocketActivity : ComponentActivity() {
         onConnectedChange(binding)
         onMessagesChange()
         buttonsListeners(binding)
-    }
 
+        Log.d("ButtonClickListener", "Connect button clicked")
+        viewModel.startSocket()
+    }
 
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
@@ -78,11 +80,6 @@ class SocketActivity : ComponentActivity() {
     }
 
     private fun buttonsListeners(binding: ActivitySocketBinding) {
-        binding.btnConnect.setOnClickListener {
-            Log.d("ButtonClickListener", "Connect button clicked")
-            viewModel.startSocket()
-        }
-
         binding.btnSendMessage.setOnClickListener {
             Log.d("ButtonClickListener", "Send Message button clicked")
             val message = binding.inputMessage.text.toString()
