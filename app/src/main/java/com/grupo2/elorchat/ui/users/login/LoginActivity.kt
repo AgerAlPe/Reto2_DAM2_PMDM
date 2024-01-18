@@ -11,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.text.set
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -27,6 +28,7 @@ import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LoginActivity : AppCompatActivity() {
@@ -50,15 +52,29 @@ class LoginActivity : AppCompatActivity() {
 
         var loginUser = LoginUser("","")
 
-        btnLogin.setOnClickListener{
-            //RECOGE LOS DATOS GUARDADOS Y LOS ESCRIBE EN LOS CAMPOS
-            lifecycleScope.launch(Dispatchers.IO) {
-                getSavedValues().collect {
-                    Log.i("name",it.email)
-                    Log.i("password", it.password)
-                    Log.i("chbox", it.chbox.toString())
+        lifecycleScope.launch(Dispatchers.IO) {
+            getSavedValues().collect { savedValues ->
+                withContext(Dispatchers.Main) {
+                    Log.i("name", savedValues.email)
+                    Log.i("password", savedValues.password)
+                    Log.i("chbox", savedValues.chbox.toString())
+
+                    if (savedValues.chbox) {
+                        Log.i("dentro del checkbox", "ha entrado")
+                        email.setText(savedValues.email)
+                        Log.i("dentro del checkbox", "ha puesto el mail")
+                        pass.setText(savedValues.password)
+                        Log.i("dentro del checkbox", "ha puesto la contraseña")
+                        chBox.isChecked = savedValues.chbox
+                        Log.i("dentro del checkbox", "ha puesto el remember me")
+                    }
                 }
             }
+        }
+
+
+
+        btnLogin.setOnClickListener{
             if(!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
                 loginUser = LoginUser(email.text.toString(),pass.text.toString())
             }else {
