@@ -37,18 +37,11 @@ class PrivateGroupsFragment : Fragment() {
         val binding = FragmentPrivateChatsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val myGroup = listOf(
-            Group(id = 1, name = "Group 1", private = true),
-            Group(id = 2, name = "Group 2", private = false),
-            Group(id = 3, name = "Group 3", private = true),
-            // Add more objects as needed
-        )
-
         groupListAdapter = GroupAdapter(::onGroupsListClickItem)
         binding.privateGroups.adapter = groupListAdapter
         binding.privateGroups.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.items.observe(viewLifecycleOwner, Observer {
+        viewModel.privateGroups.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
@@ -66,8 +59,6 @@ class PrivateGroupsFragment : Fragment() {
                         // Handle loading state if needed
                     }
                 }
-            } else {
-                groupListAdapter.submitList(myGroup.toMutableList())
             }
         })
 

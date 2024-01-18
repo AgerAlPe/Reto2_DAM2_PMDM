@@ -3,17 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="horizontal"
-    android:layout_margin="10dp">
+    android:layout_marginStart="5dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginBottom="5dp"
+    android:background="@color/white"
+    android:orientation="horizontal">
 
     <!-- Avatar del remitente -->
     <ImageView
         android:id="@+id/GroupImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="10dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:contentDescription="Group image"
-        android:src="@drawable/ic_launcher_background"/>
+        android:src="@drawable/icon" />
 
 
     <!-- Contenedor para el contenido del grupo -->
@@ -49,7 +51,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="8"
                 android:layout_height="match_parent"
-                android:padding="10dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black"
                 tools:text="This is this groups last message" />

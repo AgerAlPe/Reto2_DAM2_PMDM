@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 class Group (
     val id: Int,
     val name: String,
-    var private: Boolean = false
+    val isPrivate: Boolean,
 ): Parcelable

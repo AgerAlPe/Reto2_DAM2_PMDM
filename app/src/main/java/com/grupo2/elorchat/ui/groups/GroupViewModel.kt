@@ -1,5 +1,7 @@
 package com.grupo2.elorchat.ui.groups
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -17,7 +19,11 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
 
     private val _items = MutableLiveData<Resource<List<Group>>?>()
 
-    private var originalSongs: List<Group> = emptyList()
+    private var originalGroups: List<Group> = emptyList()
+
+    private val _privateGroups = MutableLiveData<Resource<List<Group>>?>()
+
+    private val _publicGroups = MutableLiveData<Resource<List<Group>>?>()
 
     private val _delete = MutableLiveData<Resource<Int>?>()
 
@@ -29,6 +35,10 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
 
     val items: MutableLiveData<Resource<List<Group>>?> get() = _items
 
+    val privateGroups: MutableLiveData<Resource<List<Group>>?> get() = _privateGroups
+
+    val publicGroups: MutableLiveData<Resource<List<Group>>?> get() = _publicGroups
+
     init {
         updateGroupList()
     }
@@ -36,8 +46,31 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
     private fun updateGroupList() {
         viewModelScope.launch {
             val repoResponse = getGroupsFromRepository()
-            _items.value = repoResponse
-            originalSongs = repoResponse?.data.orEmpty() // Guarda la lista original
+            originalGroups = repoResponse?.data.orEmpty() // Guarda la lista original
+            filterPrivateGroups() // Inicializa los grupos privados
+            filterPublicGroups() // Inicializa los grupos públicos
+        }
+    }
+
+    // Filtrar grupos privados
+    private fun filterPrivateGroups() {
+        for (group in originalGroups) {
+            Log.i("Datos", group.name)
+            Log.i("Datos", group.isPrivate.toString())
+        }
+        val privateGroups = originalGroups.filter { group -> group.isPrivate}
+        _privateGroups.value = Resource.success(privateGroups)
+    }
+
+    // Filtrar grupos públicos
+    fun filterPublicGroups() {
+        val publicGroups = originalGroups.filterNot { group -> group.isPrivate }
+        _publicGroups.value = Resource.success(publicGroups)
+    }
+
+    private suspend fun getGroupsFromRepository(): Resource<List<Group>>? {
+        return withContext(Dispatchers.IO) {
+            groupRepository.getGroups()
         }
     }
 //      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
@@ -64,12 +97,6 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
 //        }
 //        _items.value = Resource.success(currentSongs)
 //    }
-
-    private suspend fun getGroupsFromRepository(): Resource<List<Group>>? {
-        return withContext(Dispatchers.IO) {
-            groupRepository.getGroups()
-        }
-    }
 }
 
 class GroupsViewModelFactory(

@@ -31,14 +31,6 @@ class GroupAdapter(
 
         fun bind(group: Group) {
             binding.GroupName.text = group.name
-
-            if (group.private) {
-                //TODO
-                //CAMBIAR ESTO PARA QUE, DEPENDIENDO DESDE DONDE SE LE LLAME, SE MUESTRE EL GRUPO
-                group.private == true
-            }else {
-                group.private == false
-            }
         }
     }
 
