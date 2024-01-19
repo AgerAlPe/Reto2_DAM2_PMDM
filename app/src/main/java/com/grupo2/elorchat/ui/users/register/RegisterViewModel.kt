@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.grupo2.elorchat.data.LoginUser
+import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import com.grupo2.elorchat.data.repository.CommonUserRepository
@@ -23,6 +24,9 @@ class RegisterViewModel(
     private val _registeringUser = MutableLiveData<Resource<User>>()
     val registeringUser : LiveData<Resource<User>> get() = _registeringUser
 
+    private val _updateRegisteredUser = MutableLiveData<Resource<Int>>()
+    val updateRegisteredUser : LiveData<Resource<Int>> get() = _updateRegisteredUser
+
     fun registerOfUser(userEmail: String) {
         viewModelScope.launch {
             _registeringUser.value =  registerUser(userEmail)
@@ -32,6 +36,18 @@ class RegisterViewModel(
     private suspend fun registerUser(userEmail: String): Resource<User> {
         return withContext(Dispatchers.IO) {
             userRepository.getUserByEmail(userEmail)
+        }
+    }
+
+    fun updateRegisterOfUser(userId: Int, user: RegisterUser) {
+        viewModelScope.launch {
+            _updateRegisteredUser.value =  updateRegisterUser(userId, user)
+            Log.i("valueOfUser", _updateRegisteredUser.toString())
+        }
+    }
+    private suspend fun updateRegisterUser(userId: Int, user: RegisterUser): Resource<Int> {
+        return withContext(Dispatchers.IO) {
+            userRepository.updateRegisteredUser(userId, user)
         }
     }
 }

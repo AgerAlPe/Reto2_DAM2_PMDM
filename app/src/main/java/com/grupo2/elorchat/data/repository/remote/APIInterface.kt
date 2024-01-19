@@ -3,6 +3,7 @@ package com.grupo2.elorchat.data.repository.remote
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.User
+import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -23,5 +24,5 @@ interface APIInterface {
     suspend fun getUserByEmail(@Path("email") userEmail : String): Response<User>
 
     @PUT("users/{id}")
-    suspend fun updateRegisteredUser(@Path("id") userId : Int): Response<Int>
+    suspend fun updateRegisteredUser(@Path("id") userId : Int, @Body user: RegisterUser): Response<Int>
 }

@@ -25,10 +25,8 @@ import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -97,11 +95,12 @@ class LoginActivity : AppCompatActivity() {
                                     saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
                                 }
 
-                                if(loginUser.password.equals("Elorrieta00")){
+                                if (loginUser.password == "Elorrieta00") {
                                     val intent = Intent(applicationContext, RegisterActivity::class.java)
                                     intent.putExtra("userEmail", loginUser.email)
                                     startActivity(intent)
                                     finish()
+
                                 } else {
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
                                     startActivity(intent)

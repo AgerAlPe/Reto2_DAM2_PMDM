@@ -77,9 +77,9 @@
                         android:autofillHints=""
                         android:ems="10"
                         android:hint="@string/emailString"
-                        android:inputType="none"
                         android:minHeight="48dp"
                         android:textColorHint="#8D6E63"
+                        android:inputType="none"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
@@ -307,10 +307,12 @@
                         android:autofillHints=""
                         android:ems="10"
                         android:hint="@string/cycleString"
-                        android:inputType="textPersonName"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -336,10 +338,12 @@
                         android:autofillHints=""
                         android:ems="10"
                         android:hint="@string/courseString"
-                        android:inputType="textPersonName"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -365,10 +369,12 @@
                         android:autofillHints=""
                         android:ems="10"
                         android:hint="@string/fctDualString"
-                        android:inputType="textPersonName"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
+                        android:inputType="none"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
