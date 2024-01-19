@@ -5,13 +5,125 @@
     android:layout_height="match_parent"
     tools:context=".ui.groups.settings.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="TAB 3"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="40sp" />
+        android:orientation="vertical"
+        android:layout_marginTop="50dp"
+        tools:ignore="ExtraText">
 
+        <LinearLayout
+            android:id="@+id/UserData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical">
+
+            <!-- Contenido del primer LinearLayout -->
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UserName"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/subtitleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="a"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/descriptionTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/User"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical">
+
+            <!-- Contenido del segundo LinearLayout -->
+            <TextView
+                android:id="@+id/DateTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Miembro desde:"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/Date2TextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10/20/24"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/forgotPasswordLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical">
+
+            <!-- Contenido del cuarto LinearLayout para recuperar contraseña -->
+            <TextView
+                android:id="@+id/forgotPasswordTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recuperar Contraseña"
+                android:textSize="18sp" />
+
+            <!-- Puedes agregar aquí elementos adicionales para el proceso de recuperación de contraseña -->
+            <!-- Ejemplo con un botón de recuperación de contraseña -->
+            <Button
+                android:id="@+id/forgotPasswordButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recuperar Contraseña"/>
+
+        </LinearLayout>
+
+        <!-- Nuevo LinearLayout con selector de idiomas -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="20dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical">
+
+            <!-- Contenido del tercer LinearLayout con selector de idiomas -->
+            <TextView
+                android:id="@+id/languageTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Seleccionar Idioma"
+                android:textSize="18sp" />
+
+            <!-- Puedes agregar aquí un Spinner u otro elemento para seleccionar el idioma -->
+            <!-- Ejemplo con un Spinner vacío -->
+            <Spinner
+                android:id="@+id/languageSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 </FrameLayout>

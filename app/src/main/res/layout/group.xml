@@ -15,7 +15,7 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:contentDescription="Group image"
-        android:src="@drawable/icon" />
+        android:src="@drawable/circle_launcher" />
 
 
     <!-- Contenedor para el contenido del grupo -->

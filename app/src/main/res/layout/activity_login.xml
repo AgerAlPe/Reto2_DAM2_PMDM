@@ -28,16 +28,16 @@
 
     <ImageView
         android:id="@+id/register_icon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="122dp"
+        android:layout_height="121dp"
         android:importantForAccessibility="no"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_toolbar"
-        app:layout_constraintVertical_bias="0.075"
-        app:srcCompat="@drawable/ic_launcher_background" />
+        app:layout_constraintVertical_bias="0.05"
+        app:srcCompat="@drawable/circle_launcher" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailAddressLayout"
@@ -55,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/register_icon"
-        app:layout_constraintVertical_bias="0.12">
+        app:layout_constraintVertical_bias="0.100000024">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/emailAddress"
