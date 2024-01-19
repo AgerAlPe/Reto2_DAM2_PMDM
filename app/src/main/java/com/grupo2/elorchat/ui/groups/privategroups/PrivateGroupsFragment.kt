@@ -12,7 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
-import com.grupo2.elorchat.databinding.FragmentPrivateChatsBinding
+import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupAdapter
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.ui.groups.GroupsViewModelFactory
@@ -30,12 +30,12 @@ class PrivateGroupsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentPrivateChatsBinding.inflate(inflater, container, false)
+        val binding = FragmentChatsBinding.inflate(inflater, container, false)
         val view = binding.root
 
         groupListAdapter = GroupAdapter(::onGroupsListClickItem)
-        binding.privateGroups.adapter = groupListAdapter
-        binding.privateGroups.layoutManager = LinearLayoutManager(requireContext())
+        binding.groupsList.adapter = groupListAdapter
+        binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
 
         viewModel.privateGroups.observe(viewLifecycleOwner, Observer {
             if (it != null) {
