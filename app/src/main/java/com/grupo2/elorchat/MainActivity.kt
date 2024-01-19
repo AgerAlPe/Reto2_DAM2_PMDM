@@ -9,48 +9,30 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.Toast
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.grupo2.elorchat.ui.users.login.LoginActivity
+import com.grupo2.elorchat.utils.isOnline
 
 class MainActivity : AppCompatActivity() {
 
     private var connection : Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val screenSplash = installSplashScreen()
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.loginButton).setOnClickListener{
-            connection = isOnline(this)
-            if (connection) {
-                Toast.makeText(this, "there is connection", Toast.LENGTH_LONG).show()
-                val intent = Intent(applicationContext, LoginActivity::class.java)
-                intent.putExtra("isConnected", connection)
-                startActivity(intent)
-                finish()
-            }else {
-                //TODO hay que hacer que cuando no haya conexión y el usuario ya se haya logueado, que directamente inicie sesión.
-                Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
-            }
-        }
-    }
+        screenSplash.setKeepOnScreenCondition {true}
 
-    private fun isOnline(context: Context): Boolean {
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val capabilities =
-            connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork)
-        if (capabilities != null) {
-            if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_CELLULAR")
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_WIFI")
-                return true
-            } else if (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) {
-                Log.i("Internet", "NetworkCapabilities.TRANSPORT_ETHERNET")
-                return true
-            }
+        connection = isOnline(this)
+        if (connection) {
+            Toast.makeText(this, "there is connection", Toast.LENGTH_LONG).show()
+            val intent = Intent(applicationContext, LoginActivity::class.java)
+            intent.putExtra("isConnected", connection)
+            startActivity(intent)
+            finish()
+        }else {
+            //TODO hay que hacer que cuando no haya conexión y el usuario ya se haya logueado, que directamente inicie sesión.
+            Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
         }
-        return false
     }
 }
