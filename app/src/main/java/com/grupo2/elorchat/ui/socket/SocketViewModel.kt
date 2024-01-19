@@ -10,8 +10,8 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.google.gson.Gson
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.SocketMessage
-import com.grupo2.elorchat.data.repository.CommonSocketRepository
-import com.grupo2.elorchat.data.repository.CommonUserRepository
+import com.grupo2.elorchat.data.User
+import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.data.socket.SocketMessageRes
@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 
 class SocketViewModel (
-    //private val socketRepository: CommonSocketRepository
+    private val groupRepository: CommonGroupRepository
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -35,6 +35,9 @@ class SocketViewModel (
 
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
+
+    private val _testMessages = MutableLiveData<Resource<List<Message>>>()
+    val testMessages : LiveData<Resource<List<Message>>> get() = _testMessages
 
     private val SOCKET_HOST = "http://10.0.2.2:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
@@ -58,6 +61,18 @@ class SocketViewModel (
             Log.i("SocketViewModel", "Connecting to the socket")
             connect()
             Log.i("SocketViewModel", "connect fun3")
+        }
+    }
+
+    fun allTestChats() {
+        viewModelScope.launch {
+            _testMessages.value =  showAllTestChats()
+        }
+    }
+
+    private suspend fun showAllTestChats(): Resource<List<Message>> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.getAllMessages()
         }
     }
 
@@ -163,9 +178,9 @@ class SocketViewModel (
 
 
 class SocketViewModelFactory(
-    //private val socketRepository: CommonSocketRepository
+    private val groupRepository: CommonGroupRepository
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel() as T
+        return SocketViewModel(groupRepository) as T
     }
 }

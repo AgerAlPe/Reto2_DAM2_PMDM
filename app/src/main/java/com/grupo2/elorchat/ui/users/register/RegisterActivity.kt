@@ -37,10 +37,15 @@ class RegisterActivity : AppCompatActivity() {
         val dni = findViewById<EditText>(R.id.registerDni)
         val fctDual = findViewById<EditText>(R.id.registerFctDual)
 
+        //---PRUEBAS---//
+        //BORRAR CUANDO SE PUEDA//
+        var stringRoles: String = ""
+        //-------------//
+
         var roles: List<Role>? = null
 
-        var pass1 = findViewById<EditText>(R.id.firstPassword)
-        var pass2= findViewById<EditText>(R.id.secondPassword)
+        val pass1 = findViewById<EditText>(R.id.firstPassword)
+        val pass2= findViewById<EditText>(R.id.secondPassword)
 
         val userEmail = intent.getStringExtra("userEmail")
 
@@ -67,6 +72,10 @@ class RegisterActivity : AppCompatActivity() {
                         id = data.id!!
                         roles = data.roles
 
+                        stringRoles = (data.roles?.map { it.name } ?: emptyList()).toString()
+
+                        Log.i("userEntero", data.toString())
+                        Log.i("solo los roles", stringRoles)
                         if (data.fctDual) {
                             // ESCRIBE DUAL
                            fctDual.setText(getString(R.string.dual))
@@ -109,7 +118,7 @@ class RegisterActivity : AppCompatActivity() {
                                 if (int == 1){
                                     Toast.makeText(this, "Updated successfuly, enjoy", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
-                                    intent.putExtra("userRoles", roles.toString())
+                                    intent.putExtra("userRoles", stringRoles)
                                     startActivity(intent)
                                     finish()
                                 }else {

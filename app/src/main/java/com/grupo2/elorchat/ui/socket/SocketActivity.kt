@@ -9,6 +9,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.grupo2.elorchat.R
+import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
+import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.utils.Resource
 
@@ -16,7 +18,9 @@ class SocketActivity : ComponentActivity() {
 
     private val TAG = "SocketActivity"
     private lateinit var messageAdapter: MessageAdapter
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory() }
+    private lateinit var testMessageAdapter: TestMessageAdapter
+    private val groupRepository = RemoteGroupDataSource()
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +29,35 @@ class SocketActivity : ComponentActivity() {
 
         messageAdapter = MessageAdapter()
         binding.listMessages.adapter = messageAdapter
+
+        testMessageAdapter = TestMessageAdapter()
+        binding.listMessages.adapter = testMessageAdapter
+
+        viewModel.allTestChats()
+
+        viewModel.testMessages.observe(this) { result ->
+            when (result.status) {
+                Resource.Status.SUCCESS -> {
+                    // Handle successful login
+                    result.data?.let { data ->
+                        testMessageAdapter.submitList(data)
+                        Toast.makeText(this, "Deberian de verse todos los mensajes", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                Resource.Status.ERROR -> {
+                    // Handle login error
+                    Toast.makeText(
+                        this,
+                        "There has been an error fetching your information, please restart",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                Resource.Status.LOADING -> {
+                    // Handle loading state (optional)
+                    // You can show a loading indicator or perform other actions while waiting
+                }
+            }
+        }
 
         binding.btnSendMessage.isEnabled = false
 

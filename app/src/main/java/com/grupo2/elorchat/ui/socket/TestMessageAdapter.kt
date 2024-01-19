@@ -1,0 +1,47 @@
+package com.grupo2.elorchat.ui.socket
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.grupo2.elorchat.data.Message
+import com.grupo2.elorchat.databinding.ItemMessageBinding
+import com.grupo2.elorchat.databinding.MessageBinding
+
+class TestMessageAdapter : ListAdapter<Message, TestMessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
+        val binding = MessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return MessageViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: MessageViewHolder, position: Int) {
+        val message = getItem(position)
+        holder.bind(message)
+    }
+
+    inner class MessageViewHolder(private val binding: MessageBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(message: Message) {
+            binding.messageText.text = message.text
+            binding.MessagerName.text = message.userId.toString()
+
+        }
+    }
+
+    class MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
+
+        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem.text == newItem.text &&
+                    oldItem.userId == newItem.userId &&
+                    oldItem.groupId == newItem.groupId &&
+                    oldItem.timestamp == newItem.timestamp
+        }
+    }
+}

@@ -73,30 +73,8 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
             groupRepository.getGroups()
         }
     }
-//      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
-//    fun filterSongsTitle(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.title.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
-//
-//    fun filterSongsAuthor(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.author.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
+
+
 }
 
 class GroupsViewModelFactory(
