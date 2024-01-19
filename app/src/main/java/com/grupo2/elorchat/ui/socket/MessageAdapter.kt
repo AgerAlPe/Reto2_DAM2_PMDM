@@ -32,14 +32,11 @@ class MessageAdapter() : ListAdapter<SocketMessage, MessageAdapter.MessageViewHo
     class MessageDiffCallback : DiffUtil.ItemCallback<SocketMessage>() {
 
         override fun areItemsTheSame(oldItem: SocketMessage, newItem: SocketMessage): Boolean {
-            // TODO
             return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: SocketMessage, newItem: SocketMessage): Boolean {
-            // TODO
-            return oldItem == newItem
+            return oldItem.room == newItem.room && oldItem.text == newItem.text && oldItem.authorName == newItem.authorName
         }
-
     }
 }

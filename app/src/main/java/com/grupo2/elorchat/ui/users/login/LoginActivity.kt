@@ -27,6 +27,7 @@ import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LoginActivity : AppCompatActivity() {
@@ -50,15 +51,29 @@ class LoginActivity : AppCompatActivity() {
 
         var loginUser = LoginUser("","")
 
-        btnLogin.setOnClickListener{
-            //RECOGE LOS DATOS GUARDADOS Y LOS ESCRIBE EN LOS CAMPOS
-            lifecycleScope.launch(Dispatchers.IO) {
-                getSavedValues().collect {
-                    Log.i("name",it.email)
-                    Log.i("password", it.password)
-                    Log.i("chbox", it.chbox.toString())
+        lifecycleScope.launch(Dispatchers.IO) {
+            getSavedValues().collect { savedValues ->
+                withContext(Dispatchers.Main) {
+                    Log.i("name", savedValues.email)
+                    Log.i("password", savedValues.password)
+                    Log.i("chbox", savedValues.chbox.toString())
+
+                    if (savedValues.chbox) {
+                        Log.i("dentro del checkbox", "ha entrado")
+                        email.setText(savedValues.email)
+                        Log.i("dentro del checkbox", "ha puesto el mail")
+                        pass.setText(savedValues.password)
+                        Log.i("dentro del checkbox", "ha puesto la contraseña")
+                        chBox.isChecked = savedValues.chbox
+                        Log.i("dentro del checkbox", "ha puesto el remember me")
+                    }
                 }
             }
+        }
+
+
+
+        btnLogin.setOnClickListener{
             if(!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
                 loginUser = LoginUser(email.text.toString(),pass.text.toString())
             }else {
@@ -80,11 +95,13 @@ class LoginActivity : AppCompatActivity() {
                                     saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
                                 }
 
-                                if(loginUser.password.equals("Elorrieta00")){
+                                if (loginUser.password == "Elorrieta00") {
                                     val intent = Intent(applicationContext, RegisterActivity::class.java)
+                                    intent.putExtra("userEmail", loginUser.email)
                                     startActivity(intent)
                                     finish()
-                                }else {
+
+                                } else {
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
                                     startActivity(intent)
                                     finish()
@@ -116,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun getSavedValues() = dataStore.data.map { preferences ->
+    fun getSavedValues() = dataStore.data.map { preferences ->
         UserProfile(
             email = preferences[stringPreferencesKey("name")].orEmpty(),
             password = preferences[stringPreferencesKey("password")].orEmpty(),
