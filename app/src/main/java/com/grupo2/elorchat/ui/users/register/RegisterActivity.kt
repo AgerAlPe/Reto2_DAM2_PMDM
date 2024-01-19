@@ -107,11 +107,13 @@ class RegisterActivity : AppCompatActivity() {
                             // Handle successful login
                             result.data?.let { int ->
                                 if (int == 1){
+                                    Toast.makeText(this, "Updated successfuly, enjoy", Toast.LENGTH_SHORT).show()
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
                                     intent.putExtra("userRoles", roles.toString())
                                     startActivity(intent)
                                     finish()
                                 }else {
+                                    Toast.makeText(this, "Error while updating, please restart and try again", Toast.LENGTH_SHORT).show()
                                     Log.i("RegisterButtonError", "No se ha actualizado el usuario")
                                 }
                             }
