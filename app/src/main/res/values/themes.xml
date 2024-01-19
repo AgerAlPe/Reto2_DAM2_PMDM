@@ -5,7 +5,18 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.ElorChat" parent="Base.Theme.ElorChat" />
+    <style name="Theme.ElorChat" parent="Base.Theme.ElorChat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="Theme.ElorChat.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/colorPrimaryDark</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/circle_launcher</item>
+        <item name="windowSplashScreenAnimationDuration">1000</item>
+        <item name="postSplashScreenTheme">@style/Theme.ElorChat</item>
+    </style>
 
     <style name="CustomCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox_selector</item>
