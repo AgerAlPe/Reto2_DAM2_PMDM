@@ -7,8 +7,8 @@ import java.sql.Timestamp
 @Parcelize
 class Message (
     val id: Int,
-    val text: String,
+    val message: String,
     val userId: Int,
     val groupId: Int,
-    val timestamp: Timestamp?,
+    val createdAt: Timestamp?,
 ): Parcelable

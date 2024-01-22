@@ -69,7 +69,7 @@ class PublicGroupsFragment : Fragment() {
 
     private fun onGroupsListClickItem(group: Group) {
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
-            putExtra("idGroup", group.id)
+            putExtra("idGroup", group.id.toString())
         }
         startActivity(intent)
     }

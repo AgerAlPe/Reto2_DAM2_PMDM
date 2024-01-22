@@ -9,6 +9,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import com.grupo2.elorchat.R
+import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
@@ -27,9 +28,6 @@ class SocketActivity : ComponentActivity() {
         val binding = ActivitySocketBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        messageAdapter = MessageAdapter()
-        binding.listMessages.adapter = messageAdapter
-
         testMessageAdapter = TestMessageAdapter()
         binding.listMessages.adapter = testMessageAdapter
 
@@ -38,27 +36,44 @@ class SocketActivity : ComponentActivity() {
         viewModel.testMessages.observe(this) { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    // Handle successful login
                     result.data?.let { data ->
-                        testMessageAdapter.submitList(data)
-                        Toast.makeText(this, "Deberian de verse todos los mensajes", Toast.LENGTH_SHORT).show()
+                        // Retrieve data from the intent
+                        val groupId = intent.getStringExtra("idGroup")
+
+                        if (groupId != null) {
+                            // Log groupId
+                            Log.i("TestMessageAdapter", "Received groupId: $groupId")
+
+                            // Filter messages based on groupId
+                            val filteredMessages = data.filter { message ->
+                                message.groupId == groupId.toInt()
+                            }
+
+                            // Log filtered messages
+                            Log.i("TestMessageAdapter", "Filtered Messages: $filteredMessages")
+
+                            // Use 'filteredMessages' to update the adapter
+                            testMessageAdapter.submitList(filteredMessages)
+
+                        } else {
+                            Log.e("TestMessageAdapter", "No groupId received")
+                            // Handle the case when groupId is null (e.g., show an error message)
+                        }
                     }
                 }
                 Resource.Status.ERROR -> {
-                    // Handle login error
+                    // Handle error
                     Toast.makeText(
                         this,
-                        "There has been an error fetching your information, please restart",
+                        "Error fetching information, please restart",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
                 Resource.Status.LOADING -> {
                     // Handle loading state (optional)
-                    // You can show a loading indicator or perform other actions while waiting
                 }
             }
         }
-
         binding.btnSendMessage.isEnabled = false
 
         onConnectedChange(binding)

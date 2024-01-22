@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.socket
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -25,8 +26,9 @@ class TestMessageAdapter : ListAdapter<Message, TestMessageAdapter.MessageViewHo
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.messageText.text = message.text
             binding.MessagerName.text = message.userId.toString()
+            binding.messageText.text = message.message
+            binding.messageDate.text = message.createdAt.toString()
 
         }
     }
@@ -38,10 +40,10 @@ class TestMessageAdapter : ListAdapter<Message, TestMessageAdapter.MessageViewHo
         }
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
-            return oldItem.text == newItem.text &&
+            return oldItem.message == newItem.message &&
                     oldItem.userId == newItem.userId &&
                     oldItem.groupId == newItem.groupId &&
-                    oldItem.timestamp == newItem.timestamp
+                    oldItem.createdAt == newItem.createdAt
         }
     }
 }
