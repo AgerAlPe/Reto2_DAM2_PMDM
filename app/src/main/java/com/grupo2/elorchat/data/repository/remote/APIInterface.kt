@@ -25,4 +25,7 @@ interface APIInterface {
 
     @PUT("users/{id}")
     suspend fun updateRegisteredUser(@Path("id") userId : Int, @Body user: RegisterUser): Response<Int>
+
+    @POST("chats")
+    suspend fun createGroup(@Body name : String, isPrivate : Boolean): Response<Int>
 }

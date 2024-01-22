@@ -2,6 +2,7 @@ package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,8 +19,11 @@ import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupAdapter
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.ui.groups.GroupsViewModelFactory
+import com.grupo2.elorchat.ui.socket.SocketActivity
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class PublicGroupsFragment : Fragment() {
 
@@ -64,7 +68,7 @@ class PublicGroupsFragment : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
-        val intent = Intent(requireContext(), RegisterActivity::class.java).apply {
+        val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id)
         }
         startActivity(intent)

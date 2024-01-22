@@ -1,12 +1,17 @@
 package com.grupo2.elorchat.ui.groups
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
+import com.grupo2.elorchat.ui.users.register.RegisterActivity
+
 
 class GroupActivity : AppCompatActivity() {
 
@@ -17,7 +22,6 @@ class GroupActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chats)
-        findViewById<ImageButton>(R.id.createChat).visibility = View.INVISIBLE
 
         tabLayout = findViewById(R.id.tabLayout)
         viewPager2 = findViewById(R.id.viewpager)
@@ -26,23 +30,36 @@ class GroupActivity : AppCompatActivity() {
 
         viewPager2.adapter = adapter
 
+        val createChatButton: ImageButton = findViewById(R.id.createChat)
+        createChatButton.setOnClickListener {
+            // Lógica para manejar el clic en createChat
+            val intent = Intent(this, CreateGroupActivity::class.java).apply {
+                //TODO Se tiene que almacenar el role en room para obtenerlo aqui
+                //putExtra("userRole", user.role)
+            }
+            startActivity(intent)
+        }
+
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (tab != null) {
                     viewPager2.currentItem = tab.position
                 }
+                if (viewPager2.currentItem != 2) {
+                    createChatButton.visibility = View.VISIBLE
+                }else{
+                    createChatButton.visibility = View.GONE
+                }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
-
             }
 
             override fun onTabReselected(tab: TabLayout.Tab?) {
-
             }
 
         })
-        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 tabLayout.selectTab(tabLayout.getTabAt(position))

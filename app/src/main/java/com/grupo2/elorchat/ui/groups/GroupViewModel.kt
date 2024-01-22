@@ -73,6 +73,13 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
             groupRepository.getGroups()
         }
     }
+
+    suspend fun createGroupFromRepository(name : String, isPrivate : Boolean): Resource<Int> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.createGroup(name, isPrivate)
+        }
+    }
+
 //      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
 //    fun filterSongsTitle(query: String) {
 //        val currentSongs = originalSongs.toMutableList()
