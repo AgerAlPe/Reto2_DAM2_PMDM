@@ -2,6 +2,7 @@ package com.grupo2.elorchat.data.repository.remote
 
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
+import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
@@ -28,4 +29,7 @@ interface APIInterface {
 
     @POST("chats")
     suspend fun createGroup(@Body name : String, isPrivate : Boolean): Response<Int>
+
+    @GET("messages")
+    suspend fun getAllMessages() : Response<List<Message>>
 }
