@@ -30,6 +30,6 @@ interface APIInterface {
     @POST("chats")
     suspend fun createGroup(@Body name : String, isPrivate : Boolean): Response<Int>
 
-    @GET("messages")
-    suspend fun getAllMessages() : Response<List<Message>>
+    @GET("messages/{id}")
+    suspend fun getMessagesFromGroup(@Path("id") chatId : Int) : Response<List<Message>>
 }

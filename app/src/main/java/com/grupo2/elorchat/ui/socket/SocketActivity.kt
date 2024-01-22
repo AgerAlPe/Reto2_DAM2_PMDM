@@ -18,7 +18,6 @@ import com.grupo2.elorchat.utils.Resource
 class SocketActivity : ComponentActivity() {
 
     private val TAG = "SocketActivity"
-    private lateinit var messageAdapter: MessageAdapter
     private lateinit var testMessageAdapter: TestMessageAdapter
     private val groupRepository = RemoteGroupDataSource()
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository) }
@@ -31,34 +30,18 @@ class SocketActivity : ComponentActivity() {
         testMessageAdapter = TestMessageAdapter()
         binding.listMessages.adapter = testMessageAdapter
 
-        viewModel.allTestChats()
+        // Retrieve data from the intent
+        val groupId = intent.getStringExtra("idGroup")?.toInt()
+
+        if (groupId != null) {
+            viewModel.thisGroupsMessages(groupId)
+        }
 
         viewModel.testMessages.observe(this) { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     result.data?.let { data ->
-                        // Retrieve data from the intent
-                        val groupId = intent.getStringExtra("idGroup")
-
-                        if (groupId != null) {
-                            // Log groupId
-                            Log.i("TestMessageAdapter", "Received groupId: $groupId")
-
-                            // Filter messages based on groupId
-                            val filteredMessages = data.filter { message ->
-                                message.groupId == groupId.toInt()
-                            }
-
-                            // Log filtered messages
-                            Log.i("TestMessageAdapter", "Filtered Messages: $filteredMessages")
-
-                            // Use 'filteredMessages' to update the adapter
-                            testMessageAdapter.submitList(filteredMessages)
-
-                        } else {
-                            Log.e("TestMessageAdapter", "No groupId received")
-                            // Handle the case when groupId is null (e.g., show an error message)
-                        }
+                        testMessageAdapter.submitList(data)
                     }
                 }
                 Resource.Status.ERROR -> {
@@ -102,14 +85,14 @@ class SocketActivity : ComponentActivity() {
         })
     }
     private fun onMessagesChange() {
-        viewModel.messages.observe(this, Observer {
+        viewModel.testMessages.observe(this, Observer {
             Log.d(TAG, "messages change")
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     Log.d(TAG, "messages observe success")
                     if (!it.data.isNullOrEmpty()) {
-                        messageAdapter.submitList(it.data)
-                        messageAdapter.notifyDataSetChanged()
+                        testMessageAdapter.submitList(it.data)
+                        testMessageAdapter.notifyDataSetChanged()
                     }
                 }
                 Resource.Status.ERROR -> {

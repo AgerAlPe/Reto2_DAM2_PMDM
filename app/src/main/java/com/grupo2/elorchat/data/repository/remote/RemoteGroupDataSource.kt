@@ -12,7 +12,7 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
         RetrofitClient.apiInterface.createGroup(name, isPrivate)
     }
     
-    override suspend fun getAllMessages() = getResult {
-        RetrofitClient.apiInterface.getAllMessages()
+    override suspend fun getMessagesFromGroup(groupId : Int) = getResult {
+        RetrofitClient.apiInterface.getMessagesFromGroup(groupId)
     }
 }

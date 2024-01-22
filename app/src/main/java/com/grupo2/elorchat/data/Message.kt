@@ -8,6 +8,7 @@ import java.sql.Timestamp
 class Message (
     val id: Int,
     val message: String,
+    val name: String,
     val userId: Int,
     val groupId: Int,
     val createdAt: Timestamp?,
