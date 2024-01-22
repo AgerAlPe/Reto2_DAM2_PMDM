@@ -35,11 +35,12 @@
 
         <ImageView
             android:id="@+id/addMessageImageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
-            android:src="@drawable/baseline_add_24"
-            android:contentDescription="TODO" />
+            android:background="@drawable/rounded_background"
+            android:contentDescription="TODO"
+            android:src="@drawable/baseline_add_24" />
 
         <EditText
             android:id="@+id/input_message"
@@ -57,12 +58,13 @@
 
         <ImageView
             android:id="@+id/btn_send_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
+            android:background="@drawable/rounded_background"
+            android:contentDescription="TODO"
             android:enabled="false"
-            android:src="@drawable/outline_send_24"
-            android:contentDescription="TODO" />
+            android:src="@drawable/outline_send_24" />
 
     </LinearLayout>
 

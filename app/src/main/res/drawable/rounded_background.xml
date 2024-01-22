@@ -1,9 +1,5 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <solid android:color="@color/colorBackground"/> <!-- Color de fondo -->
     <corners android:radius="16dp"/> <!-- Radio de esquinas para hacerlo redondeado -->
-    <padding
-        android:left="10dp"
-        android:top="16dp"
-        android:right="10dp"
-        android:bottom="16dp"/> <!-- Agregado un espaciado de 8dp -->
+
 </shape>

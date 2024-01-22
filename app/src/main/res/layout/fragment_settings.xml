@@ -3,21 +3,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="16dp"
     tools:context=".ui.groups.settings.SettingsFragment">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_marginTop="50dp"
-        tools:ignore="ExtraText">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/UserData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
             android:background="@drawable/rounded_background"
             android:orientation="vertical">
 
@@ -28,30 +26,35 @@
                 android:layout_height="wrap_content"
                 android:text="UserName"
                 android:textSize="36sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
             <TextView
                 android:id="@+id/subtitleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="a"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
             <TextView
                 android:id="@+id/descriptionTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="B"
-                android:textSize="18sp" />
-
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/User"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
             android:background="@drawable/rounded_background"
             android:orientation="vertical">
 
@@ -61,22 +64,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Miembro desde:"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
             <TextView
                 android:id="@+id/Date2TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10/20/24"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/forgotPasswordLinearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="20dp"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
             android:background="@drawable/rounded_background"
             android:orientation="vertical">
 
@@ -86,24 +93,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recuperar Contraseña"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
-            <!-- Puedes agregar aquí elementos adicionales para el proceso de recuperación de contraseña -->
-            <!-- Ejemplo con un botón de recuperación de contraseña -->
+            <!-- Botón de recuperación de contraseña -->
             <Button
                 android:id="@+id/forgotPasswordButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recuperar Contraseña"/>
-
+                android:text="Recuperar Contraseña"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
         </LinearLayout>
 
-        <!-- Nuevo LinearLayout con selector de idiomas -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_margin="20dp"
+            android:padding="8dp"
             android:background="@drawable/rounded_background"
             android:orientation="vertical">
 
@@ -113,17 +120,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Seleccionar Idioma"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
 
-            <!-- Puedes agregar aquí un Spinner u otro elemento para seleccionar el idioma -->
-            <!-- Ejemplo con un Spinner vacío -->
+            <!-- Spinner para seleccionar el idioma -->
             <Spinner
                 android:id="@+id/languageSpinner"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp" />
-
+                android:minHeight="48dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
         </LinearLayout>
-
     </LinearLayout>
 </FrameLayout>
