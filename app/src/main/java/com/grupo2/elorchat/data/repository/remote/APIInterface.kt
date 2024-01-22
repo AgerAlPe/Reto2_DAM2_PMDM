@@ -28,7 +28,7 @@ interface APIInterface {
     suspend fun updateRegisteredUser(@Path("id") userId : Int, @Body user: RegisterUser): Response<Int>
 
     @POST("chats")
-    suspend fun createGroup(@Body name : String, isPrivate : Boolean): Response<Int>
+    suspend fun createGroup(@Body group: Group): Response<Int>
 
     @GET("messages")
     suspend fun getAllMessages() : Response<List<Message>>
