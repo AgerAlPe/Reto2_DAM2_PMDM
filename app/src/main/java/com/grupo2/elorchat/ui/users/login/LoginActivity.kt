@@ -1,6 +1,5 @@
 package com.grupo2.elorchat.ui.users.login
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
@@ -10,29 +9,24 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.LoginUser
-import com.grupo2.elorchat.data.preferences.UserProfile
+import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
 class LoginActivity : AppCompatActivity() {
 
-    val Context.dataStore by preferencesDataStore(name = "USER_PREFERENCES_NAME")
+    private val dataStoreManager by lazy { DataStoreManager(this) }
+    private lateinit var loginUser: LoginUser
 
     private val userRepository = RemoteUserDataSource()
     private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(
@@ -49,50 +43,41 @@ class LoginActivity : AppCompatActivity() {
         val chBox = findViewById<CheckBox>(R.id.checkBox)
         val deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
 
-        var loginUser = LoginUser("","")
-
         lifecycleScope.launch(Dispatchers.IO) {
-            getSavedValues().collect { savedValues ->
+            dataStoreManager.getSavedValues().collect { savedValues ->
                 withContext(Dispatchers.Main) {
                     Log.i("name", savedValues.email)
                     Log.i("password", savedValues.password)
                     Log.i("chbox", savedValues.chbox.toString())
 
                     if (savedValues.chbox) {
-                        Log.i("dentro del checkbox", "ha entrado")
                         email.setText(savedValues.email)
-                        Log.i("dentro del checkbox", "ha puesto el mail")
                         pass.setText(savedValues.password)
-                        Log.i("dentro del checkbox", "ha puesto la contraseña")
                         chBox.isChecked = savedValues.chbox
-                        Log.i("dentro del checkbox", "ha puesto el remember me")
                     }
                 }
             }
         }
 
 
-
-        btnLogin.setOnClickListener{
-            if(!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
-                loginUser = LoginUser(email.text.toString(),pass.text.toString())
-            }else {
-                Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña validos")
+        btnLogin.setOnClickListener {
+            if (!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
+                loginUser = LoginUser(email.text.toString(), pass.text.toString())
+            } else {
+                Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña válidos")
             }
-            Log.i("user", loginUser.toString())
+
             viewModel.loginOfUser(loginUser)
 
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {
                     Resource.Status.SUCCESS -> {
-                        // Handle successful login
                         result.data?.let { data ->
                             if (data.accessToken != null) {
                                 ElorChat.userPreferences.saveAuthToken(data.accessToken)
 
-                                //GUARDAR LOS DATOS INTRODUCIDOS
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
+                                    dataStoreManager.saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
                                 }
 
                                 if (loginUser.password == "Elorrieta00") {
@@ -100,20 +85,18 @@ class LoginActivity : AppCompatActivity() {
                                     intent.putExtra("userEmail", loginUser.email)
                                     startActivity(intent)
                                     finish()
-
                                 } else {
                                     val intent = Intent(applicationContext, GroupActivity::class.java)
                                     startActivity(intent)
                                     finish()
                                 }
-                            }else {
-                                Log.d("tokenNull","the token to access is null")
-                                Toast.makeText(this, "The has been an error, please try again", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Log.d("tokenNull", "the token to access is null")
+                                Toast.makeText(this, "There has been an error, please try again", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
                     Resource.Status.ERROR -> {
-                        // Handle login error
                         Toast.makeText(this, "The login provided is not valid, please try again", Toast.LENGTH_SHORT).show()
                     }
                     Resource.Status.LOADING -> {
@@ -123,24 +106,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
     }
-    private suspend fun saveValues(name: String, password: String, checked: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[stringPreferencesKey("name")] = name
-            preferences[stringPreferencesKey("password")] = password
-            preferences[booleanPreferencesKey("checked")] = checked
-        }
-    }
-
-    fun getSavedValues() = dataStore.data.map { preferences ->
-        UserProfile(
-            email = preferences[stringPreferencesKey("name")].orEmpty(),
-            password = preferences[stringPreferencesKey("password")].orEmpty(),
-            chbox = preferences[booleanPreferencesKey("checked")] ?: false
-        )
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         viewModel.loggedUser.removeObservers(this)
