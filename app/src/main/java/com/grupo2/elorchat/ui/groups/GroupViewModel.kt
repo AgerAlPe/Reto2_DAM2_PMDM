@@ -6,15 +6,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.grupo2.elorchat.ElorChat.Companion.context
 import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewModel() {
+
+    private val dataStoreManager by lazy { DataStoreManager.getInstance(context) }
 
     private val _items = MutableLiveData<Resource<List<Group>>?>()
 
@@ -44,8 +49,8 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
 
     private fun updateGroupList() {
         viewModelScope.launch {
-            val repoResponse = getGroupsFromRepository()
-            originalGroups = repoResponse?.data.orEmpty() // Guarda la lista original
+            val repoResponse = getAllGroupsFromRepository()
+            originalGroups = repoResponse.data.orEmpty() // Guarda la lista original
             filterPrivateGroups() // Inicializa los grupos privados
             filterPublicGroups() // Inicializa los grupos públicos
         }
@@ -53,12 +58,22 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
 
     // Filtrar grupos privados
     private fun filterPrivateGroups() {
-        for (group in originalGroups) {
-            Log.i("Datos", group.name)
-            Log.i("Datos", group.isPrivate.toString())
+        viewModelScope.launch {
+            try {
+                // Retrieve the saved groups from DataStoreManager
+                val savedGroups = dataStoreManager.getSavedGroups().first()
+
+                // Filter the original groups based on the saved groups
+                val privateGroups = originalGroups.filter { group ->
+                    group.isPrivate && savedGroups.any { savedGroup -> savedGroup.id == group.id }
+                }
+
+                _privateGroups.value = Resource.success(privateGroups)
+            } catch (e: Exception) {
+                // Handle the exception or log the error
+                _privateGroups.value = Resource.error(e.message ?: "Error filtering private groups", null)
+            }
         }
-        val privateGroups = originalGroups.filter { group -> group.isPrivate}
-        _privateGroups.value = Resource.success(privateGroups)
     }
 
     // Filtrar grupos públicos
@@ -67,7 +82,7 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
         _publicGroups.value = Resource.success(publicGroups)
     }
 
-    private suspend fun getGroupsFromRepository(): Resource<List<Group>>? {
+    private suspend fun getAllGroupsFromRepository(): Resource<List<Group>> {
         return withContext(Dispatchers.IO) {
             groupRepository.getGroups()
         }
@@ -79,30 +94,6 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
         }
     }
 
-//      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
-//    fun filterSongsTitle(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.title.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
-//
-//    fun filterSongsAuthor(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.author.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
 }
 
 class GroupsViewModelFactory(

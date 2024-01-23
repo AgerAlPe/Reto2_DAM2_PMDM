@@ -32,4 +32,7 @@ interface APIInterface {
 
     @GET("messages/{id}")
     suspend fun getMessagesFromGroup(@Path("id") chatId : Int) : Response<List<Message>>
+
+    @GET("{id}/chats")
+    suspend fun getUserGroups(@Path("id") userId: Int) : Response<List<Group>>
 }

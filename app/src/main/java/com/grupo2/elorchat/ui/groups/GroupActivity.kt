@@ -31,7 +31,7 @@ class GroupActivity : AppCompatActivity() {
         createChatButton.setOnClickListener {
             // Lógica para manejar el clic en createChat
             val intent = Intent(this, CreateGroupActivity::class.java).apply {
-                //TODO Se tiene que almacenar el role en room para obtenerlo aqui
+                //TODO Se tiene que recoger el rol del usuario desde el DataStoreManager
                 //putExtra("userRole", user.role)
             }
             startActivity(intent)
