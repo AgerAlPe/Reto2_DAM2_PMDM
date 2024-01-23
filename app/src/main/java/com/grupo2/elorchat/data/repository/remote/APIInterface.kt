@@ -3,8 +3,8 @@ package com.grupo2.elorchat.data.repository.remote
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.RegisterUser
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import retrofit2.Response
 import retrofit2.http.Body

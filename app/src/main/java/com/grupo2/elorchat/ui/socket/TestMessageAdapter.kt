@@ -1,13 +1,11 @@
 package com.grupo2.elorchat.ui.socket
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.databinding.ItemMessageBinding
 import com.grupo2.elorchat.databinding.MessageBinding
 
 class TestMessageAdapter : ListAdapter<Message, TestMessageAdapter.MessageViewHolder>(MessageDiffCallback()) {

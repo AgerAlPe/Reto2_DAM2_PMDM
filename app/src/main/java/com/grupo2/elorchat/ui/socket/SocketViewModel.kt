@@ -10,7 +10,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.google.gson.Gson
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.SocketMessage
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq

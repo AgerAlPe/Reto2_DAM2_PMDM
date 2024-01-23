@@ -9,9 +9,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.grupo2.elorchat.R
-import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.data.Role
 import com.grupo2.elorchat.data.RegisterUser
+import com.grupo2.elorchat.data.Role
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.utils.Resource

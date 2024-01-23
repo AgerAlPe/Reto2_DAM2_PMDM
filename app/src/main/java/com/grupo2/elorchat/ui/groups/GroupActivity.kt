@@ -2,15 +2,12 @@ package com.grupo2.elorchat.ui.groups
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
-import com.grupo2.elorchat.ui.users.register.RegisterActivity
 
 
 class GroupActivity : AppCompatActivity() {
