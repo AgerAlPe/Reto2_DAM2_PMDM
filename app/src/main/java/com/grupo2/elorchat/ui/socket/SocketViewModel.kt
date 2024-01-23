@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.google.gson.Gson
+import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.SocketMessage
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
@@ -38,7 +39,7 @@ class SocketViewModel (
     private val _testMessages = MutableLiveData<Resource<List<Message>>>()
     val testMessages : LiveData<Resource<List<Message>>> get() = _testMessages
 
-    private val SOCKET_HOST = "http://10.0.2.2:8085/"
+    private val SOCKET_HOST = "http://10.5.7.39:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private lateinit var mSocket: Socket
@@ -63,15 +64,15 @@ class SocketViewModel (
         }
     }
 
-    fun allTestChats() {
+    fun thisGroupsMessages(groupId : Int) {
         viewModelScope.launch {
-            _testMessages.value =  showAllTestChats()
+            _testMessages.value =  showThisGroupsMessages(groupId)
         }
     }
 
-    private suspend fun showAllTestChats(): Resource<List<Message>> {
+    private suspend fun showThisGroupsMessages(groupId: Int): Resource<List<Message>> {
         return withContext(Dispatchers.IO) {
-            groupRepository.getAllMessages()
+            groupRepository.getMessagesFromGroup(groupId)
         }
     }
 
@@ -89,7 +90,11 @@ class SocketViewModel (
         // Add custom headers
         val headers = mutableMapOf<String, MutableList<String>>()
         // TODO el token tendria que salir de las sharedPrefernces para conectarse
-        headers[AUTHORIZATION_HEADER] = mutableListOf("Bearer AppJwt:1:Mikel")
+        //EL CODIGO DE ABAJO PODRIA FUNCIONAR, REVISAR
+        //-----------------------------------------------------------------------------//
+        //mutableListOf("Bearer", ElorChat.userPreferences.fetchAuthToken().toString())
+        //-----------------------------------------------------------------------------//
+        headers[AUTHORIZATION_HEADER] = mutableListOf(ElorChat.userPreferences.fetchAuthToken().toString())
 
         options.extraHeaders = headers
         return options
@@ -108,7 +113,6 @@ class SocketViewModel (
     }
     private fun onDisconnect(): Emitter.Listener {
         return Emitter.Listener {
-            // Manejar el mensaje recibido
             Log.d(TAG, "desconectado")
             _connected.postValue(Resource.success(false))
         }
