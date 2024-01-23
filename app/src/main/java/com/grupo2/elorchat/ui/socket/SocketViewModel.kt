@@ -89,11 +89,7 @@ class SocketViewModel (
 
         // Add custom headers
         val headers = mutableMapOf<String, MutableList<String>>()
-        // TODO el token tendria que salir de las sharedPrefernces para conectarse
-        //EL CODIGO DE ABAJO PODRIA FUNCIONAR, REVISAR
-        //-----------------------------------------------------------------------------//
-        //mutableListOf("Bearer", ElorChat.userPreferences.fetchAuthToken().toString())
-        //-----------------------------------------------------------------------------//
+
         headers[AUTHORIZATION_HEADER] = mutableListOf(ElorChat.userPreferences.fetchAuthToken().toString())
 
         options.extraHeaders = headers
