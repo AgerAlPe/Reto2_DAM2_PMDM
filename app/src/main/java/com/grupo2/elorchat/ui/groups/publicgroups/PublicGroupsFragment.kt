@@ -2,17 +2,14 @@ package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
@@ -20,10 +17,7 @@ import com.grupo2.elorchat.ui.groups.GroupAdapter
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.ui.groups.GroupsViewModelFactory
 import com.grupo2.elorchat.ui.socket.SocketActivity
-import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class PublicGroupsFragment : Fragment() {
 

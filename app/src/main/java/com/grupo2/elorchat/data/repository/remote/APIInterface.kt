@@ -3,8 +3,8 @@ package com.grupo2.elorchat.data.repository.remote
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.RegisterUser
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -28,7 +28,7 @@ interface APIInterface {
     suspend fun updateRegisteredUser(@Path("id") userId : Int, @Body user: RegisterUser): Response<Int>
 
     @POST("chats")
-    suspend fun createGroup(@Body name : String, isPrivate : Boolean): Response<Int>
+    suspend fun createGroup(@Body group: Group): Response<Int>
 
     @GET("messages/{id}")
     suspend fun getMessagesFromGroup(@Path("id") chatId : Int) : Response<List<Message>>

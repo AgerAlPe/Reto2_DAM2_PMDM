@@ -1,7 +1,6 @@
 package com.grupo2.elorchat.ui.groups
 
 import android.util.Log
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -63,7 +62,7 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
     }
 
     // Filtrar grupos públicos
-    fun filterPublicGroups() {
+    private fun filterPublicGroups() {
         val publicGroups = originalGroups.filterNot { group -> group.isPrivate }
         _publicGroups.value = Resource.success(publicGroups)
     }
@@ -74,9 +73,9 @@ class GroupViewModel(private val groupRepository: CommonGroupRepository) : ViewM
         }
     }
 
-    suspend fun createGroupFromRepository(name : String, isPrivate : Boolean): Resource<Int> {
+    suspend fun createGroupFromRepository(group: Group): Resource<Int> {
         return withContext(Dispatchers.IO) {
-            groupRepository.createGroup(name, isPrivate)
+            groupRepository.createGroup(group)
         }
     }
 

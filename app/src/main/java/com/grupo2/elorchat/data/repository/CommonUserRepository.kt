@@ -1,8 +1,8 @@
 package com.grupo2.elorchat.data.repository
 
 import com.grupo2.elorchat.data.LoginUser
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.RegisterUser
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.utils.Resource
 
 interface CommonUserRepository {

@@ -1,6 +1,5 @@
 package com.grupo2.elorchat.ui.socket
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -8,10 +7,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import com.grupo2.elorchat.R
-import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
-import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.utils.Resource
 

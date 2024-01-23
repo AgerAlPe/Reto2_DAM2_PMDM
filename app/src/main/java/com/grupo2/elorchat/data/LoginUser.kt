@@ -1,6 +1,5 @@
 package com.grupo2.elorchat.data
 
-import android.companion.AssociatedDevice
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 

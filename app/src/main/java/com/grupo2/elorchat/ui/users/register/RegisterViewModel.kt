@@ -7,10 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.User
-import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import com.grupo2.elorchat.data.repository.CommonUserRepository
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers

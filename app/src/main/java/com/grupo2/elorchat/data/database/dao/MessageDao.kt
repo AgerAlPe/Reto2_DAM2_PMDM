@@ -4,7 +4,6 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.entities.MessageEntity
 
 @Dao

@@ -1,7 +1,6 @@
 package com.grupo2.elorchat.ui.users.login
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
