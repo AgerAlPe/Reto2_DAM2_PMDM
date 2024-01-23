@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
+import androidx.appcompat.app.AppCompatActivity;
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
@@ -59,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-
         btnLogin.setOnClickListener {
             if (!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
                 loginUser = LoginUser(email.text.toString(), pass.text.toString())
@@ -67,7 +67,9 @@ class LoginActivity : AppCompatActivity() {
                 Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña válidos")
             }
 
+            if (loginUser != null) {
             viewModel.loginOfUser(loginUser)
+            }
 
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {

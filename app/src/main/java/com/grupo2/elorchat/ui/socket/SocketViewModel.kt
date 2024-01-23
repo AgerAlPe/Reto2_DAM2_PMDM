@@ -49,7 +49,7 @@ class SocketViewModel @Inject constructor(
     private lateinit var mSocket: Socket
 
     // TODO esto esta hardcodeeado
-    private val SOCKET_ROOM = "default-room"
+    private val SOCKET_ROOM = "Tartaria"
 
     fun startSocket() {
         Log.i("SocketViewModel", "Starting socket")
