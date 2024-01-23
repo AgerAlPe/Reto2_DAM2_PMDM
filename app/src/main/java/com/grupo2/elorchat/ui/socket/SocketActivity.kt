@@ -10,13 +10,15 @@ import androidx.lifecycle.Observer
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SocketActivity : ComponentActivity() {
 
     private val TAG = "SocketActivity"
     private lateinit var testMessageAdapter: TestMessageAdapter
     private val groupRepository = RemoteGroupDataSource()
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository) }
+    private val viewModel: SocketViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
