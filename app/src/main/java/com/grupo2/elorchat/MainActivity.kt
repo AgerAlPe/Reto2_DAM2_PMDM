@@ -11,6 +11,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.grupo2.elorchat.ui.users.login.LoginActivity
+import com.grupo2.elorchat.ui.users.login.OfflineLoginActivity
 import com.grupo2.elorchat.utils.isOnline
 
 class MainActivity : AppCompatActivity() {
@@ -31,8 +32,11 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }else {
-            //TODO hay que hacer que cuando no haya conexión y el usuario ya se haya logueado, que directamente inicie sesión.
-            Toast.makeText(this, "there is NO connection", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "there is no connection", Toast.LENGTH_LONG).show()
+            val intent = Intent(applicationContext, OfflineLoginActivity::class.java)
+            intent.putExtra("isConnected", connection)
+            startActivity(intent)
+            finish()
         }
     }
 }
