@@ -2,7 +2,7 @@ package com.grupo2.elorchat.di
 
 import android.content.Context
 import androidx.room.Room
-import com.grupo2.elorchat.data.database.MessageDatabase
+import com.grupo2.elorchat.data.database.AppDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,14 +14,22 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RoomModule {
 
-    private const val  MESSAGE_DATABASE_NAME = "message_database"
+    private const val  APP_DATABASE_NAME = "app_database"
 
     @Singleton
     @Provides
     fun provideRoom(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, MessageDatabase::class.java, MESSAGE_DATABASE_NAME).build()
+        Room.databaseBuilder(
+            context,
+            AppDatabase::class.java,
+            APP_DATABASE_NAME
+        ).build()
 
     @Singleton
     @Provides
-    fun provideMessageDao(db:MessageDatabase) = db.getMessageDao()
+    fun provideUserDao(db:AppDatabase) = db.getUserDao()
+
+    @Singleton
+    @Provides
+    fun provideMessageDao(db:AppDatabase) = db.getMessageDao()
 }

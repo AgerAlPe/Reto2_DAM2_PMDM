@@ -8,6 +8,8 @@ import androidx.room.PrimaryKey
 data class MessageEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")val id: Int = 0,
-    @ColumnInfo(name = "room")val room: String,
-    @ColumnInfo(name =   "text")val text: String,
-    @ColumnInfo(name = "authorName")val authorName: String)
+    @ColumnInfo(name = "text")val text: String,
+    @ColumnInfo(name = "author_id")val authorId: Int,
+    @ColumnInfo(name = "author_name")val authorName: String,
+    @ColumnInfo(name = "chat_id")val chatId: String,
+)
