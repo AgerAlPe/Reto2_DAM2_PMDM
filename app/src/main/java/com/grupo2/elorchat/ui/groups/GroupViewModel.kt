@@ -1,11 +1,19 @@
 package com.grupo2.elorchat.ui.groups
 
+
+import android.content.ContentValues.TAG
+import android.util.Log
+
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+
+import com.grupo2.elorchat.data.ChatUser
+
 import com.grupo2.elorchat.ElorChat.Companion.context
+
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
@@ -40,6 +48,13 @@ class GroupViewModel @Inject constructor(
     private val _delete = MutableLiveData<Resource<Int>?>()
 
     private val _create = MutableLiveData<Resource<Int>?>()
+
+    private val _joinChat = MutableLiveData<Resource<ChatUser>>()
+
+    private val _leaveChat = MutableLiveData<Resource<Void>>()
+
+    val leaveChat : MutableLiveData<Resource<Void>> get() = _leaveChat
+    val joinChat : MutableLiveData<Resource<ChatUser>> get() = _joinChat
 
     val delete : MutableLiveData<Resource<Int>?> get() = _delete
 
@@ -142,6 +157,66 @@ class GroupViewModel @Inject constructor(
             groupRepository.createGroup(group)
         }
     }
+
+    private fun joinChat(chatUser: ChatUser) {
+        viewModelScope.launch {
+            try {
+                _joinChat.value = joinChatFromRepo(chatUser)
+            } catch (e: Exception) {
+                // Handle exceptions if any
+                Log.e(TAG, "Exception while joining the chat: ${e.message}")
+            }
+        }
+    }
+    private suspend fun joinChatFromRepo(chatUser: ChatUser): Resource<ChatUser> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.joinChat(chatUser)
+        }
+    }
+
+    private fun leaveChat(userId : Int, chatId : Int) {
+        viewModelScope.launch {
+            try {
+                 _leaveChat.value = leaveChatFromRepo(userId, chatId)
+
+            } catch (e: Exception) {
+                // Handle exceptions if any
+                Log.e(TAG, "Exception while joining the chat: ${e.message}")
+            }
+        }
+    }
+
+    private suspend fun leaveChatFromRepo(userId: Int, chatId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.leaveChat(userId, chatId)
+        }
+    }
+
+
+//      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
+//    fun filterSongsTitle(query: String) {
+//        val currentSongs = originalSongs.toMutableList()
+//
+//        // Realiza el filtrado basado en la consulta
+//        if (query.isNotBlank()) {
+//            currentSongs.retainAll { song ->
+//                song.title.contains(query, ignoreCase = true)
+//            }
+//        }
+//        _items.value = Resource.success(currentSongs)
+//    }
+//
+//    fun filterSongsAuthor(query: String) {
+//        val currentSongs = originalSongs.toMutableList()
+//
+//        // Realiza el filtrado basado en la consulta
+//        if (query.isNotBlank()) {
+//            currentSongs.retainAll { song ->
+//                song.author.contains(query, ignoreCase = true)
+//            }
+//        }
+//        _items.value = Resource.success(currentSongs)
+//    }
 
 }
 

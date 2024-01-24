@@ -2,6 +2,7 @@ package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
@@ -65,7 +67,9 @@ class PublicGroupsFragment : Fragment() {
     private fun onGroupsListClickItem(group: Group) {
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())
+            putExtra("groupName", group.name)
         }
+
         startActivity(intent)
     }
 }
