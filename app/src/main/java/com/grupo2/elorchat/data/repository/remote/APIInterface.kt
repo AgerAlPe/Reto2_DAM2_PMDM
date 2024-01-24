@@ -35,15 +35,13 @@ interface APIInterface {
     @GET("messages/{id}")
     suspend fun getMessagesFromGroup(@Path("id") chatId : Int) : Response<List<Message>>
 
-
     @POST("chats/joinChat")
     suspend fun joinChat(@Body chatUser : ChatUser) : Response<ChatUser>
 
     @DELETE("chats/leaveChat/{userId}/{chatId}")
     suspend fun leaveChat(@Path("userId") userId: Int, @Path("chatId") chatId: Int) : Response<Void>
 
-
-    @GET("{id}/chats")
+    @GET("users/{id}/chats")
     suspend fun getUserGroups(@Path("id") userId: Int) : Response<List<Group>>
 
 }
