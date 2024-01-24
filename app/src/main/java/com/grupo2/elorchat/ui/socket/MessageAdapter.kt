@@ -5,10 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.SocketMessage
 import com.grupo2.elorchat.databinding.ItemMessageBinding
 
-class MessageAdapter() : ListAdapter<SocketMessage, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
+class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -23,20 +24,26 @@ class MessageAdapter() : ListAdapter<SocketMessage, MessageAdapter.MessageViewHo
     inner class MessageViewHolder(private val binding: ItemMessageBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(socketMessage: SocketMessage) {
-            binding.textViewMessage.text = socketMessage.text
-            binding.textViewAuthor.text = socketMessage.authorName
+        fun bind(message: Message) {
+            binding.textViewMessage.text = message.message
+            binding.textViewAuthor.text = message.name
+            // You can bind other properties as needed
         }
     }
 
-    class MessageDiffCallback : DiffUtil.ItemCallback<SocketMessage>() {
+    class MessageDiffCallback : DiffUtil.ItemCallback<Message>() {
 
-        override fun areItemsTheSame(oldItem: SocketMessage, newItem: SocketMessage): Boolean {
-            return oldItem == newItem
+        override fun areItemsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem.id == newItem.id // Assuming Message has an 'id' property
         }
 
-        override fun areContentsTheSame(oldItem: SocketMessage, newItem: SocketMessage): Boolean {
-            return oldItem.room == newItem.room && oldItem.text == newItem.text && oldItem.authorName == newItem.authorName
+        override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
+            return oldItem.message == newItem.message &&
+                    oldItem.name == newItem.name &&
+                    oldItem.userId == newItem.userId &&
+                    oldItem.chatId == newItem.chatId &&
+                    oldItem.createdAt == newItem.createdAt
+            // Add other properties as needed
         }
     }
 }
