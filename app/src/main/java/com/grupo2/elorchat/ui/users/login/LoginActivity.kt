@@ -59,6 +59,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+        loginUser = LoginUser("", "")
 
         btnLogin.setOnClickListener {
             if (!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
@@ -68,9 +69,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "The user provided has no valid email or password", Toast.LENGTH_SHORT).show()
             }
 
-            if (loginUser != null) {
             viewModel.loginOfUser(loginUser)
-            }
 
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {

@@ -32,4 +32,8 @@ object RoomModule {
     @Singleton
     @Provides
     fun provideMessageDao(db:AppDatabase) = db.getMessageDao()
+
+    @Singleton
+    @Provides
+    fun provideGroupDao(db:AppDatabase) = db.getGroupDao()
 }
