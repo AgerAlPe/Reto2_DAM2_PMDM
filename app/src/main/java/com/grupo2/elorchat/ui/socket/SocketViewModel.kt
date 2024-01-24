@@ -23,15 +23,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.security.Timestamp
 
 class SocketViewModel (
-    private val groupRepository: CommonGroupRepository
+    private val groupRepository: CommonGroupRepository,
+    private val groupName: String?
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
 
-    private val _messages = MutableLiveData<Resource<List<SocketMessage>>>()
-    val messages : LiveData<Resource<List<SocketMessage>>> get() = _messages
+    private val _messages = MutableLiveData<Resource<List<Message>>>()
+    val messages : LiveData<Resource<List<Message>>> get() = _messages
 
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
@@ -44,8 +46,7 @@ class SocketViewModel (
 
     private lateinit var mSocket: Socket
 
-    // TODO esto esta hardcodeeado
-    private val SOCKET_ROOM = "Tartaria"
+    private val SOCKET_ROOM = groupName
 
     fun startSocket() {
         Log.i("SocketViewModel", "Starting socket")
@@ -136,40 +137,85 @@ class SocketViewModel (
         }
     }
 
-    private fun onNewMessageJsonObject(data : Any) {
+    private fun onNewMessageJsonObject(data: Any) {
         try {
             val jsonObject = data as JSONObject
             val jsonObjectString = jsonObject.toString()
-            val message = Gson().fromJson(jsonObjectString, SocketMessageRes::class.java)
 
-            Log.d(TAG, message.authorName)
-            Log.d(TAG, message.messageType.toString())
+            // Assuming you have a MessageResponse class for deserialization
+            val messageResponse = Gson().fromJson(jsonObjectString, Message::class.java)
 
+            // Creating a Message instance from MessageResponse
+            val message = Message(
+                id = messageResponse.id,
+                message = messageResponse.message,
+                name = messageResponse.name,
+                userId = messageResponse.userId,
+                chatId = messageResponse.chatId,
+                createdAt = messageResponse.createdAt // Assuming messageResponse.createdAt is already a Timestamp
+            )
+
+            Log.d("mensajeSocket", "ID: ${message.id}")
+            Log.d("mensajeSocket", "Message: ${message.message}")
+            Log.d("mensajeSocket", "Name: ${message.name}")
+            Log.d("mensajeSocket", "UserId: ${message.userId}")
+            Log.d("mensajeSocket", "GroupId: ${message.chatId}")
+            Log.d("mensajeSocket", "CreatedAt: ${message.createdAt}")
+            
             updateMessageListWithNewMessage(message)
         } catch (ex: Exception) {
-            Log.e(TAG, ex.message!!)
+            Log.e(TAG, ex.message ?: "Unknown error")
         }
     }
 
-    private fun updateMessageListWithNewMessage(socketMessage: SocketMessageRes) {
+//    private fun updateMessageListWithNewMessage(socketMessage: SocketMessageRes) {
+//        try {
+//            val incomingMessage =
+//                SOCKET_ROOM?.let { SocketMessage(it, socketMessage.message, socketMessage.authorName) }
+//            val msgsList = _messages.value?.data?.toMutableList()
+//            if (msgsList != null) {
+//                if (incomingMessage != null) {
+//                    msgsList.add(incomingMessage)
+//                }
+//                _messages.postValue(Resource.success(msgsList))
+//            } else {
+//                _messages.postValue(Resource.success(listOf(incomingMessage)) as Resource<List<SocketMessage>>?)
+//            }
+//        } catch (ex: Exception) {
+//            Log.e(TAG, ex.message!!)
+//        }
+//    }
+
+    private fun updateMessageListWithNewMessage(socketMessage: Message) {
         try {
-            val incomingMessage = SocketMessage(SOCKET_ROOM, socketMessage.message, socketMessage.authorName)
+            val incomingMessage = SOCKET_ROOM?.let {
+                Message(
+                    id = socketMessage.id,  // You might need to set an appropriate default value for id
+                    message = socketMessage.message,
+                    name = socketMessage.name,
+                    userId = socketMessage.userId,  // You might need to set an appropriate default value for userId
+                    chatId = socketMessage.chatId,  // You might need to set an appropriate default value for groupId
+                    createdAt = socketMessage.createdAt  // You might need to set an appropriate default value for createdAt
+                )
+            }
+
             val msgsList = _messages.value?.data?.toMutableList()
+
             if (msgsList != null) {
-                msgsList.add(incomingMessage)
+                incomingMessage?.let { msgsList.add(it) }
                 _messages.postValue(Resource.success(msgsList))
             } else {
-                _messages.postValue(Resource.success(listOf(incomingMessage)))
+                _messages.postValue(Resource.success(listOfNotNull(incomingMessage)))
             }
         } catch (ex: Exception) {
-            Log.e(TAG, ex.message!!)
+            Log.e(TAG, ex.message ?: "Unknown error")
         }
     }
 
     fun onSendMessage(message: String) {
         Log.d(TAG, "onSendMessage $message")
         // la sala esta hardcodeada..
-        val socketMessage = SocketMessageReq(SOCKET_ROOM, message)
+        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
         val jsonObject = JSONObject(Gson().toJson(socketMessage))
         mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
     }
@@ -177,9 +223,10 @@ class SocketViewModel (
 
 
 class SocketViewModelFactory(
-    private val groupRepository: CommonGroupRepository
+    private val groupRepository: CommonGroupRepository,
+    private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository) as T
+        return SocketViewModel(groupRepository, groupName) as T
     }
 }

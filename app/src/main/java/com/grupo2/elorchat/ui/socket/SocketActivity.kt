@@ -14,30 +14,32 @@ import com.grupo2.elorchat.utils.Resource
 class SocketActivity : ComponentActivity() {
 
     private val TAG = "SocketActivity"
-    private lateinit var testMessageAdapter: TestMessageAdapter
+    private lateinit var messageAdapter: MessageAdapter
     private val groupRepository = RemoteGroupDataSource()
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository) }
+    private lateinit var groupName: String
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivitySocketBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        testMessageAdapter = TestMessageAdapter()
-        binding.listMessages.adapter = testMessageAdapter
-
         // Retrieve data from the intent
         val groupId = intent.getStringExtra("idGroup")?.toInt()
+        groupName = intent.getStringExtra("groupName") ?: ""
+
+        messageAdapter = MessageAdapter()
+        binding.listMessages.adapter = messageAdapter
 
         if (groupId != null) {
             viewModel.thisGroupsMessages(groupId)
         }
 
-        viewModel.testMessages.observe(this) { result ->
+        viewModel.messages.observe(this) { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     result.data?.let { data ->
-                        testMessageAdapter.submitList(data)
+                        messageAdapter.submitList(data)
                     }
                 }
                 Resource.Status.ERROR -> {
@@ -63,6 +65,7 @@ class SocketActivity : ComponentActivity() {
         viewModel.startSocket()
     }
 
+
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
             when (it.status) {
@@ -81,14 +84,14 @@ class SocketActivity : ComponentActivity() {
         })
     }
     private fun onMessagesChange() {
-        viewModel.testMessages.observe(this, Observer {
+        viewModel.messages.observe(this, Observer {
             Log.d(TAG, "messages change")
             when (it.status) {
                 Resource.Status.SUCCESS -> {
                     Log.d(TAG, "messages observe success")
                     if (!it.data.isNullOrEmpty()) {
-                        testMessageAdapter.submitList(it.data)
-                        testMessageAdapter.notifyDataSetChanged()
+                        messageAdapter.submitList(it.data)
+                        messageAdapter.notifyDataSetChanged()
                     }
                 }
                 Resource.Status.ERROR -> {

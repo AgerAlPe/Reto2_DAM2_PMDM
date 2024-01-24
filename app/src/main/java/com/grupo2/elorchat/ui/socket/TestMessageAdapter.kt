@@ -40,7 +40,7 @@ class TestMessageAdapter : ListAdapter<Message, TestMessageAdapter.MessageViewHo
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
             return oldItem.message == newItem.message &&
                     oldItem.userId == newItem.userId &&
-                    oldItem.groupId == newItem.groupId &&
+                    oldItem.chatId == newItem.chatId &&
                     oldItem.createdAt == newItem.createdAt
         }
     }

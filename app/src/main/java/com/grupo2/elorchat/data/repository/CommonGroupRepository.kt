@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.data.repository
 
+import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.utils.Resource
@@ -11,4 +12,8 @@ interface CommonGroupRepository {
     suspend fun createGroup(group: Group) : Resource<Int>
 
     suspend fun getMessagesFromGroup(groupId : Int) : Resource<List<Message>>
+
+    suspend fun joinChat (chatUser: ChatUser) : Resource<ChatUser>
+
+    suspend fun leaveChat (userId : Int , chatId : Int) : Resource<Void>
 }
