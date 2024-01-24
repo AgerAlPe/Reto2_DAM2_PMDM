@@ -18,6 +18,7 @@ import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.data.socket.SocketMessageRes
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -27,6 +28,7 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import javax.inject.Inject
 
+@HiltViewModel
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
     private val messageDao: MessageDao
@@ -161,15 +163,16 @@ class SocketViewModel @Inject constructor(
             val msgsList = _messages.value?.data?.toMutableList()
             if (msgsList != null) {
                 msgsList.add(incomingMessage)
+                Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
                 //TODO Hay que mirar esto para guarda los mensajes que llegan
-                /*viewModelScope.launch {
+                viewModelScope.launch {
                     val messageEntity = MessageEntity(
                         text = incomingMessage.text,
-                        authorId = incomingMessage.authorId,
-                        chatId = incomingMessage.chatId
+                        authorId =1, //incomingMessage.authorId,
+                        chatId = 1 //incomingMessage.chatId
                     )
                     messageDao.insertMessage(messageEntity)
-                }*/
+                }
                 _messages.postValue(Resource.success(msgsList))
             } else {
                 _messages.postValue(Resource.success(listOf(incomingMessage)))
