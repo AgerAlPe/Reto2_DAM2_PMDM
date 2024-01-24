@@ -3,6 +3,8 @@ package com.grupo2.elorchat.di
 import android.content.Context
 import androidx.room.Room
 import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.repository.CommonGroupRepository
+import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,6 +27,12 @@ object RoomModule {
             APP_DATABASE_NAME
         ).build()
 
+    @Provides
+    @Singleton
+    fun provideCommonGroupRepository(): CommonGroupRepository {
+        return RemoteGroupDataSource() // Cambia esto según tu implementación real
+    }
+
     @Singleton
     @Provides
     fun provideUserDao(db:AppDatabase) = db.getUserDao()
@@ -32,4 +40,8 @@ object RoomModule {
     @Singleton
     @Provides
     fun provideMessageDao(db:AppDatabase) = db.getMessageDao()
+
+    @Singleton
+    @Provides
+    fun provideGroupDao(db:AppDatabase) = db.getGroupDao()
 }

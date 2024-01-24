@@ -16,4 +16,7 @@ interface CommonGroupRepository {
     suspend fun joinChat (chatUser: ChatUser) : Resource<ChatUser>
 
     suspend fun leaveChat (userId : Int , chatId : Int) : Resource<Void>
+
+    suspend fun getUserGroups(userId : Int) : Resource<List<Group>>
+
 }

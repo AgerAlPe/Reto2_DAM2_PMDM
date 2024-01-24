@@ -4,11 +4,10 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "message_table")
-data class MessageEntity(
+@Entity(tableName = "group_table")
+class GroupEntity (
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")val id: Int = 0,
-    @ColumnInfo(name = "text")val text: String,
-    @ColumnInfo(name = "author_id")val authorId: Int,
-    @ColumnInfo(name = "chat_id")val chatId: Int,
+    @ColumnInfo(name = "group_name")val name: String,
+    @ColumnInfo(name = "is_private")val isPrivate: Boolean,
 )

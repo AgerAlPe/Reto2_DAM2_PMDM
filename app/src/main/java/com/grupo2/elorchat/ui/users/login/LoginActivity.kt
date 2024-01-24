@@ -26,7 +26,7 @@ import kotlinx.coroutines.withContext
 
 class LoginActivity : AppCompatActivity() {
 
-    private val dataStoreManager by lazy { DataStoreManager(this) }
+    private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
     private lateinit var loginUser: LoginUser
 
     private val userRepository = RemoteUserDataSource()
@@ -59,17 +59,17 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+        loginUser = LoginUser("", "")
 
         btnLogin.setOnClickListener {
             if (!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
                 loginUser = LoginUser(email.text.toString(), pass.text.toString())
             } else {
                 Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña válidos")
+                Toast.makeText(this, "The user provided has no valid email or password", Toast.LENGTH_SHORT).show()
             }
 
-            if (loginUser != null) {
             viewModel.loginOfUser(loginUser)
-            }
 
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {
