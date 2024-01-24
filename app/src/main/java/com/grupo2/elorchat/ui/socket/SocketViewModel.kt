@@ -11,11 +11,14 @@ import com.google.gson.Gson
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.SocketMessage
+import com.grupo2.elorchat.data.database.dao.MessageDao
+import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.data.socket.SocketMessageRes
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -23,9 +26,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import javax.inject.Inject
 
-class SocketViewModel (
-    private val groupRepository: CommonGroupRepository
+@HiltViewModel
+class SocketViewModel @Inject constructor(
+    private val groupRepository: CommonGroupRepository,
+    private val messageDao: MessageDao
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -157,6 +163,16 @@ class SocketViewModel (
             val msgsList = _messages.value?.data?.toMutableList()
             if (msgsList != null) {
                 msgsList.add(incomingMessage)
+                Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
+                //TODO Hay que mirar esto para guarda los mensajes que llegan
+                viewModelScope.launch {
+                    val messageEntity = MessageEntity(
+                        text = incomingMessage.text,
+                        authorId =1, //incomingMessage.authorId,
+                        chatId = 1 //incomingMessage.chatId
+                    )
+                    messageDao.insertMessage(messageEntity)
+                }
                 _messages.postValue(Resource.success(msgsList))
             } else {
                 _messages.postValue(Resource.success(listOf(incomingMessage)))
@@ -177,9 +193,10 @@ class SocketViewModel (
 
 
 class SocketViewModelFactory(
-    private val groupRepository: CommonGroupRepository
+    private val groupRepository: CommonGroupRepository,
+    private val messageDao: MessageDao
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository) as T
+        return SocketViewModel(groupRepository, messageDao) as T
     }
 }
