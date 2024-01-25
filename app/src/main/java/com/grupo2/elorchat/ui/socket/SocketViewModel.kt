@@ -205,9 +205,6 @@ class SocketViewModel @Inject constructor(
                 )
             }
 
-            Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
-            //TODO Hay que mirar esto para guarda los mensajes que llegan
-
             val messageEntity = MessageEntity(
                 text = socketMessage.message,
                 authorId = socketMessage.userId,
