@@ -205,25 +205,26 @@ class SocketViewModel @Inject constructor(
                 )
             }
 
-            val msgsList = _messages.value?.data?.toMutableList()
+            Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
+            //TODO Hay que mirar esto para guarda los mensajes que llegan
 
+            val messageEntity = MessageEntity(
+                text = socketMessage.message,
+                authorId = socketMessage.userId,
+                chatId =  socketMessage.chatId
+            )
+
+            viewModelScope.launch {
+                messageDao.insertMessage(messageEntity)
+            }
+
+            val msgsList = _messages.value?.data?.toMutableList()
+            Log.i(TAG, "Estado de la lista:" + msgsList.toString())
             if (msgsList != null) {
 
-                incomingMessage?.let { msgsList.add(it) }
-
-                if (incomingMessage != null) {
-                    msgsList.add(incomingMessage)
+                if (!incomingMessage.toString().isNullOrEmpty()) {
+                    incomingMessage?.let { msgsList.add(it) }
                 }
-                Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
-                //TODO Hay que mirar esto para guarda los mensajes que llegan
-//                viewModelScope.launch {
-////                    val messageEntity = MessageEntity(
-////                        text = incomingMessage.text,
-////                        authorId =1, //incomingMessage.authorId,
-////                        chatId = 1 //incomingMessage.chatId
-////                    )
-//                    messageDao.insertMessage(messageEntity)
-//                }
 
                 _messages.postValue(Resource.success(msgsList))
             } else {
