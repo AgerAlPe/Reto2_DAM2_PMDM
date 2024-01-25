@@ -158,7 +158,7 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    private fun joinChat(chatUser: ChatUser) {
+    fun joinChat(chatUser: ChatUser) {
         viewModelScope.launch {
             try {
                 _joinChat.value = joinChatFromRepo(chatUser)

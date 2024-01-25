@@ -55,6 +55,12 @@
                 android:textColor="@android:color/black"
                 tools:text="This is this groups last message" />
 
+            <Button
+                android:id="@+id/joinButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Join" />
+
         </LinearLayout>
 
         <!-- Información del ultimo mensaje enviado en el grupo -->
