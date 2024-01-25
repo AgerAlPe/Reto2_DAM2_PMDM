@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.databinding.GroupBinding
 
-class GroupAdapter(
+class PrivateGroupAdapter(
     private val onClickListener: (Group) -> Unit,
-) : ListAdapter<Group, GroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
+) : ListAdapter<Group, PrivateGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -30,6 +30,7 @@ class GroupAdapter(
 
         fun bind(group: Group) {
             binding.GroupName.text = group.name
+            // You may need to set other views or handle other bindings here
         }
     }
 
