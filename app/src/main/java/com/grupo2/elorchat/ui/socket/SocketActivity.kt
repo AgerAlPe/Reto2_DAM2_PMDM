@@ -7,6 +7,8 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.utils.Resource
@@ -18,9 +20,9 @@ class SocketActivity : ComponentActivity() {
     private val TAG = "SocketActivity"
     private lateinit var messageAdapter: MessageAdapter
     private val groupRepository = RemoteGroupDataSource()
-
     private lateinit var groupName: String
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName) }
+    private lateinit var messageDao: MessageDao
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName, messageDao) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +32,9 @@ class SocketActivity : ComponentActivity() {
         // Retrieve data from the intent
         val groupId = intent.getStringExtra("idGroup")?.toInt()
         groupName = intent.getStringExtra("groupName") ?: ""
+
+        // Initialize messageDao here
+        messageDao = AppDatabase.getInstance(application).getMessageDao()
 
         messageAdapter = MessageAdapter()
         binding.listMessages.adapter = messageAdapter
@@ -67,7 +72,6 @@ class SocketActivity : ComponentActivity() {
         Log.d("ButtonClickListener", "Connect button clicked")
         viewModel.startSocket()
     }
-
 
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
