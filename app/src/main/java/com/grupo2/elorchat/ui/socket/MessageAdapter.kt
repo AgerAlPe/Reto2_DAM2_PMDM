@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.databinding.MessageBinding
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
@@ -24,10 +27,11 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            binding.MessagerName.text = message.userId.toString()
             binding.messageText.text = message.message
-            binding.messageDate.text = message.createdAt.toString()
-
+            binding.MessagerName.text = message.name
+            val dateString = convertTimestampToDate(message.createdAt)
+            binding.messageDate.text = dateString
+            // You can bind other properties as needed
         }
     }
 
@@ -42,6 +46,21 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
                     oldItem.userId == newItem.userId &&
                     oldItem.chatId == newItem.chatId &&
                     oldItem.createdAt == newItem.createdAt
+        }
+    }
+
+    fun convertTimestampToDate(timestamp: Long?): String {
+        if (timestamp == null) {
+            return ""
+        }
+
+        try {
+            val sdf = SimpleDateFormat("MMM dd, HH:mm:ss", Locale.getDefault())
+            val netDate = Date(timestamp)
+            return sdf.format(netDate)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return ""
         }
     }
 }
