@@ -211,17 +211,19 @@ class SocketViewModel @Inject constructor(
 
                 incomingMessage?.let { msgsList.add(it) }
 
-                msgsList.add(incomingMessage)
+                if (incomingMessage != null) {
+                    msgsList.add(incomingMessage)
+                }
                 Log.i(TAG, "Mensaje a room:" + incomingMessage.toString())
                 //TODO Hay que mirar esto para guarda los mensajes que llegan
-                viewModelScope.launch {
-                    val messageEntity = MessageEntity(
-                        text = incomingMessage.text,
-                        authorId =1, //incomingMessage.authorId,
-                        chatId = 1 //incomingMessage.chatId
-                    )
-                    messageDao.insertMessage(messageEntity)
-                }
+//                viewModelScope.launch {
+////                    val messageEntity = MessageEntity(
+////                        text = incomingMessage.text,
+////                        authorId =1, //incomingMessage.authorId,
+////                        chatId = 1 //incomingMessage.chatId
+////                    )
+//                    messageDao.insertMessage(messageEntity)
+//                }
 
                 _messages.postValue(Resource.success(msgsList))
             } else {
@@ -244,10 +246,10 @@ class SocketViewModel @Inject constructor(
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
-    private val groupName: String?
+    private val groupName: String?,
     private val messageDao: MessageDao
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, messageDao) as T
+        return SocketViewModel(groupRepository, groupName, messageDao) as T
     }
 }

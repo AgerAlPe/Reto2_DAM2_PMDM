@@ -16,7 +16,7 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object RoomModule {
 
-    private const val  APP_DATABASE_NAME = "app_database"
+    private const val APP_DATABASE_NAME = "app_database"
 
     @Singleton
     @Provides
@@ -30,18 +30,25 @@ object RoomModule {
     @Provides
     @Singleton
     fun provideCommonGroupRepository(): CommonGroupRepository {
-        return RemoteGroupDataSource() // Cambia esto según tu implementación real
+        return RemoteGroupDataSource() // Change this according to your real implementation
     }
 
     @Singleton
     @Provides
-    fun provideUserDao(db:AppDatabase) = db.getUserDao()
+    fun provideUserDao(db: AppDatabase) = db.getUserDao()
 
     @Singleton
     @Provides
-    fun provideMessageDao(db:AppDatabase) = db.getMessageDao()
+    fun provideMessageDao(db: AppDatabase) = db.getMessageDao()
 
     @Singleton
     @Provides
-    fun provideGroupDao(db:AppDatabase) = db.getGroupDao()
+    fun provideGroupDao(db: AppDatabase) = db.getGroupDao()
+
+    @Provides
+    @Singleton
+    fun provideGroupName(): String {
+        // You can return the actual value or retrieve it from a source.
+        return "YourGroupName"
+    }
 }
