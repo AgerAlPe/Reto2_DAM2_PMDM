@@ -14,15 +14,16 @@ import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupAdapter
 import com.grupo2.elorchat.ui.groups.GroupViewModel
-import com.grupo2.elorchat.ui.groups.GroupsViewModelFactory
 import com.grupo2.elorchat.ui.socket.SocketActivity
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PrivateGroupsFragment : Fragment() {
 
     private lateinit var groupListAdapter: GroupAdapter
     private val groupRepository = RemoteGroupDataSource()
-    private val viewModel: GroupViewModel by viewModels { GroupsViewModelFactory(groupRepository) }
+    private val viewModel: GroupViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +42,6 @@ class PrivateGroupsFragment : Fragment() {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
                         if (it.data != null) {
-                            //SE DEBERÍAN MOSTRAR LOS GRUPOS PRIVADOS
                             groupListAdapter.submitList(it.data)
                         }
                     }

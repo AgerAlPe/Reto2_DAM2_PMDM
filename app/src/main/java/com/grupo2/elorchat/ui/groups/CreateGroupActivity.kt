@@ -7,25 +7,19 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.utils.Resource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+
 
 class CreateGroupActivity : AppCompatActivity() {
 
     private val groupRepository = RemoteGroupDataSource()
-    private val viewModel: GroupViewModel by viewModels {
-        GroupsViewModelFactory(groupRepository)
-    }
+    private val viewModel: GroupViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_group)
