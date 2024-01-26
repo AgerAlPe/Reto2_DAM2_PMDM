@@ -93,7 +93,7 @@ class PublicGroupsFragment : Fragment() {
             if (userId != null) {
                 // Use parsedUserId in your logic
                 //TODO sacar la id del usuario
-                viewModel.joinChat(ChatUser(69, group.id))
+                viewModel.joinChat(ChatUser(69, group.id,false))
             } else {
                 // Handle the case where userId is null
                 Log.e("PublicGroupsFragment", "userId is null")
