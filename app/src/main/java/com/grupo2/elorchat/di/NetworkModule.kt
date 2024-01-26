@@ -8,13 +8,13 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    // Proveo Retrofit
-    //@Provides
-    //fun provideRetrofit():Retrofit{
-    //return Retrofit.Builder()
-    //            .client(client)
-    //            .baseUrl(API_URI)
-    //            .addConverterFactory(GsonConverterFactory.create())
-    //            .build
-    //}
+//     Proveo Retrofit
+//    @Provides
+//    fun provideRetrofit():Retrofit{
+//    return Retrofit.Builder()
+//                .client(client)
+//                .baseUrl(API_URI)
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build
+//    }
 }

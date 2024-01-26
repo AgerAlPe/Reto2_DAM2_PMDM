@@ -17,6 +17,7 @@ import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
+import com.grupo2.elorchat.ui.messages.MessageViewModel
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +29,7 @@ class LoginActivity : AppCompatActivity() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
     private lateinit var loginUser: LoginUser
+    private val messageViewModel:   MessageViewModel by viewModels()
 
     private val userRepository = RemoteUserDataSource()
     private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(
@@ -36,6 +38,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_login)
 
         val btnLogin = findViewById<Button>(R.id.buttonAccept)
@@ -74,6 +77,7 @@ class LoginActivity : AppCompatActivity() {
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {
                     Resource.Status.SUCCESS -> {
+                        messageViewModel.fetchAllMessagesFromRoom()
                         result.data?.let { data ->
                             if (data.accessToken != null) {
                                 ElorChat.userPreferences.saveAuthToken(data.accessToken)

@@ -6,6 +6,7 @@ import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.User
+import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -43,5 +44,8 @@ interface APIInterface {
 
     @GET("users/{id}/chats")
     suspend fun getUserGroups(@Path("id") userId: Int) : Response<List<Group>>
+
+    @GET("messages")
+    suspend fun getMessages() : Response<List<MessageEntity>>
 
 }

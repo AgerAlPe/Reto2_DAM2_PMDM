@@ -18,6 +18,7 @@ class GroupActivity : AppCompatActivity() {
     private lateinit var viewPager2: ViewPager2
     private lateinit var adapter: FragmentPageAdapter
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chats)

@@ -12,6 +12,18 @@
         android:background="@color/colorLightGray"
         app:title="@string/app_name" />
 
+    <!-- Place the "Leave Chat" Button on the Upper-Right -->
+    <Button
+        android:id="@+id/leaveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="Leave Chat"
+        android:background="@drawable/rounded_button"
+        android:padding="10dp"
+        android:textColor="@android:color/holo_red_dark" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list_messages"
@@ -64,6 +76,7 @@
             android:contentDescription="TODO"
             android:enabled="false"
             android:src="@drawable/outline_send_24" />
+
 
     </LinearLayout>
 

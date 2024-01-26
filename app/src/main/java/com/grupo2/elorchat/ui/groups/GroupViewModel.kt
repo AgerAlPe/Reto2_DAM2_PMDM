@@ -3,6 +3,7 @@ package com.grupo2.elorchat.ui.groups
 
 import android.content.ContentValues.TAG
 import android.util.Log
+import androidx.lifecycle.LiveData
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -65,6 +66,8 @@ class GroupViewModel @Inject constructor(
     val privateGroups: MutableLiveData<Resource<List<Group>>?> get() = _privateGroups
 
     val publicGroups: MutableLiveData<Resource<List<Group>>?> get() = _publicGroups
+
+
 
     init {
         updateGroupList()
@@ -174,14 +177,19 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    private fun leaveChat(userId : Int, chatId : Int) {
+    private val _leaveChatResult = MutableLiveData<Resource<Unit>>()
+    val leaveChatResult: LiveData<Resource<Unit>> get() = _leaveChatResult
+
+    fun leaveChat(userId: Int, chatId: Int) {
         viewModelScope.launch {
             try {
-                 _leaveChat.value = leaveChatFromRepo(userId, chatId)
-
+                _leaveChatResult.value = Resource.loading() // Optional loading state
+                groupRepository.leaveChat(userId, chatId)
+                _leaveChatResult.value = Resource.success(Unit)
             } catch (e: Exception) {
                 // Handle exceptions if any
-                Log.e(TAG, "Exception while joining the chat: ${e.message}")
+                Log.e(TAG, "Exception while leaving the chat: ${e.message}")
+                _leaveChatResult.value = Resource.error("Error leaving the chat", null)
             }
         }
     }
