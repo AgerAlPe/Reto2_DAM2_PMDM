@@ -14,6 +14,8 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
 import androidx.appcompat.app.AppCompatActivity;
 import com.grupo2.elorchat.data.LoginUser
+import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.database.entities.UserEntity
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
@@ -27,12 +29,9 @@ import kotlinx.coroutines.withContext
 class LoginActivity : AppCompatActivity() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
-    private lateinit var loginUser: LoginUser
 
     private val userRepository = RemoteUserDataSource()
-    private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(
-        userRepository
-    ) }
+    private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,15 +41,12 @@ class LoginActivity : AppCompatActivity() {
         val email = findViewById<EditText>(R.id.emailAddress)
         val pass = findViewById<EditText>(R.id.password)
         val chBox = findViewById<CheckBox>(R.id.checkBox)
-        val deviceCode = Settings.Secure.getString(this.contentResolver, Settings.Secure.ANDROID_ID)
+
+        var loginUser = LoginUser("", "")
 
         lifecycleScope.launch(Dispatchers.IO) {
             dataStoreManager.getSavedValues().collect { savedValues ->
                 withContext(Dispatchers.Main) {
-                    Log.i("name", savedValues.email)
-                    Log.i("password", savedValues.password)
-                    Log.i("chbox", savedValues.chbox.toString())
-
                     if (savedValues.chbox) {
                         email.setText(savedValues.email)
                         pass.setText(savedValues.password)
@@ -59,15 +55,9 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-        loginUser = LoginUser("", "")
 
         btnLogin.setOnClickListener {
-            if (!(email.text.isNullOrEmpty() or pass.text.isNullOrEmpty())) {
-                loginUser = LoginUser(email.text.toString(), pass.text.toString())
-            } else {
-                Log.i("errorDeUsuario", "El usuario introducido no tiene email o contraseña válidos")
-                Toast.makeText(this, "The user provided has no valid email or password", Toast.LENGTH_SHORT).show()
-            }
+            loginUser = LoginUser(email.text.toString(), pass.text.toString())
 
             viewModel.loginOfUser(loginUser)
 
@@ -82,24 +72,14 @@ class LoginActivity : AppCompatActivity() {
                                     dataStoreManager.saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
                                 }
 
-                                if (loginUser.password == "Elorrieta00") {
-                                    val intent = Intent(applicationContext, RegisterActivity::class.java)
-                                    intent.putExtra("userEmail", loginUser.email)
-                                    startActivity(intent)
-                                    finish()
-                                } else {
-                                    val intent = Intent(applicationContext, GroupActivity::class.java)
-                                    startActivity(intent)
-                                    finish()
-                                }
+                                viewModel.getUserData(loginUser.email)
                             } else {
-                                Log.d("tokenNull", "the token to access is null")
-                                Toast.makeText(this, "There has been an error, please try again", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this, "Authentication failed. Token is null.", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
                     Resource.Status.ERROR -> {
-                        Toast.makeText(this, "The login provided is not valid, please try again", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Login failed. Verify the email and password", Toast.LENGTH_SHORT).show()
                     }
                     Resource.Status.LOADING -> {
                         // Handle loading state (optional)
@@ -108,10 +88,49 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.userData.observe(this) { userDataResult ->
+            when (userDataResult.status) {
+                Resource.Status.SUCCESS -> {
+                    userDataResult.data?.let { userData ->
+                        // Convert User to UserEntity
+                        val userEntity = UserEntity(
+                            id = userData.id ?: 0,
+                            name = userData.name,
+                            email = userData.email,
+                            roles = userData.roles
+                        )
+                        Log.i("AddedUserToRoom", "User added to Room: $userEntity")
+
+                        // Save UserEntity to Room database
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            AppDatabase.getInstance(applicationContext).getUserDao().insertUser(userEntity)
+                        }
+
+                        // Move the navigation logic outside this block
+                        if (loginUser.password == "Elorrieta00") {
+                            val intent = Intent(applicationContext, RegisterActivity::class.java)
+                            intent.putExtra("userEmail", loginUser.email)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            val intent = Intent(applicationContext, GroupActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    }
+                }
+                Resource.Status.ERROR -> {
+                    Toast.makeText(this, "Error getting user data. Verify connection and try again", Toast.LENGTH_SHORT).show()
+                }
+                Resource.Status.LOADING -> {
+                    // Handle loading state (optional)
+                }
+            }
+        }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         viewModel.loggedUser.removeObservers(this)
     }
-
 }
