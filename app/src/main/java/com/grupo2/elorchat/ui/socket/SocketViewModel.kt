@@ -10,13 +10,11 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.google.gson.Gson
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.SocketMessage
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
-import com.grupo2.elorchat.data.socket.SocketMessageRes
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.socket.client.IO
@@ -26,7 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import java.security.Timestamp
+import java.time.LocalDateTime.now
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,9 +41,6 @@ class SocketViewModel @Inject constructor(
 
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
-
-    private val _testMessages = MutableLiveData<Resource<List<Message>>>()
-    val testMessages : LiveData<Resource<List<Message>>> get() = _testMessages
 
     private val SOCKET_HOST = "http://10.5.7.39:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
@@ -72,8 +67,10 @@ class SocketViewModel @Inject constructor(
     }
 
     fun thisGroupsMessages(groupId : Int) {
+        Log.i(TAG, "Id Grupo: " + groupId)
         viewModelScope.launch {
-            _testMessages.value =  showThisGroupsMessages(groupId)
+            _messages.value =  showThisGroupsMessages(groupId)
+            Log.i(TAG, "Lista mensajes: " + _messages.value)
         }
     }
 
@@ -82,6 +79,7 @@ class SocketViewModel @Inject constructor(
             groupRepository.getMessagesFromGroup(groupId)
         }
     }
+
 
     private suspend fun connect() {
         withContext(Dispatchers.IO) {
@@ -139,11 +137,12 @@ class SocketViewModel @Inject constructor(
             Log.d(TAG, "mensaje recibido $message")
             // ojo aqui no estoy actualizando la lista. aunque no deberiamos recibir strings
         } catch (ex: Exception) {
-            Log.e(TAG, ex.message!!)
+            Log.e(TAG, "onNewMessageString" + ex.message!!)
         }
     }
 
     private fun onNewMessageJsonObject(data: Any) {
+        Log.i(TAG, "Mensaje que envias: " + data.toString())
         try {
             val jsonObject = data as JSONObject
             val jsonObjectString = jsonObject.toString()
@@ -152,45 +151,22 @@ class SocketViewModel @Inject constructor(
             val messageResponse = Gson().fromJson(jsonObjectString, Message::class.java)
 
             // Creating a Message instance from MessageResponse
+            Log.i(TAG, "Fecha: " + messageResponse.createdAt)
+
             val message = Message(
                 id = messageResponse.id,
                 message = messageResponse.message,
                 name = messageResponse.name,
                 userId = messageResponse.userId,
                 chatId = messageResponse.chatId,
-                createdAt = messageResponse.createdAt // Assuming messageResponse.createdAt is already a Timestamp
+                createdAt = now().toString()
             )
 
-            Log.d("mensajeSocket", "ID: ${message.id}")
-            Log.d("mensajeSocket", "Message: ${message.message}")
-            Log.d("mensajeSocket", "Name: ${message.name}")
-            Log.d("mensajeSocket", "UserId: ${message.userId}")
-            Log.d("mensajeSocket", "GroupId: ${message.chatId}")
-            Log.d("mensajeSocket", "CreatedAt: ${message.createdAt}")
-            
             updateMessageListWithNewMessage(message)
         } catch (ex: Exception) {
-            Log.e(TAG, ex.message ?: "Unknown error")
+            Log.e(TAG, "onNewMessageJsonObject " + ex.message ?: "Unknown error")
         }
     }
-
-//    private fun updateMessageListWithNewMessage(socketMessage: SocketMessageRes) {
-//        try {
-//            val incomingMessage =
-//                SOCKET_ROOM?.let { SocketMessage(it, socketMessage.message, socketMessage.authorName) }
-//            val msgsList = _messages.value?.data?.toMutableList()
-//            if (msgsList != null) {
-//                if (incomingMessage != null) {
-//                    msgsList.add(incomingMessage)
-//                }
-//                _messages.postValue(Resource.success(msgsList))
-//            } else {
-//                _messages.postValue(Resource.success(listOf(incomingMessage)) as Resource<List<SocketMessage>>?)
-//            }
-//        } catch (ex: Exception) {
-//            Log.e(TAG, ex.message!!)
-//        }
-//    }
 
     private fun updateMessageListWithNewMessage(socketMessage: Message) {
         try {
@@ -203,6 +179,7 @@ class SocketViewModel @Inject constructor(
                     chatId = socketMessage.chatId,  // You might need to set an appropriate default value for groupId
                     createdAt = socketMessage.createdAt  // You might need to set an appropriate default value for createdAt
                 )
+
             }
 
             val messageEntity = MessageEntity(
@@ -216,10 +193,9 @@ class SocketViewModel @Inject constructor(
             }
 
             val msgsList = _messages.value?.data?.toMutableList()
-            Log.i(TAG, "Estado de la lista:" + msgsList.toString())
             if (msgsList != null) {
 
-                if (!incomingMessage.toString().isNullOrEmpty()) {
+                if (incomingMessage.toString().isNotEmpty()) {
                     incomingMessage?.let { msgsList.add(it) }
                 }
 

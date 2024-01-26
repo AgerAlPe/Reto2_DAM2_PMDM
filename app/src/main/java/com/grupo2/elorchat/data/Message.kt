@@ -2,7 +2,7 @@ package com.grupo2.elorchat.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-
+import java.util.Date
 
 
 @Parcelize
@@ -12,5 +12,5 @@ class Message (
     val name: String,
     val userId: Int,
     val chatId: Int,
-    val createdAt: Long?,
+    val createdAt: String,
 ): Parcelable
