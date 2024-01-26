@@ -12,9 +12,13 @@ interface UserDao {
     @Query("SELECT * FROM user_table")
     suspend fun getAllUser():List<UserEntity>
 
+    @Query("SELECT * FROM user_table ORDER BY id LIMIT 1")
+    suspend fun getFirstUser(): UserEntity?
+
     @Query("SELECT * FROM user_table where id = :userId")
     suspend fun getUser(userId:Int):UserEntity
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUser(userEntity: UserEntity)
+
 }

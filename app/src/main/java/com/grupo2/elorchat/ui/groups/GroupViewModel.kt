@@ -14,8 +14,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.grupo2.elorchat.data.ChatUser
 
 import com.grupo2.elorchat.ElorChat.Companion.context
+import com.grupo2.elorchat.data.ChangePasswordRequest
 
 import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
 import com.grupo2.elorchat.data.preferences.DataStoreManager
@@ -53,6 +55,13 @@ class GroupViewModel @Inject constructor(
     private val _joinChat = MutableLiveData<Resource<ChatUser>>()
 
     private val _leaveChat = MutableLiveData<Resource<Void>>()
+
+    private val _changePassword = MutableLiveData<Resource<Void>>()
+
+    private val _firstUserEmail = MutableLiveData<String>()
+
+    val firstUserEmail: LiveData<String> get() = _firstUserEmail
+    val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
 
     val leaveChat : MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat : MutableLiveData<Resource<ChatUser>> get() = _joinChat
@@ -198,32 +207,31 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) {
+        viewModelScope.launch {
+            _changePassword.value =  userPassword(changePasswordRequest)
+        }
+    }
+    private suspend fun userPassword(changePasswordRequest: ChangePasswordRequest): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.changePassword(changePasswordRequest)
+        }
+    }
 
-//      //TODO FILTRAR LOS GRUPOS QUE SE MUESTRAN DEPENDIENDO DESDE DONDE SE LES LLAME (Privados ~ Publicos)
-//    fun filterSongsTitle(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.title.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
-//
-//    fun filterSongsAuthor(query: String) {
-//        val currentSongs = originalSongs.toMutableList()
-//
-//        // Realiza el filtrado basado en la consulta
-//        if (query.isNotBlank()) {
-//            currentSongs.retainAll { song ->
-//                song.author.contains(query, ignoreCase = true)
-//            }
-//        }
-//        _items.value = Resource.success(currentSongs)
-//    }
+    suspend fun loadFirstUserEmail() {
+        val userEmail = try {
+            val userDao = appDatabase.getUserDao()
+            val firstUser = userDao.getFirstUser()
 
+            firstUser?.email ?: "default@example.com" // Default value if no user is found
+        } catch (e: Exception) {
+            // Handle the exception if there is an error while accessing the database
+            Log.e("GroupViewModel", "Error getting user email from Room", e)
+            "default@example.com" // Default value on error
+        }
+
+        _firstUserEmail.value = userEmail
+    }
 }
 
 class GroupsViewModelFactory(
