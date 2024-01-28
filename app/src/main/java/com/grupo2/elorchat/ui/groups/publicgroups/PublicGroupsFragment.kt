@@ -17,11 +17,11 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.User
+import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
-import com.grupo2.elorchat.ui.groups.GroupsViewModelFactory
 import com.grupo2.elorchat.ui.groups.PublicGroupAdapter
 import com.grupo2.elorchat.ui.socket.SocketActivity
 import com.grupo2.elorchat.utils.Resource
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class PublicGroupsFragment : Fragment() {
+class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
 
     private lateinit var groupListAdapter: PublicGroupAdapter
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
@@ -86,17 +86,25 @@ class PublicGroupsFragment : Fragment() {
 
     private fun onJoinButtonClickItem(group: Group) {
         lifecycleScope.launch {
-            // Collect the userId value from the Flow
-            val userId = dataStoreManager.getSavedUserId().first()
+            try {
+                // Use appDatabase to get the user ID
+                val userId = appDatabase.getUserDao().getAllUser().first().id
 
-            // Check if userId is not an empty string before parsing
-            if (userId != null) {
-                // Use parsedUserId in your logic
-                //TODO sacar la id del usuario
-                viewModel.joinChat(ChatUser(69, group.id,false))
-            } else {
-                // Handle the case where userId is null
-                Log.e("PublicGroupsFragment", "userId is null")
+                // Check if userId is not an empty string before parsing
+                if (userId != null) {
+                    // Use parsedUserId in your logic
+                    viewModel.joinChat(ChatUser(userId, group.id, false))
+                    viewModel.updateGroupList()
+
+
+                } else {
+                    // Handle the case where userId is null
+                    Log.e("PublicGroupsFragment", "userId is null")
+                    // Handle the error accordingly
+                }
+            } catch (e: Exception) {
+                // Handle exceptions if any
+                Log.e("PublicGroupsFragment", "Exception while getting user ID: ${e.message}")
                 // Handle the error accordingly
             }
         }
