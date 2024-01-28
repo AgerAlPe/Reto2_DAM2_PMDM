@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.socket
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -82,6 +83,7 @@ class SocketActivity() : ComponentActivity() {
         viewModel.startSocket()
     }
 
+
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
             when (it.status) {
@@ -145,11 +147,18 @@ class SocketActivity() : ComponentActivity() {
                 }
             }
         }
+
         groupViewModel.leaveChatResult.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
+                    groupViewModel.updateGroupList()
+
+                    // Set the result to indicate success
+                    setResult(Activity.RESULT_OK)
+                    // Finish the current activity
+
                 }
                 Resource.Status.ERROR -> {
                     Toast.makeText(this, "Error leaving the chat: ${result.message}", Toast.LENGTH_SHORT).show()

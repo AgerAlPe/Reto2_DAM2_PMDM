@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.groups.publicgroups
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -36,12 +37,13 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
     private val groupRepository = RemoteGroupDataSource()
     private val viewModel: GroupViewModel by viewModels()
+    private val SOCKET_ACTIVITY_REQUEST_CODE = 123
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //El codigo debe de ir antes de que se devuelva la view
         val binding = FragmentChatsBinding.inflate(inflater, container, false)
         val view = binding.root
 
@@ -81,31 +83,58 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
             putExtra("groupName", group.name)
         }
 
-        startActivity(intent)
+        startActivityForResult(intent, SOCKET_ACTIVITY_REQUEST_CODE)
+    }
+
+    private fun refreshFragmentData() {
+        // Your logic to refresh the fragment data
+        viewModel.updateGroupList()
+        // Add any other logic needed to refresh the entire view
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == SOCKET_ACTIVITY_REQUEST_CODE) {
+            // Check if the result is OK and perform the refresh/update action
+            if (resultCode == Activity.RESULT_OK) {
+                // Refresh the fragment data
+                refreshFragmentData()
+            }
+        }
     }
 
     private fun onJoinButtonClickItem(group: Group) {
         lifecycleScope.launch {
             try {
-                // Use appDatabase to get the user ID
-                val userId = appDatabase.getUserDao().getAllUser().first().id
+                val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
 
-                // Check if userId is not an empty string before parsing
                 if (userId != null) {
-                    // Use parsedUserId in your logic
                     viewModel.joinChat(ChatUser(userId, group.id, false))
-                    viewModel.updateGroupList()
 
-
+                    viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
+                        when (result.status) {
+                            Resource.Status.SUCCESS -> {
+                                Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()
+                                viewModel.updateGroupList()
+                                // You can add any additional actions on success if needed
+                            }
+                            Resource.Status.ERROR -> {
+                                Toast.makeText(requireContext(), "Error joining the chat: ${result.message}", Toast.LENGTH_SHORT).show()
+                                // Handle error state, if needed
+                            }
+                            Resource.Status.LOADING -> {
+                                // Handle loading state if needed
+                            }
+                        }
+                    })
                 } else {
+                    Log.e("YourActivity", "userId is null")
                     // Handle the case where userId is null
-                    Log.e("PublicGroupsFragment", "userId is null")
-                    // Handle the error accordingly
                 }
             } catch (e: Exception) {
+                Log.e("YourActivity", "Exception while getting user ID: ${e.message}")
                 // Handle exceptions if any
-                Log.e("PublicGroupsFragment", "Exception while getting user ID: ${e.message}")
-                // Handle the error accordingly
             }
         }
     }

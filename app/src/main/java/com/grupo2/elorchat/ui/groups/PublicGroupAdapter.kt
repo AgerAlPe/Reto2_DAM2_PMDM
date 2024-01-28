@@ -20,13 +20,6 @@ class PublicGroupAdapter(
         return GroupViewHolder(binding)
     }
 
-    private var joinedGroupId: Int? = null
-
-    fun setGroupJoined(groupId: Int) {
-        joinedGroupId = groupId
-        notifyDataSetChanged() // Update the UI
-    }
-
     override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
         val group = getItem(position)
         holder.bind(group)
@@ -45,6 +38,7 @@ class PublicGroupAdapter(
             Log.d("GroupAdapter", "User is not in the group, showing joinButton")
             holder.joinButton.visibility = View.VISIBLE
             holder.joinButton.setOnClickListener {
+                holder.joinButton.visibility = View.GONE
                 onJoinButtonClickListener(group)
             }
         }
