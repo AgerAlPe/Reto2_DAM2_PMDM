@@ -1,0 +1,8 @@
+<!-- res/values/arrays.xml -->
+<resources>
+    <string-array name="languages_array">
+        <item>Inglés</item>
+        <item>Español</item>
+        <!-- Agrega más idiomas según sea necesario -->
+    </string-array>
+</resources>
