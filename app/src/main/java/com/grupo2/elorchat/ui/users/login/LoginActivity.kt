@@ -1,7 +1,11 @@
 package com.grupo2.elorchat.ui.users.login
 
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import android.widget.Button
@@ -19,6 +23,7 @@ import com.grupo2.elorchat.data.database.entities.UserEntity
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
+import com.grupo2.elorchat.ui.socket.SocketService
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +37,23 @@ class LoginActivity : AppCompatActivity() {
 
     private val userRepository = RemoteUserDataSource()
     private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
+
+    private val socketServiceIntent by lazy {
+        Intent(this, SocketService::class.java).apply {
+            putExtra("SOCKET_HOST", "http://10.5.7.39:8085/")  // Update with your socket host
+            putExtra("AUTHORIZATION_HEADER", "Authorization")  // Update with your authorization header
+        }
+    }
+
+    private val socketServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            // Handle connection to the service if needed
+        }
+
+        override fun onServiceDisconnected(name: ComponentName?) {
+            // Handle disconnection from the service if needed
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +102,9 @@ class LoginActivity : AppCompatActivity() {
                                 }
 
                                 viewModel.getUserData(loginUser.email)
+
+                                startService(socketServiceIntent)
+                                bindService(socketServiceIntent, socketServiceConnection, Context.BIND_AUTO_CREATE)
                             } else {
                                 Toast.makeText(this, "Authentication failed. Token is null.", Toast.LENGTH_SHORT).show()
                             }
@@ -94,6 +119,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+
 
         viewModel.userData.observe(this) { userDataResult ->
             when (userDataResult.status) {

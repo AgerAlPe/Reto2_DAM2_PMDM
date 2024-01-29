@@ -115,7 +115,7 @@ class GroupViewModel @Inject constructor(
 
                 filterPrivateGroups()
                 filterPublicGroups()
-                updateIsUserOnGroupStatus()
+
 
                 // Update LiveData with the latest list of groups
                 _groups.postValue(allGroups)

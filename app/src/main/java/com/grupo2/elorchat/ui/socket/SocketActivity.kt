@@ -1,7 +1,11 @@
 package com.grupo2.elorchat.ui.socket
 
 import android.app.Activity
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.Gravity
 import android.widget.Toast
@@ -9,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
@@ -17,6 +22,9 @@ import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,9 +35,11 @@ class SocketActivity() : ComponentActivity() {
     private lateinit var messageAdapter: MessageAdapter
     private val groupRepository = RemoteGroupDataSource()
     private lateinit var groupName: String
-    private lateinit var messageDao: MessageDao
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName, messageDao) }
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
+
+    private lateinit var socketService: SocketService
+    private var isBind = false
 
     @Inject
     lateinit var appDatabase: AppDatabase
@@ -44,7 +54,7 @@ class SocketActivity() : ComponentActivity() {
         groupName = intent.getStringExtra("groupName") ?: ""
 
         // Initialize messageDao here
-        messageDao = AppDatabase.getInstance(application).getMessageDao()
+        // messageDao = AppDatabase.getInstance(application).getMessageDao()
 
         messageAdapter = MessageAdapter()
         binding.listMessages.adapter = messageAdapter
@@ -73,14 +83,13 @@ class SocketActivity() : ComponentActivity() {
                 }
             }
         }
-        binding.btnSendMessage.isEnabled = false
+        // binding.btnSendMessage.isEnabled = false
 
         onConnectedChange(binding)
         onMessagesChange()
         buttonsListeners(binding)
 
         Log.d("ButtonClickListener", "Connect button clicked")
-        viewModel.startSocket()
     }
 
 
@@ -132,8 +141,11 @@ class SocketActivity() : ComponentActivity() {
             Log.d("ButtonClickListener", "Send Message button clicked")
             val message = binding.inputMessage.text.toString()
             binding.inputMessage.setText("")
-            viewModel.onSendMessage(message)
+            // viewModel.onSendMessage(message)
+
+            socketService.sendMessage(message, groupName)
         }
+
         binding.leaveButton.setOnClickListener {
             Log.d("ButtonClickListener", "Leave Chat button clicked")
 
@@ -169,5 +181,40 @@ class SocketActivity() : ComponentActivity() {
                 }
             }
         })
+
     }
+
+
+    override fun onStart() {
+        super.onStart()
+        val intent = Intent(this, SocketService::class.java)
+        bindService(intent, serviceConnection, BIND_AUTO_CREATE)
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (isBind) {
+            unbindService(serviceConnection)
+            EventBus.getDefault().unregister(this)
+        }
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onNotificationMessage(message: Message) {
+        // Notify the ViewModel about the new message
+        viewModel.onNewMessageReceived(message)
+    }
+
+    private var serviceConnection: ServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(name: ComponentName, service: IBinder) {
+            val localService = service as SocketService.SocketBinder
+            socketService = localService.getService()
+            isBind = true
+        }
+
+        override fun onServiceDisconnected(name: ComponentName) {
+            isBind = false
+        }
+    }
+
 }
