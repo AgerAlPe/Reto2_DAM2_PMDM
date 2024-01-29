@@ -32,10 +32,7 @@ class GroupActivity : AppCompatActivity() {
         val createChatButton: ImageButton = findViewById(R.id.createChat)
         createChatButton.setOnClickListener {
             // Lógica para manejar el clic en createChat
-            val intent = Intent(this, CreateGroupActivity::class.java).apply {
-                //TODO Se tiene que recoger el rol del usuario desde el DataStoreManager
-                //putExtra("userRole", user.role)
-            }
+            val intent = Intent(this, CreateGroupActivity::class.java).apply {}
             startActivity(intent)
         }
 
