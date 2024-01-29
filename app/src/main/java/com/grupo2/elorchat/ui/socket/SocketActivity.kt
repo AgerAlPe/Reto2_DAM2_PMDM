@@ -43,6 +43,8 @@ class SocketActivity() : ComponentActivity() {
         groupId = intent.getStringExtra("idGroup")?.toInt()
         groupName = intent.getStringExtra("groupName") ?: ""
 
+        binding.toolbar.title = groupName
+
         // Initialize messageDao here
         messageDao = AppDatabase.getInstance(application).getMessageDao()
 
