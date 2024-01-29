@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
@@ -33,7 +34,9 @@ class PrivateGroupsFragment : Fragment() {
         val binding = FragmentChatsBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        groupListAdapter = PrivateGroupAdapter( ::onGroupsListClickItem)
+        groupListAdapter = PrivateGroupAdapter(
+            ::onGroupsListClickItem
+        ) { group, anchorView, userEmail -> onMenuClick(group, anchorView, userEmail) }
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
 
@@ -58,6 +61,33 @@ class PrivateGroupsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun onMenuClick(group: Group, anchorView: View, userEmail: String?) {
+        when (anchorView.id) {
+            R.id.menu_add_user -> {
+                // Handle add user action with userEmail
+                if (!userEmail.isNullOrEmpty()) {
+                    // Perform the add user action using userEmail
+                } else {
+                    // Show an error or prompt the user to enter an email
+                }
+            }
+            R.id.menu_kick_user -> {
+                // Handle kick user action with userEmail
+                if (!userEmail.isNullOrEmpty()) {
+                    // Perform the kick user action using userEmail
+                } else {
+                    // Show an error or prompt the user to enter an email
+                }
+            }
+            R.id.menu_purge -> {
+                // Handle purge action (no email required for purge)
+            }
+            else -> {
+                // Handle unexpected case
+            }
+        }
     }
 
     private fun onGroupsListClickItem(group: Group) {

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,7 +16,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:contentDescription="Group image"
-        android:src="@drawable/circle_launcher" />
+        android:src="@drawable/circle_launcher"
+        tools:ignore="HardcodedText" />
 
 
     <!-- Contenedor para el contenido del grupo -->
@@ -49,17 +51,19 @@
             <TextView
                 android:id="@+id/LastMessage"
                 android:layout_width="0dp"
-                android:layout_weight="8"
+                android:layout_weight="16"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@android:color/black"
                 tools:text="This is this groups last message" />
 
-            <Button
+            <ImageButton
                 android:id="@+id/joinButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Join" />
+                android:layout_weight="6"
+                android:contentDescription="@string/btn_connect"
+                app:srcCompat="@drawable/baseline_person_add_24" />
 
         </LinearLayout>
 

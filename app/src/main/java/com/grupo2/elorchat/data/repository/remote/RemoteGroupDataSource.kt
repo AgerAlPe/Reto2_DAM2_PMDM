@@ -2,6 +2,7 @@ package com.grupo2.elorchat.data.repository.remote
 
 import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
+import com.grupo2.elorchat.data.ChatUserEmailRequest
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 
@@ -41,5 +42,13 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
 
     override suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = getResult {
         RetrofitClient.apiInterface.changePassword(changePasswordRequest)
+    }
+
+    override suspend fun getChatsWhereUserIsAdmin(userId: Int) = getResult {
+        RetrofitClient.apiInterface.getGroupsWhereUserIsAdmin(userId)
+    }
+
+    override suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest) = getResult {
+        RetrofitClient.apiInterface.makeAnUserJoinAChat(chatUserEmailRequest)
     }
 }

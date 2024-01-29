@@ -1,28 +1,20 @@
 package com.grupo2.elorchat.ui.groups
 
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-
 import com.grupo2.elorchat.data.ChatUser
-
 import com.grupo2.elorchat.ElorChat.Companion.context
 import com.grupo2.elorchat.data.ChangePasswordRequest
-
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
-import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -64,9 +56,12 @@ class GroupViewModel @Inject constructor(
 
     private val _firstUserEmail = MutableLiveData<String>()
 
+    private val _adminInGroups = MutableLiveData<List<Group>>()
+
+    val adminInGroups :MutableLiveData<List<Group>> get() = _adminInGroups
+
     val firstUserEmail: LiveData<String> get() = _firstUserEmail
     val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
-
 
     val leaveChat: MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat: MutableLiveData<Resource<ChatUser>> get() = _joinChat
@@ -78,6 +73,7 @@ class GroupViewModel @Inject constructor(
 
     init {
         updateGroupList()
+        getAdminGroups()
     }
 
     private val _joinChatListener = MutableLiveData<Resource<ChatUser>>()
@@ -285,6 +281,25 @@ class GroupViewModel @Inject constructor(
         }
 
         _firstUserEmail.value = userEmail
+    }
+
+    private fun getAdminGroups() {
+        viewModelScope.launch {
+            try {
+                val userId = appDatabase.getUserDao().getAllUser().first().id
+                Log.i("userID", userId.toString())
+                val adminGroupsResponse = getAllGroupsWhereUserIsAdmin(userId)
+                _adminInGroups.postValue(adminGroupsResponse.data.orEmpty())
+                Log.i(TAG, "Admin Groups: $adminGroupsResponse")
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while getting admin groups: ${e.message}")
+            }
+        }
+    }
+    private suspend fun getAllGroupsWhereUserIsAdmin(userId: Int): Resource<List<Group>> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.getChatsWhereUserIsAdmin(userId)
+        }
     }
 }
 
