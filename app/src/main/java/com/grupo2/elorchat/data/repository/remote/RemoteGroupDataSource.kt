@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.data.repository.remote
 
+import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
@@ -36,5 +37,9 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
 
     override suspend fun getUserGroups(userId: Int) = getResult {
         RetrofitClient.apiInterface.getUserGroups(userId)
+    }
+
+    override suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) = getResult {
+        RetrofitClient.apiInterface.changePassword(changePasswordRequest)
     }
 }

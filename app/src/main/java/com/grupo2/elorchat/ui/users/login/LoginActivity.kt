@@ -42,6 +42,8 @@ class LoginActivity : AppCompatActivity() {
         val pass = findViewById<EditText>(R.id.password)
         val chBox = findViewById<CheckBox>(R.id.checkBox)
 
+        val btnChangePassword = findViewById<Button>(R.id.retrievePassButton)
+
         var loginUser = LoginUser("", "")
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -54,6 +56,11 @@ class LoginActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        //TODO ESTE BOTON NECESITA REDIRIGIRTE
+        btnChangePassword.setOnClickListener {
+
         }
 
         btnLogin.setOnClickListener {

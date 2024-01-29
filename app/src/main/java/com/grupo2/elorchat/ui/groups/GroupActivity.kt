@@ -8,8 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
+import com.grupo2.elorchat.data.database.AppDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class GroupActivity : AppCompatActivity() {
@@ -18,6 +20,10 @@ class GroupActivity : AppCompatActivity() {
     private lateinit var viewPager2: ViewPager2
     private lateinit var adapter: FragmentPageAdapter
 
+    @Inject
+    lateinit var appDatabase: AppDatabase
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chats)
@@ -25,17 +31,14 @@ class GroupActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.tabLayout)
         viewPager2 = findViewById(R.id.viewpager)
 
-        adapter = FragmentPageAdapter(supportFragmentManager, lifecycle)
+        adapter = FragmentPageAdapter(supportFragmentManager, lifecycle, appDatabase)
 
         viewPager2.adapter = adapter
 
         val createChatButton: ImageButton = findViewById(R.id.createChat)
         createChatButton.setOnClickListener {
             // Lógica para manejar el clic en createChat
-            val intent = Intent(this, CreateGroupActivity::class.java).apply {
-                //TODO Se tiene que recoger el rol del usuario desde el DataStoreManager
-                //putExtra("userRole", user.role)
-            }
+            val intent = Intent(this, CreateGroupActivity::class.java).apply {}
             startActivity(intent)
         }
 
