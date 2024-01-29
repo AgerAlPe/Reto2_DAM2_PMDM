@@ -4,13 +4,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.ui.groups.privategroups.PrivateGroupsFragment
 import com.grupo2.elorchat.ui.groups.publicgroups.PublicGroupsFragment
 import com.grupo2.elorchat.ui.groups.settings.SettingsFragment
 
 class FragmentPageAdapter(
     fragmentManager: FragmentManager,
-    lifecycle: Lifecycle
+    lifecycle: Lifecycle,
+    private val appDatabase: AppDatabase
 ) : FragmentStateAdapter(fragmentManager, lifecycle) {
 
     override fun getItemCount(): Int {
@@ -21,7 +23,7 @@ class FragmentPageAdapter(
         return if(position == 0) {
             PrivateGroupsFragment()
         }else if (position == 1) {
-            PublicGroupsFragment()
+            PublicGroupsFragment(appDatabase)
         }else {
             SettingsFragment()
         }

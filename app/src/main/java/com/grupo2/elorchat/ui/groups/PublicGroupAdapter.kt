@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.groups
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +15,6 @@ class PublicGroupAdapter(
     private val onJoinButtonClickListener: (Group) -> Unit
 ) : ListAdapter<Group, PublicGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
-    private var userJoinedGroups: Set<Int> = emptySet()
-
-    fun setUserJoinedGroups(joinedGroups: Set<Int>) {
-        userJoinedGroups = joinedGroups
-        notifyDataSetChanged()
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GroupViewHolder(binding)
@@ -32,15 +26,21 @@ class PublicGroupAdapter(
         holder.itemView.setOnClickListener {
             onGroupClickListener(group)
         }
-        holder.joinButton.setOnClickListener {
-            onJoinButtonClickListener(group)
-        }
 
-        // Check if the user is already in the group and hide the button
-        if (userJoinedGroups.contains(group.id)) {
+        // Log the values for debugging
+        Log.d("GroupAdapter", "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}")
+
+        // Check if the user is already in the group
+        if (group.isUserOnGroup) {
+            Log.d("GroupAdapter", "User is already in the group, hiding joinButton")
             holder.joinButton.visibility = View.GONE
         } else {
+            Log.d("GroupAdapter", "User is not in the group, showing joinButton")
             holder.joinButton.visibility = View.VISIBLE
+            holder.joinButton.setOnClickListener {
+                holder.joinButton.visibility = View.GONE
+                onJoinButtonClickListener(group)
+            }
         }
     }
 

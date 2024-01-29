@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.socket
 
+import android.app.Activity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -7,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
@@ -14,9 +16,11 @@ import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class SocketActivity : ComponentActivity() {
+class SocketActivity() : ComponentActivity() {
 
     private val TAG = "SocketActivity"
     private var groupId: Int? = null
@@ -26,6 +30,10 @@ class SocketActivity : ComponentActivity() {
     private lateinit var messageDao: MessageDao
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName, messageDao) }
     private val groupViewModel: GroupViewModel by viewModels()
+
+    @Inject
+    lateinit var appDatabase: AppDatabase
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivitySocketBinding.inflate(layoutInflater)
@@ -74,6 +82,7 @@ class SocketActivity : ComponentActivity() {
         Log.d("ButtonClickListener", "Connect button clicked")
         viewModel.startSocket()
     }
+
 
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
@@ -127,15 +136,29 @@ class SocketActivity : ComponentActivity() {
         }
         binding.leaveButton.setOnClickListener {
             Log.d("ButtonClickListener", "Leave Chat button clicked")
-            // Call the ViewModel method to leave the chat
-            //TODO userId hardcoded
-            groupId?.let { it1 -> groupViewModel.leaveChat(69 ,it1 ) }
+
+            lifecycleScope.launch {
+                try {
+                    val userId = appDatabase.getUserDao().getAllUser().first().id
+                    groupId?.let { it1 -> groupViewModel.leaveChat(userId, it1) }
+                } catch (e: Exception) {
+                    // Handle exceptions if any
+                    Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")
+                }
+            }
         }
+
         groupViewModel.leaveChatResult.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
+                    groupViewModel.updateGroupList()
+
+                    // Set the result to indicate success
+                    setResult(Activity.RESULT_OK)
+                    // Finish the current activity
+
                 }
                 Resource.Status.ERROR -> {
                     Toast.makeText(this, "Error leaving the chat: ${result.message}", Toast.LENGTH_SHORT).show()
