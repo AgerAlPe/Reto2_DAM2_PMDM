@@ -6,6 +6,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class ChangePasswordRequest (
     val email: String,
-    val password: String,
-    val newpassword: String
+    val oldPassword: String,
+    val newPassword: String
 ): Parcelable
