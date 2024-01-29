@@ -67,13 +67,6 @@ class GroupViewModel @Inject constructor(
     val firstUserEmail: LiveData<String> get() = _firstUserEmail
     val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
 
-    val leaveChat : MutableLiveData<Resource<Void>> get() = _leaveChat
-    val joinChat : MutableLiveData<Resource<ChatUser>> get() = _joinChat
-
-    val delete : MutableLiveData<Resource<Int>?> get() = _delete
-
-    val create : MutableLiveData<Resource<Int>?> get() = _create
-
 
     val leaveChat: MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat: MutableLiveData<Resource<ChatUser>> get() = _joinChat
