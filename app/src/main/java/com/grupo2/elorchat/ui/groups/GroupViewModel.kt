@@ -76,6 +76,9 @@ class GroupViewModel @Inject constructor(
     val privateGroups: MutableLiveData<Resource<List<Group>>?> get() = _privateGroups
     val publicGroups: MutableLiveData<Resource<List<Group>>?> get() = _publicGroups
 
+    private var originalPublicGroups: List<Group> = emptyList()
+    private var originalPrivateGroups: List<Group> = emptyList()
+
     init {
         updateGroupList()
     }
@@ -117,6 +120,8 @@ class GroupViewModel @Inject constructor(
                 filterPublicGroups()
                 updateIsUserOnGroupStatus()
 
+                Log.i("filta", publicGroups.value?.data.orEmpty().toString())
+
                 // Update LiveData with the latest list of groups
                 _groups.postValue(allGroups)
             } catch (e: Exception) {
@@ -148,7 +153,8 @@ class GroupViewModel @Inject constructor(
                 }
 
                 allGroups = allGroupsFromRepository.data.orEmpty()
-
+                originalPublicGroups = publicGroups.value?.data.orEmpty()
+                originalPrivateGroups = privateGroups.value?.data.orEmpty()
                 _publicGroups.value = Resource.success(allGroups)
             } catch (e: Exception) {
                 _publicGroups.value = Resource.error("Error updating isUserOnGroup status", null)
@@ -202,6 +208,29 @@ class GroupViewModel @Inject constructor(
                     Resource.error(e.message ?: "Error filtering public groups", null)
             }
         }
+    }
+
+    fun filterPublicGroupsByName(query: String) {
+        Log.i("filta", publicGroups.value?.data.orEmpty().toString())
+        val filteredPublicGroups = if (query.isNotBlank()) {
+            originalPublicGroups.filter { group ->
+                group.name.contains(query, ignoreCase = true)
+            }
+        } else {
+            originalPublicGroups
+        }
+        _publicGroups.value = Resource.success(filteredPublicGroups)
+    }
+
+    fun filterPrivateGroupsByName(query: String) {
+        val filteredPrivateGroups = if (query.isNotBlank()) {
+            originalPrivateGroups.filter { group ->
+                group.name.contains(query, ignoreCase = true)
+            }
+        } else {
+            originalPrivateGroups
+        }
+        _privateGroups.value = Resource.success(filteredPrivateGroups)
     }
 
     private suspend fun getAllGroupsFromRepository(): Resource<List<Group>> {
