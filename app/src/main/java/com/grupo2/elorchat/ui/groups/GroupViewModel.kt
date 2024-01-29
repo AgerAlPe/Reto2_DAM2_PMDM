@@ -14,8 +14,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import com.grupo2.elorchat.data.ChatUser
 
 import com.grupo2.elorchat.ElorChat.Companion.context
+import com.grupo2.elorchat.data.ChangePasswordRequest
 
 import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
 import com.grupo2.elorchat.data.preferences.DataStoreManager
@@ -57,6 +59,21 @@ class GroupViewModel @Inject constructor(
 
     private val _groups = MutableLiveData<List<Group>>() // LiveData for the list of groups
     val groups: LiveData<List<Group>> get() = _groups // Expose LiveData to observe in the fragment
+
+    private val _changePassword = MutableLiveData<Resource<Void>>()
+
+    private val _firstUserEmail = MutableLiveData<String>()
+
+    val firstUserEmail: LiveData<String> get() = _firstUserEmail
+    val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
+
+    val leaveChat : MutableLiveData<Resource<Void>> get() = _leaveChat
+    val joinChat : MutableLiveData<Resource<ChatUser>> get() = _joinChat
+
+    val delete : MutableLiveData<Resource<Int>?> get() = _delete
+
+    val create : MutableLiveData<Resource<Int>?> get() = _create
+
 
     val leaveChat: MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat: MutableLiveData<Resource<ChatUser>> get() = _joinChat
@@ -248,6 +265,33 @@ class GroupViewModel @Inject constructor(
         return withContext(Dispatchers.IO) {
             groupRepository.leaveChat(userId, chatId)
         }
+    }
+
+
+    fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) {
+        viewModelScope.launch {
+            _changePassword.value =  userPassword(changePasswordRequest)
+        }
+    }
+    private suspend fun userPassword(changePasswordRequest: ChangePasswordRequest): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.changePassword(changePasswordRequest)
+        }
+    }
+
+    suspend fun loadFirstUserEmail() {
+        val userEmail = try {
+            val userDao = appDatabase.getUserDao()
+            val firstUser = userDao.getFirstUser()
+
+            firstUser?.email ?: "default@example.com" // Default value if no user is found
+        } catch (e: Exception) {
+            // Handle the exception if there is an error while accessing the database
+            Log.e("GroupViewModel", "Error getting user email from Room", e)
+            "default@example.com" // Default value on error
+        }
+
+        _firstUserEmail.value = userEmail
     }
 }
 

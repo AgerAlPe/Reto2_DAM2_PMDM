@@ -92,7 +92,7 @@
                 android:id="@+id/forgotPasswordTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recuperar Contraseña"
+                android:text="Contraseña"
                 android:textSize="18sp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"/>
@@ -102,7 +102,7 @@
                 android:id="@+id/forgotPasswordButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Recuperar Contraseña"
+                android:text="Cambiar Contraseña"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"/>
         </LinearLayout>

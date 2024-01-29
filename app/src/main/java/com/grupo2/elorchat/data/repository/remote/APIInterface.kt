@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.data.repository.remote
 
+import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
@@ -43,5 +44,8 @@ interface APIInterface {
 
     @GET("users/{id}/chats")
     suspend fun getUserGroups(@Path("id") userId: Int) : Response<List<Group>>
+
+    @POST("auth/change-password")
+    suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : Response<Void>
 
 }
