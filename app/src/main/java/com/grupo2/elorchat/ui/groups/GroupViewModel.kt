@@ -83,6 +83,30 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    fun filterPrivateGroupsByName(query: String) {
+        val currentGroups = originalGroups.toMutableList()
+
+        // Realiza el filtrado basado en el nombre del grupo
+        if (query.isNotBlank()) {
+            currentGroups.retainAll { group ->
+                group.name.contains(query, ignoreCase = true)
+            }
+        }
+        _privateGroups.value = Resource.success(currentGroups)
+    }
+
+    fun filterPublicGroupsByName(query: String) {
+        val currentGroups = originalGroups.toMutableList()
+        Log.i("Filtar", currentGroups.toString())
+        // Realiza el filtrado basado en el nombre del grupo
+        if (query.isNotBlank()) {
+            currentGroups.retainAll { group ->
+                group.name.contains(query, ignoreCase = true)
+            }
+        }
+        _privateGroups.value = Resource.success(currentGroups)
+    }
+
     // Filtrar grupos privados
     private fun filterPrivateGroups() {
         viewModelScope.launch {

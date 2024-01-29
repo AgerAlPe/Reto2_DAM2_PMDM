@@ -3,6 +3,8 @@ package com.grupo2.elorchat.ui.groups.publicgroups
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -44,6 +46,7 @@ class PublicGroupsFragment : Fragment() {
         //El codigo debe de ir antes de que se devuelva la view
         val binding = FragmentChatsBinding.inflate(inflater, container, false)
         val view = binding.root
+        val searchGroup = binding.searchGroup
 
         groupListAdapter = PublicGroupAdapter(
             onGroupClickListener = ::onGroupsListClickItem,
@@ -70,6 +73,19 @@ class PublicGroupsFragment : Fragment() {
                     }
                 }
             }
+        })
+
+        searchGroup.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                viewModel.filterPublicGroupsByName(s.toString())
+            }
+
         })
 
         return view
