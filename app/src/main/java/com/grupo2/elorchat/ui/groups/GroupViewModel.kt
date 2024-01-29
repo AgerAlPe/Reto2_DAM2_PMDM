@@ -137,11 +137,13 @@ class GroupViewModel @Inject constructor(
                 val allGroupsFromRepository = getAllGroupsFromRepository()
                 val userGroupsFromRepository = getAllUserGroupsFromRepository(userId)
 
+
                 allGroupsFromRepository.data?.let { allGroups ->
                     userGroupsFromRepository.data?.let { userGroups ->
                         allGroups.forEach { group ->
                             group.isUserOnGroup = userGroups.any { userGroup -> userGroup.id == group.id }
                         }
+
                     }
                 }
 
@@ -155,6 +157,10 @@ class GroupViewModel @Inject constructor(
                 allGroups = allGroupsFromRepository.data.orEmpty()
                 originalPublicGroups = publicGroups.value?.data.orEmpty()
                 originalPrivateGroups = privateGroups.value?.data.orEmpty()
+
+                filterPrivateGroups()
+                filterPublicGroups()
+
                 _publicGroups.value = Resource.success(allGroups)
             } catch (e: Exception) {
                 _publicGroups.value = Resource.error("Error updating isUserOnGroup status", null)
