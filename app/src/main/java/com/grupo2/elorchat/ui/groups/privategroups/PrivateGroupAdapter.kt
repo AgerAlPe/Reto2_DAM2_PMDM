@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.groups
+package com.grupo2.elorchat.ui.groups.privategroups
 
 import android.view.LayoutInflater
 import android.view.ViewGroup

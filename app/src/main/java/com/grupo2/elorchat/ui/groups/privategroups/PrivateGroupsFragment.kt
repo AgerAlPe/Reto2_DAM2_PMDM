@@ -15,7 +15,6 @@ import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
-import com.grupo2.elorchat.ui.groups.PrivateGroupAdapter
 import com.grupo2.elorchat.ui.socket.SocketActivity
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint

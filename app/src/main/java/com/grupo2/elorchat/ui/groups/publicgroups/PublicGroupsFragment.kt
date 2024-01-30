@@ -1,7 +1,6 @@
 package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -19,17 +18,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
-import com.grupo2.elorchat.ui.groups.PublicGroupAdapter
 import com.grupo2.elorchat.ui.socket.SocketActivity
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -94,6 +90,11 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
+        if (!group.isUserOnGroup) {
+            Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())
             putExtra("groupName", group.name)
@@ -132,6 +133,7 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
                         when (result.status) {
                             Resource.Status.SUCCESS -> {
                                 Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()
+                                group.isUserOnGroup = true
                                 viewModel.updateGroupList()
                                 // You can add any additional actions on success if needed
                             }
