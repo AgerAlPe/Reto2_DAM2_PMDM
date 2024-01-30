@@ -8,7 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.ElorChat.Companion.context
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.ChangePasswordRequest
+import com.grupo2.elorchat.data.ChatUserEmailRequest
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
@@ -299,6 +301,48 @@ class GroupViewModel @Inject constructor(
     private suspend fun getAllGroupsWhereUserIsAdmin(userId: Int): Resource<List<Group>> {
         return withContext(Dispatchers.IO) {
             groupRepository.getChatsWhereUserIsAdmin(userId)
+        }
+    }
+    fun handleEmailAction(group: Group, actionId: Int, userEmail: String) {
+        when (actionId) {
+            R.id.menu_add_user -> {
+                handleAddUserAction(group, userEmail)
+                Log.i("addUserAction", "Should have added the user")
+            }
+            R.id.menu_kick_user -> {
+                handleKickUserAction(group, userEmail)
+                // TODO: This part is not implemented yet
+                Log.i("kickUserAction", "Should have kicked the user")
+            }
+            else -> {
+                // Handle unexpected case
+            }
+        }
+    }
+    fun handleAddUserAction(group: Group, userEmail: String) {
+        val chatUserEmailRequest = ChatUserEmailRequest(chatId = group.id, email = userEmail)
+        viewModelScope.launch {
+            try {
+                groupRepository.makeAnUserJoinAChat(chatUserEmailRequest)
+            } catch (e: Exception) {
+                // Handle exceptions if any
+                Log.e(TAG, "Exception while making an user join a chat: ${e.message}")
+            }
+        }
+    }
+
+    fun handleKickUserAction(group: Group, userEmail: String) {
+        // Implement logic for kicking a user with the provided email
+        // You may call a corresponding function in your ViewModel or repository
+        // For example:
+        viewModelScope.launch {
+            try {
+                // Call the repository method to kick the user
+                // groupRepository.kickUser(group.id, userEmail)
+            } catch (e: Exception) {
+                // Handle exceptions if any
+                Log.e(TAG, "Exception while kicking the user: ${e.message}")
+            }
         }
     }
 }

@@ -27,4 +27,6 @@ interface CommonGroupRepository {
 
     suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest) : Resource<String>
 
+    suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest) : Resource<String>
+
 }

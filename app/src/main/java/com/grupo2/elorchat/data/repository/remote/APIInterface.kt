@@ -55,4 +55,7 @@ interface APIInterface {
     @POST("chats/joinChatEmail")
     suspend fun makeAnUserJoinAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<String>
 
+    @POST("chats/leaveChatEmail")
+    suspend fun makeAnUserLeaveAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<String>
+
 }
