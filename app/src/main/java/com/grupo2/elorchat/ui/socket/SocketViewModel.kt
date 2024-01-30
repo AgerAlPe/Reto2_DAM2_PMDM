@@ -24,7 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime.now
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -151,7 +153,11 @@ class SocketViewModel @Inject constructor(
             val messageResponse = Gson().fromJson(jsonObjectString, Message::class.java)
 
             // Creating a Message instance from MessageResponse
-            Log.i(TAG, "Fecha: " + messageResponse.createdAt)
+            Log.i(TAG, "Fecha: " + now())
+
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+            val formattedDate = dateFormat.format(Date())
+            Log.i(TAG, "Fecha formateada: " + formattedDate.toString())
 
             val message = Message(
                 id = messageResponse.id,
@@ -159,7 +165,7 @@ class SocketViewModel @Inject constructor(
                 name = messageResponse.name,
                 userId = messageResponse.userId,
                 chatId = messageResponse.chatId,
-                createdAt = now().toString()
+                createdAt = formattedDate
             )
 
             updateMessageListWithNewMessage(message)
@@ -216,7 +222,6 @@ class SocketViewModel @Inject constructor(
         mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
     }
 }
-
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
