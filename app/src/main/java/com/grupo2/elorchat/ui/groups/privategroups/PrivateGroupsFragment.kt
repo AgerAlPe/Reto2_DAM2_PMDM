@@ -67,6 +67,18 @@ class PrivateGroupsFragment : Fragment() {
             }
         }
 
+        viewModel.addUser.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                handleUserMovementAdd(response)
+            }
+        }
+
+        viewModel.kickUser.observe(viewLifecycleOwner) { response ->
+            if (response != null) {
+                handleUserMovementLeave(response)
+            }
+        }
+
         return view
     }
 
@@ -75,5 +87,19 @@ class PrivateGroupsFragment : Fragment() {
             putExtra("idGroup", group.id.toString())
         }
         startActivity(intent)
+    }
+
+    private fun handleUserMovementAdd(response: ChatUserMovementResponse) {
+        response.response?.let { Log.i("respuesta", it) }
+        if (response.response.toString().equals("Prueba")){
+            Toast.makeText(requireContext(), "Se ha añadido el usuario", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun handleUserMovementLeave(response: ChatUserMovementResponse) {
+        response.response?.let { Log.i("respuesta", it) }
+        if (response.response.toString().equals("Prueba")){
+            Toast.makeText(requireContext(), "Se ha eliminado el usuario", Toast.LENGTH_SHORT).show()
+        }
     }
 }

@@ -316,14 +316,16 @@ class GroupViewModel @Inject constructor(
             try {
                 val result = makeAnUserJoinAChat(chatUserEmailRequest)
                 if (result.data != null) {
+                    Log.i("resultData", result.data.response.toString())
                     _addUser.value = result.data
+                    Log.i("resultStatus", result.status.toString())
                 } else if (result.status == Resource.Status.SUCCESS) {
                     _addUser.value = ChatUserMovementResponse(response = "Successfully added the user")
                 } else {
-                    _addUser.value = ChatUserMovementResponse(response = null)
+                    _addUser.value = ChatUserMovementResponse(response = "Prueba")
                 }
             } catch (e: Exception) {
-                _addUser.value = ChatUserMovementResponse(response = null)
+                _addUser.value = ChatUserMovementResponse(response = "Prueba2")
             }
         }
     }
@@ -339,14 +341,19 @@ class GroupViewModel @Inject constructor(
             try {
                 val result = makeAnUserLeaveAChat(chatUserEmailRequest)
                 if (result.data != null) {
+                    //NUNCA ENTRA
+                    Log.i("resultData", result.data.response.toString())
                     _kickUser.value = result.data
+                    Log.i("resultStatus", result.status.toString())
                 } else if (result.status == Resource.Status.SUCCESS) {
+                    //NUNCA ENTRA TAMPOCO
                     _kickUser.value = ChatUserMovementResponse(response = "Successfully kicked the user")
                 } else {
-                    _kickUser.value = ChatUserMovementResponse(response = null)
+                    //SIEMPRE ENTRA
+                    _kickUser.value = ChatUserMovementResponse(response = "Prueba")
                 }
             } catch (e: Exception) {
-                _kickUser.value = ChatUserMovementResponse(response = null)
+                _kickUser.value = ChatUserMovementResponse(response = "Prueba2")
             }
         }
     }
