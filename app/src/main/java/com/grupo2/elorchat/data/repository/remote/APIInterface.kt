@@ -3,6 +3,7 @@ package com.grupo2.elorchat.data.repository.remote
 import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.Message
@@ -53,9 +54,9 @@ interface APIInterface {
     suspend fun getGroupsWhereUserIsAdmin(@Path("userId") userId: Int ) : Response<List<Group>>
 
     @POST("chats/joinChatEmail")
-    suspend fun makeAnUserJoinAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<String>
+    suspend fun makeAnUserJoinAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<ChatUserMovementResponse>
 
     @POST("chats/leaveChatEmail")
-    suspend fun makeAnUserLeaveAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<String>
+    suspend fun makeAnUserLeaveAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<ChatUserMovementResponse>
 
 }

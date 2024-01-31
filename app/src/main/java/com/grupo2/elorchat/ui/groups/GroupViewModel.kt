@@ -11,6 +11,7 @@ import com.grupo2.elorchat.ElorChat.Companion.context
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
@@ -30,8 +31,6 @@ class GroupViewModel @Inject constructor(
     private val appDatabase: AppDatabase,
     private val groupRepository: CommonGroupRepository
 ) : ViewModel() {
-
-    private val dataStoreManager by lazy { DataStoreManager.getInstance(context) }
 
     private val _items = MutableLiveData<Resource<List<Group>>?>()
 
@@ -59,6 +58,14 @@ class GroupViewModel @Inject constructor(
     private val _firstUserEmail = MutableLiveData<String>()
 
     private val _adminInGroups = MutableLiveData<List<Group>>()
+
+    private val _addUser = MutableLiveData<ChatUserMovementResponse?>()
+
+    val addUser : MutableLiveData<ChatUserMovementResponse?> get() = _addUser
+
+    private val _kickUser = MutableLiveData<ChatUserMovementResponse?>()
+
+    val kickUser : MutableLiveData<ChatUserMovementResponse?> get() = _kickUser
 
     val adminInGroups :MutableLiveData<List<Group>> get() = _adminInGroups
 
@@ -303,46 +310,50 @@ class GroupViewModel @Inject constructor(
             groupRepository.getChatsWhereUserIsAdmin(userId)
         }
     }
-    fun handleEmailAction(group: Group, actionId: Int, userEmail: String) {
-        when (actionId) {
-            R.id.menu_add_user -> {
-                handleAddUserAction(group, userEmail)
-                Log.i("addUserAction", "Should have added the user")
-            }
-            R.id.menu_kick_user -> {
-                handleKickUserAction(group, userEmail)
-                // TODO: This part is not implemented yet
-                Log.i("kickUserAction", "Should have kicked the user")
-            }
-            else -> {
-                // Handle unexpected case
-            }
-        }
-    }
-    fun handleAddUserAction(group: Group, userEmail: String) {
-        val chatUserEmailRequest = ChatUserEmailRequest(chatId = group.id, email = userEmail)
+
+    fun makeAnUserJoin(chatUserEmailRequest: ChatUserEmailRequest) {
         viewModelScope.launch {
             try {
-                groupRepository.makeAnUserJoinAChat(chatUserEmailRequest)
+                val result = makeAnUserJoinAChat(chatUserEmailRequest)
+                if (result.data != null) {
+                    _addUser.value = result.data
+                } else if (result.status == Resource.Status.SUCCESS) {
+                    _addUser.value = ChatUserMovementResponse(response = "Successfully added the user")
+                } else {
+                    _addUser.value = ChatUserMovementResponse(response = null)
+                }
             } catch (e: Exception) {
-                // Handle exceptions if any
-                Log.e(TAG, "Exception while making an user join a chat: ${e.message}")
+                _addUser.value = ChatUserMovementResponse(response = null)
             }
         }
     }
 
-    fun handleKickUserAction(group: Group, userEmail: String) {
-        // Implement logic for kicking a user with the provided email
-        // You may call a corresponding function in your ViewModel or repository
-        // For example:
+    private suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserJoinAChat(chatUserEmailRequest)
+        }
+    }
+
+    fun makeAnUserLeave(chatUserEmailRequest: ChatUserEmailRequest) {
         viewModelScope.launch {
             try {
-                // Call the repository method to kick the user
-                // groupRepository.kickUser(group.id, userEmail)
+                val result = makeAnUserLeaveAChat(chatUserEmailRequest)
+                if (result.data != null) {
+                    _kickUser.value = result.data
+                } else if (result.status == Resource.Status.SUCCESS) {
+                    _kickUser.value = ChatUserMovementResponse(response = "Successfully kicked the user")
+                } else {
+                    _kickUser.value = ChatUserMovementResponse(response = null)
+                }
             } catch (e: Exception) {
-                // Handle exceptions if any
-                Log.e(TAG, "Exception while kicking the user: ${e.message}")
+                _kickUser.value = ChatUserMovementResponse(response = null)
             }
+        }
+    }
+
+    private suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserLeaveAChat(chatUserEmailRequest)
         }
     }
 }

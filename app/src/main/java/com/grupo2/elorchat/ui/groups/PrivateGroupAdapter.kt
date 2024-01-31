@@ -1,6 +1,7 @@
 package com.grupo2.elorchat.ui.groups
 
 import android.app.AlertDialog
+import android.content.Context
 import android.text.InputType
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,10 +10,14 @@ import android.view.ViewGroup
 import android.widget.ActionMenuView.OnMenuItemClickListener
 import android.widget.EditText
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.lifecycle.LifecycleOwner
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.R
+import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.databinding.GroupBinding
 
@@ -32,9 +37,6 @@ class PrivateGroupAdapter(
         holder.itemView.setOnClickListener {
             onClickListener(group)
         }
-        holder.binding.joinButton.setOnClickListener { view ->
-            holder.showPopupMenu(group, view)
-        }
     }
 
     inner class GroupViewHolder(
@@ -48,55 +50,72 @@ class PrivateGroupAdapter(
             binding.GroupName.text = group.name
 
             if (isAdminGroup) {
-                binding.joinButton.setImageResource(R.drawable.baseline_settings_24)
-                binding.joinButton.setOnClickListener { view ->
-                    showPopupMenu(group, view)
-                }
-                binding.joinButton.visibility = View.VISIBLE
+                setupAdminUI(group)
             } else {
                 binding.joinButton.visibility = View.GONE
             }
         }
 
-        fun showPopupMenu(group: Group, anchorView: View) {
-            val popupMenu = PopupMenu(itemView.context, anchorView)
+        private fun setupAdminUI(group: Group) {
+            binding.joinButton.setImageResource(R.drawable.baseline_settings_24)
+            binding.joinButton.setOnClickListener { view ->
+                Log.i("PruebaBottonJoin", "se ha pulsado el boton")
+                showPopupMenu(view, group)
+            }
+            binding.joinButton.visibility = View.VISIBLE
+        }
+
+        private fun showPopupMenu(view: View, group: Group) {
+            val popupMenu = PopupMenu(view.context, view)
             popupMenu.menuInflater.inflate(R.menu.group_menu, popupMenu.menu)
-
-            val emailEditText = EditText(itemView.context)
-            emailEditText.inputType =
-                InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS
-            emailEditText.hint = "Email"
-
-            val dialogBuilder = AlertDialog.Builder(itemView.context)
-                .setTitle("Enter Email")
-                .setView(emailEditText)
-                .setPositiveButton("OK") { dialog, _ ->
-                    val userEmail = emailEditText.text.toString()
-                    handleEmailAction(group, anchorView.id, userEmail)
-                }
-                .setNegativeButton("Cancel") { dialog, _ ->
-                    // Handle cancel action if needed
-                }
-
-            popupMenu.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.menu_add_user, R.id.menu_kick_user -> {
-                        dialogBuilder.show()
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    R.id.menu_add_user -> {
+                        showUserDialog(view.context, group, "Add User") { email ->
+                            viewModel.makeAnUserJoin(ChatUserEmailRequest(email, group.id))
+                        }
+                        true
+                    }
+                    R.id.menu_kick_user -> {
+                        showUserDialog(view.context, group, "Kick User") { email ->
+                            viewModel.makeAnUserLeave(ChatUserEmailRequest(email, group.id))
+                        }
                         true
                     }
                     R.id.menu_purge -> {
-                        // Handle purge action (no email required for purge)
+                        Log.i("PruebaBotonPurge", "Se esta intentando purgar el grupo")
+                        // Handle the "PURGE" menu item click
+                        // You can replace this with your logic
                         true
                     }
                     else -> false
                 }
             }
-
             popupMenu.show()
         }
 
-        private fun handleEmailAction(group: Group, actionId: Int, userEmail: String) {
-            viewModel.handleEmailAction(group, actionId, userEmail)
+        private fun showUserDialog(
+            context: Context,
+            group: Group,
+            title: String,
+            action: (String) -> Unit
+        ) {
+            val builder = AlertDialog.Builder(context)
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_user, null)
+            builder.setView(dialogView)
+                .setTitle(title)
+                .setPositiveButton(title) { _, _ ->
+                    val emailEditText = dialogView.findViewById<EditText>(R.id.editTextEmail)
+                    val email = emailEditText.text.toString()
+                    if (email.isNotBlank()) {
+                        action(email)
+                    } else {
+                        // Handle invalid email input (e.g., show a message)
+                    }
+                }
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show()
         }
     }
 
