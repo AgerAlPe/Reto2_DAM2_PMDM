@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.groups
+package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -54,15 +54,14 @@ class PublicGroupAdapter(
             binding.GroupName.text = group.name
         }
     }
+}
+class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
+
+    override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
-
-        override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return (oldItem.id == newItem.id && oldItem.name == newItem.name)
-        }
+    override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
+        return (oldItem.id == newItem.id && oldItem.name == newItem.name)
     }
+}

@@ -25,7 +25,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime.now
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -108,12 +110,13 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
-        return withContext(Dispatchers.IO) {
-            socketRepository.leaveRoom(room , userId)
-        }
+    fun onSendMessage(message: String) {
+        Log.d(TAG, "onSendMessage $message")
+        // la sala esta hardcodeada..
+        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
+        val jsonObject = JSONObject(Gson().toJson(socketMessage))
+        mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
     }
-
 }
 
 
