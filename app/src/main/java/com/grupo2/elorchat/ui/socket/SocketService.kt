@@ -62,7 +62,8 @@ class SocketService : Service() {
         mSocket.on(SocketEvents.ON_CONNECT.value, onConnect())
         mSocket.on(SocketEvents.ON_DISCONNECT.value, onDisconnect())
         mSocket.on(SocketEvents.ON_MESSAGE_RECEIVED.value, onNewMessage())
-
+        mSocket.on(SocketEvents.ON_JOINED_ROOM.value, onJoinRoom())
+        mSocket.on(SocketEvents.ON_LEFT_ROOM.value, onLeftRoom())
         connect()
     }
 
@@ -158,6 +159,34 @@ class SocketService : Service() {
         val jsonObject = JSONObject(Gson().toJson(socketMessage))
         mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
         Log.d(TAG, "sendMessage enviado")
+    }
+
+    private fun onJoinRoom(): Emitter.Listener {
+        return Emitter.Listener {
+            if (it[0] is String) {
+                onJoinRoomString(it[0] as String)
+            }
+        }
+    }
+
+    private fun onJoinRoomString(data: String) {
+        // Handle the data received when a user joins a room
+        Log.i(TAG, "User joined a room: $data")
+        // You can process the data or perform any action as needed
+    }
+
+    private fun onLeftRoom(): Emitter.Listener {
+        return Emitter.Listener {
+            if (it[0] is String) {
+                onLeftRoomString(it[0] as String)
+            }
+        }
+    }
+
+    private fun onLeftRoomString(data: String) {
+        // Handle the data received when a user joins a room
+        Log.i(TAG, "User left a room: $data")
+        // You can process the data or perform any action as needed
     }
 /*
     private fun createMessageJsonObject(message: String): JSONObject {

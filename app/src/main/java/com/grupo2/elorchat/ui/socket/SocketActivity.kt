@@ -17,6 +17,7 @@ import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
+import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.utils.Resource
@@ -34,9 +35,11 @@ class SocketActivity() : ComponentActivity() {
     private var groupId: Int? = null
     private lateinit var messageAdapter: MessageAdapter
     private val groupRepository = RemoteGroupDataSource()
+    private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, groupName) }
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
+    private val socketViewModelt: SocketViewModel by viewModels()
 
     private lateinit var socketService: SocketService
     private var isBind = false
@@ -152,7 +155,10 @@ class SocketActivity() : ComponentActivity() {
             lifecycleScope.launch {
                 try {
                     val userId = appDatabase.getUserDao().getAllUser().first().id
+
                     groupId?.let { it1 -> groupViewModel.leaveChat(userId, it1) }
+
+                    socketViewModelt.leaveRoom(groupName, userId)
                 } catch (e: Exception) {
                     // Handle exceptions if any
                     Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")
@@ -166,6 +172,7 @@ class SocketActivity() : ComponentActivity() {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
                     groupViewModel.updateGroupList()
+
 
                     // Set the result to indicate success
                     setResult(Activity.RESULT_OK)

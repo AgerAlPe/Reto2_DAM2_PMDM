@@ -13,6 +13,7 @@ import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
+import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.utils.Resource
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
+    private val socketRepository: CommonSocketRepository,
     private val groupName: String?
 ) : ViewModel() {
 
@@ -40,6 +42,14 @@ class SocketViewModel @Inject constructor(
 
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
+
+    private val _joined = MutableLiveData<Resource<Void>>()
+
+    val joined : LiveData<Resource<Void>> get() = _joined
+
+    private val _leave = MutableLiveData<Resource<Void>>()
+
+    val  leave : LiveData<Resource<Void>> get() = _leave
 
     private val SOCKET_ROOM = groupName
 
@@ -77,14 +87,42 @@ class SocketViewModel @Inject constructor(
             _messages.value = Resource.success(currentMessages)
         }
     }
+
+    fun joinRoom(room : String, userId : Int) {
+        viewModelScope.launch {
+            _joined.value = joinSocketRoom(room , userId)
+        }
+    }
+
+    // Function to leave the socket room
+    fun leaveRoom(room : String, userId : Int) {
+        viewModelScope.launch {
+            _leave.value = leaveSocketRoom(room , userId)
+        }
+    }
+
+    private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            socketRepository.joinRoom(room , userId)
+
+        }
+    }
+
+    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            socketRepository.leaveRoom(room , userId)
+        }
+    }
+
 }
 
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
+    private val socketRepository: CommonSocketRepository,
     private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, groupName) as T
+        return SocketViewModel(groupRepository, socketRepository, groupName) as T
     }
 }

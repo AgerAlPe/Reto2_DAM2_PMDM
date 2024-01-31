@@ -38,6 +38,7 @@ class PublicGroupAdapter(
             Log.d("GroupAdapter", "User is not in the group, showing joinButton")
             holder.joinButton.visibility = View.VISIBLE
             holder.joinButton.setOnClickListener {
+                group.isUserOnGroup = true
                 holder.joinButton.visibility = View.GONE
                 onJoinButtonClickListener(group)
             }
