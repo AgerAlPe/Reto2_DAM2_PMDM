@@ -1,6 +1,5 @@
 package com.grupo2.elorchat.ui.users.login
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,15 +8,20 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.User
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.repository.AuthenticationResponse
 import com.grupo2.elorchat.data.repository.CommonUserRepository
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class LoginViewModel(
-    private val userRepository: CommonUserRepository
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val commonUserRepository: CommonUserRepository,
+    private val userRepository: UserRepository
 ) : ViewModel() {
 
     private val _loggedUser = MutableLiveData<Resource<AuthenticationResponse>>()
@@ -33,7 +37,7 @@ class LoginViewModel(
     }
     private suspend fun loggedUser(user: LoginUser): Resource<AuthenticationResponse> {
         return withContext(Dispatchers.IO) {
-            userRepository.loginUser(user)
+            commonUserRepository.loginUser(user)
         }
     }
 
@@ -45,14 +49,15 @@ class LoginViewModel(
     }
     private suspend fun userData(userEmail: String): Resource<User> {
         return withContext(Dispatchers.IO) {
-            userRepository.getUserByEmail(userEmail)
+            commonUserRepository.getUserByEmail(userEmail)
         }
     }
 }
 class LoginViewModelFactory(
-    private val userRepository: CommonUserRepository
+    private val commonUserRepository: CommonUserRepository,
+    private val userRepository: UserRepository
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return LoginViewModel(userRepository) as T
+        return LoginViewModel(commonUserRepository, userRepository,) as T
     }
 }

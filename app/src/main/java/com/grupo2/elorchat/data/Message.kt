@@ -9,8 +9,7 @@ import java.util.Date
 class Message (
     val id: Int?,
     val message: String,
-    val name: String,
-    val userId: Int,
+    val user: User,
     val chatId: Int,
     val createdAt: String,
 ): Parcelable

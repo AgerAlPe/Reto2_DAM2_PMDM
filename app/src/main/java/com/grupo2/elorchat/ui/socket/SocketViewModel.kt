@@ -12,6 +12,9 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
+import com.grupo2.elorchat.data.database.entities.toMessage
+import com.grupo2.elorchat.data.database.entities.toMessageEntity
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
@@ -33,7 +36,7 @@ import javax.inject.Inject
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
     private val groupName: String?,
-    private val messageDao: MessageDao
+    private val messageRepository: MessageRepository  // Agrega esta línea
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -44,7 +47,7 @@ class SocketViewModel @Inject constructor(
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
-    private val SOCKET_HOST = "http://10.5.7.39:8085/"
+    private val SOCKET_HOST = "http://10.5.7.39:s8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private lateinit var mSocket: Socket
@@ -143,76 +146,40 @@ class SocketViewModel @Inject constructor(
         }
     }
 
+
     private fun onNewMessageJsonObject(data: Any) {
-        Log.i(TAG, "Mensaje que envias: " + data.toString())
+        Log.i(TAG, "Mensaje que envías: " + data.toString())
         try {
             val jsonObject = data as JSONObject
             val jsonObjectString = jsonObject.toString()
 
             // Assuming you have a MessageResponse class for deserialization
-            val messageResponse = Gson().fromJson(jsonObjectString, Message::class.java)
+            val message = Gson().fromJson(jsonObjectString, Message::class.java)
 
-            // Creating a Message instance from MessageResponse
-            Log.i(TAG, "Fecha: " + now())
-
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-            val formattedDate = dateFormat.format(Date())
-            Log.i(TAG, "Fecha formateada: " + formattedDate.toString())
-
-            val message = Message(
-                id = messageResponse.id,
-                message = messageResponse.message,
-                name = messageResponse.name,
-                userId = messageResponse.userId,
-                chatId = messageResponse.chatId,
-                createdAt = formattedDate
-            )
-
-            updateMessageListWithNewMessage(message)
+            //updateMessageListWithNewMessage(message)
         } catch (ex: Exception) {
             Log.e(TAG, "onNewMessageJsonObject " + ex.message ?: "Unknown error")
         }
     }
 
-    private fun updateMessageListWithNewMessage(socketMessage: Message) {
+    private suspend fun updateMessageListWithNewMessage(socketMessage: Message) {
         try {
-            val incomingMessage = SOCKET_ROOM?.let {
-                Message(
-                    id = socketMessage.id,  // You might need to set an appropriate default value for id
-                    message = socketMessage.message,
-                    name = socketMessage.name,
-                    userId = socketMessage.userId,  // You might need to set an appropriate default value for userId
-                    chatId = socketMessage.chatId,  // You might need to set an appropriate default value for groupId
-                    createdAt = socketMessage.createdAt  // You might need to set an appropriate default value for createdAt
-                )
-
-            }
-
-            val messageEntity = MessageEntity(
-                text = socketMessage.message,
-                authorId = socketMessage.userId,
-                chatId =  socketMessage.chatId
-            )
-
-            viewModelScope.launch {
-                messageDao.insertMessage(messageEntity)
-            }
+            messageRepository.insertMessage(socketMessage)
 
             val msgsList = _messages.value?.data?.toMutableList()
             if (msgsList != null) {
-
-                if (incomingMessage.toString().isNotEmpty()) {
-                    incomingMessage?.let { msgsList.add(it) }
+                if (socketMessage.toString().isNotEmpty()) {
+                    socketMessage?.let { msgsList.add(it) }
                 }
-
                 _messages.postValue(Resource.success(msgsList))
             } else {
-                _messages.postValue(Resource.success(listOfNotNull(incomingMessage)))
+                _messages.postValue(Resource.success(listOfNotNull(socketMessage)))
             }
         } catch (ex: Exception) {
             Log.e(TAG, ex.message ?: "Unknown error")
         }
     }
+
 
     fun onSendMessage(message: String) {
         Log.d(TAG, "onSendMessage $message")
@@ -226,9 +193,9 @@ class SocketViewModel @Inject constructor(
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
     private val groupName: String?,
-    private val messageDao: MessageDao
+    private val messageRepository: MessageRepository
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, groupName, messageDao) as T
+        return SocketViewModel(groupRepository, groupName, messageRepository) as T
     }
 }

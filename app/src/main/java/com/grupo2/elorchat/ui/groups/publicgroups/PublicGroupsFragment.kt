@@ -127,7 +127,7 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
                 val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
 
                 if (userId != null) {
-                    viewModel.joinChat(ChatUser(userId, group.id, false))
+                    viewModel.joinChat(ChatUser(0, userId, group.id, false))
 
                     viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
                         when (result.status) {

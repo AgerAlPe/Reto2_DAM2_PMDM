@@ -25,7 +25,7 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
 
         fun bind(message: Message) {
             binding.messageText.text = message.message
-            binding.MessagerName.text = message.name
+            binding.MessagerName.text = message.message
             binding.messageDate.text = message.createdAt.toString()
             // You can bind other properties as needed
         }
@@ -39,7 +39,7 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
 
         override fun areContentsTheSame(oldItem: Message, newItem: Message): Boolean {
             return oldItem.message == newItem.message &&
-                    oldItem.userId == newItem.userId &&
+                    oldItem.user == newItem.user &&
                     oldItem.chatId == newItem.chatId &&
                     oldItem.createdAt == newItem.createdAt
         }

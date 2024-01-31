@@ -2,11 +2,9 @@ package com.grupo2.elorchat.ui.groups
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -134,7 +132,7 @@ class CreateGroupActivity : AppCompatActivity() {
         Log.i("JOINCHATuserId", userRoles.id.toString())
         Log.i("JOINCHATGroupId", groupId.toString())
 
-        val chatUser = ChatUser(userRoles.id, groupId, true)
+        val chatUser = ChatUser(0 , userRoles.id!!, groupId, true)
         viewModel.joinChat(chatUser)
     }
 
