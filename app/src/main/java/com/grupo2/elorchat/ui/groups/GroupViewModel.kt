@@ -118,7 +118,7 @@ class GroupViewModel @Inject constructor(
 
                 filterPrivateGroups()
                 filterPublicGroups()
-                updateIsUserOnGroupStatus()
+
 
                 Log.i("filta", publicGroups.value?.data.orEmpty().toString())
 
