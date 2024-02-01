@@ -5,8 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+
 import android.os.IBinder
 import android.provider.Settings
+
 import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
@@ -20,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.UserEntity
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
@@ -29,14 +32,16 @@ import com.grupo2.elorchat.utils.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 
 class LoginActivity : AppCompatActivity() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
-
-    private val userRepository = RemoteUserDataSource()
-    private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
+    @Inject
+    lateinit var userRepository: UserRepository
+    private val userDataRepository = RemoteUserDataSource()
+    private val viewModel: LoginViewModel by viewModels()
 
     private val socketServiceIntent by lazy {
         Intent(this, SocketService::class.java).apply {
@@ -125,18 +130,9 @@ class LoginActivity : AppCompatActivity() {
             when (userDataResult.status) {
                 Resource.Status.SUCCESS -> {
                     userDataResult.data?.let { userData ->
-                        // Convert User to UserEntity
-                        val userEntity = UserEntity(
-                            id = userData.id ?: 0,
-                            name = userData.name,
-                            email = userData.email,
-                            roles = userData.roles
-                        )
-                        Log.i("AddedUserToRoom", "User added to Room: $userEntity")
 
-                        // Save UserEntity to Room database
                         lifecycleScope.launch(Dispatchers.IO) {
-                            AppDatabase.getInstance(applicationContext).getUserDao().insertUser(userEntity)
+                            userRepository.insertUser(userData)
                         }
 
                         // Move the navigation logic outside this block

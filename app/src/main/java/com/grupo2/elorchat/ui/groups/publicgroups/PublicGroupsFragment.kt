@@ -131,7 +131,7 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
                 val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
 
                 if (userId != null) {
-                    viewModel.joinChat(ChatUser(userId, group.id, false))
+                    viewModel.joinChat(ChatUser(0, userId, group.id, false))
 
                     socketViewModel.joinRoom(group.name, userId)
 

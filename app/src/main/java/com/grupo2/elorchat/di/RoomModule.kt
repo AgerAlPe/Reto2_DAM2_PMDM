@@ -3,6 +3,12 @@ package com.grupo2.elorchat.di
 import android.content.Context
 import androidx.room.Room
 import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.database.dao.ChatUserDao
+import com.grupo2.elorchat.data.database.dao.MessageDao
+import com.grupo2.elorchat.data.database.dao.UserDao
+import com.grupo2.elorchat.data.database.repository.ChatUserRepository
+import com.grupo2.elorchat.data.database.repository.MessageRepository
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
@@ -40,6 +46,28 @@ object RoomModule {
     fun provideCommonSocketRepository(): CommonSocketRepository {
         return RemoteSocketDataSource() // Change this according to your real implementation
     }
+
+    @Singleton
+    @Provides
+    fun provideChatUserRepository(chatUserDao: ChatUserDao): ChatUserRepository {
+        return ChatUserRepository(chatUserDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideUserRepository(userDao: UserDao): UserRepository {
+        return UserRepository(userDao)
+    }
+
+    @Singleton
+    @Provides
+    fun provideMessageRepository(messageDao: MessageDao, userRepository: UserRepository): MessageRepository {
+        return MessageRepository(messageDao, userRepository)
+    }
+
+    @Singleton
+    @Provides
+    fun provideChatUserDao(db: AppDatabase) = db.getChatUserDao()
 
     @Singleton
     @Provides

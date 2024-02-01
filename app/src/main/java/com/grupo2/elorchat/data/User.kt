@@ -13,7 +13,6 @@ data class User(
     val phoneNumber: String,
     val fctDual: Boolean,
     val password: String,
-    val chats: List<Group>,
     val roles: List<Role>,
     val dni: String,
 ): Parcelable

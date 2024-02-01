@@ -85,7 +85,7 @@ class RegisterActivity : AppCompatActivity() {
 
                         //STORE THE GROUPS OF THIS USER
                         lifecycleScope.launch(Dispatchers.IO) {
-                            dataStoreManager.saveGroups(data.chats)
+                            //dataStoreManager.saveGroups(data.chats)
                         }
 
                         stringRoles = (data.roles?.map { it.name }).toString()

@@ -1,15 +1,12 @@
 package com.grupo2.elorchat.ui.groups
 
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 
 import com.grupo2.elorchat.data.ChatUser
 
@@ -17,16 +14,14 @@ import com.grupo2.elorchat.ElorChat.Companion.context
 import com.grupo2.elorchat.data.ChangePasswordRequest
 
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
+import com.grupo2.elorchat.data.database.repository.GroupRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
-import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -34,7 +29,9 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupViewModel @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val groupRepository: CommonGroupRepository
+    private val groupRepository: CommonGroupRepository,
+    private val roomGroupRepository: GroupRepository
+
 ) : ViewModel() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(context) }
@@ -101,7 +98,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userId = appDatabase.getUserDao().getAllUser().first().id
-                val repoResponse = getAllUserGroupsFromRepository(userId)
+                val repoResponse = getAllUserGroupsFromRepository(userId!!)
                 val allGroupsFromRepository = getAllGroupsFromRepository()
                 originalGroups = repoResponse.data.orEmpty()
 
@@ -135,7 +132,7 @@ class GroupViewModel @Inject constructor(
             try {
                 val userId = appDatabase.getUserDao().getAllUser().first().id
                 val allGroupsFromRepository = getAllGroupsFromRepository()
-                val userGroupsFromRepository = getAllUserGroupsFromRepository(userId)
+                val userGroupsFromRepository = getAllUserGroupsFromRepository(userId!!)
 
 
                 allGroupsFromRepository.data?.let { allGroups ->
@@ -321,6 +318,11 @@ class GroupViewModel @Inject constructor(
 
         _firstUserEmail.value = userEmail
     }
+
+        //fun obtainGroupById(groupId: Int): LiveData<Group?> {
+        //    return roomGroupRepository.getGroupById(groupId)
+        //}
+
 }
 
 sealed class GroupEvent {

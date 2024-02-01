@@ -12,6 +12,9 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
+import com.grupo2.elorchat.data.database.entities.toMessage
+import com.grupo2.elorchat.data.database.entities.toMessageEntity
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
@@ -33,8 +36,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
+
+    private val groupName: String?,
+    private val messageRepository: MessageRepository  // Agrega esta línea
     private val socketRepository: CommonSocketRepository,
-    private val groupName: String?
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -44,6 +49,7 @@ class SocketViewModel @Inject constructor(
 
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
+
 
     private val _joined = MutableLiveData<Resource<Void>>()
 
@@ -121,10 +127,12 @@ class SocketViewModel @Inject constructor(
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
+    private val messageRepository: MessageRepository
     private val socketRepository: CommonSocketRepository,
     private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, socketRepository, groupName) as T
+        return SocketViewModel(groupRepository, socketRepository, groupName, messageRepository) as T
+
     }
 }

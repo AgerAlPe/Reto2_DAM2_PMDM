@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
@@ -37,7 +38,8 @@ class SocketActivity() : ComponentActivity() {
     private val groupRepository = RemoteGroupDataSource()
     private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName) }
+    private lateinit var messageRepository: MessageRepository
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName, messageRepository) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
 
@@ -57,9 +59,6 @@ class SocketActivity() : ComponentActivity() {
         groupName = intent.getStringExtra("groupName") ?: ""
 
         binding.toolbar.title = groupName
-
-        // Initialize messageDao here
-        // messageDao = AppDatabase.getInstance(application).getMessageDao()
 
         messageAdapter = MessageAdapter()
         binding.listMessages.adapter = messageAdapter
@@ -157,8 +156,8 @@ class SocketActivity() : ComponentActivity() {
             lifecycleScope.launch {
                 try {
                     val userId = appDatabase.getUserDao().getAllUser().first().id
-
-                    groupId?.let { it1 -> groupViewModel.leaveChat(userId, it1) }
+                  
+                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
                     socketViewModelt.leaveRoom(groupName, userId)
                 } catch (e: Exception) {
@@ -173,7 +172,14 @@ class SocketActivity() : ComponentActivity() {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
-                    groupViewModel.updateGroupList()
+                    //val group = obtainGroupById(groupId)
+
+                    // Verificar si el objeto Group se obtuvo correctamente y cambiar isUserOnGroup a false
+                    //group?.let {
+                    //    it.isUserOnGroup = false
+                    //    // Actualizar la lista de grupos
+                    //    groupViewModel.updateGroupList()
+                    //}
 
 
                     // Set the result to indicate success

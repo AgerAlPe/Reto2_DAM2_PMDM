@@ -22,4 +22,7 @@ interface GroupDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(groups: List<GroupEntity>)
+
+    @Query("SELECT * FROM group_table WHERE id = :groupId")
+    suspend fun getGroupById(groupId: Int): GroupEntity?
 }
