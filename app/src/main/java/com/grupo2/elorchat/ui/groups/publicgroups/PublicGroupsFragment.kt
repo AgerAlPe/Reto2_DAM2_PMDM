@@ -21,9 +21,11 @@ import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
+import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.FragmentChatsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.ui.socket.SocketActivity
+import com.grupo2.elorchat.ui.socket.SocketViewModel
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -34,7 +36,9 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     private lateinit var groupListAdapter: PublicGroupAdapter
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
     private val groupRepository = RemoteGroupDataSource()
+    private val socketRepository = RemoteSocketDataSource()
     private val viewModel: GroupViewModel by viewModels()
+    private val socketViewModel : SocketViewModel by viewModels()
     private val SOCKET_ACTIVITY_REQUEST_CODE = 123
 
     override fun onCreateView(
@@ -128,6 +132,8 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
 
                 if (userId != null) {
                     viewModel.joinChat(ChatUser(0, userId, group.id, false))
+
+                    socketViewModel.joinRoom(group.name, userId)
 
                     viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
                         when (result.status) {

@@ -11,5 +11,5 @@ class Message (
     val message: String,
     val user: User,
     val chatId: Int,
-    val createdAt: String,
+    var createdAt: String,
 ): Parcelable

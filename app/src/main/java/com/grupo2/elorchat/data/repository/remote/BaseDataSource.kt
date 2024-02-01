@@ -13,9 +13,9 @@ abstract class BaseDataSource {
                 if (body != null) {
                     return Resource.success(body)
                 } else {
-                    // podria no devolver datos...
+                    // Could return success without data
                     return Resource.success()
-                    // el 204 hay que tratarlo en algun lado. Dara success sin datos
+                    // Handle the 204 status code somewhere. It will give success without data
                 }
             }
 
@@ -29,5 +29,4 @@ abstract class BaseDataSource {
         Log.e("ErrorBDS", message)
         return Resource.error("Network call has failed for a following reason: $message")
     }
-
 }

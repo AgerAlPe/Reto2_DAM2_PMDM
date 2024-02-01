@@ -10,7 +10,9 @@ import com.grupo2.elorchat.data.database.repository.ChatUserRepository
 import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
+import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
+import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -37,6 +39,12 @@ object RoomModule {
     @Singleton
     fun provideCommonGroupRepository(): CommonGroupRepository {
         return RemoteGroupDataSource() // Change this according to your real implementation
+    }
+
+    @Provides
+    @Singleton
+    fun provideCommonSocketRepository(): CommonSocketRepository {
+        return RemoteSocketDataSource() // Change this according to your real implementation
     }
 
     @Singleton
@@ -79,4 +87,6 @@ object RoomModule {
         // You can return the actual value or retrieve it from a source.
         return "YourGroupName"
     }
+
+
 }

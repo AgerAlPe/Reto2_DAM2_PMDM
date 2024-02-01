@@ -48,4 +48,10 @@ interface APIInterface {
     @POST("auth/change-password")
     suspend fun changePassword(@Body changePasswordRequest: ChangePasswordRequest) : Response<Void>
 
+    @GET("sockets/joinRoom/{room}/{idUser}")
+    suspend fun joinRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>
+
+    @GET("sockets/leaveRoom/{room}/{idUser}")
+    suspend fun leaveRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>
+
 }
