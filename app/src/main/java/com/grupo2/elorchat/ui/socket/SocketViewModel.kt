@@ -38,7 +38,7 @@ class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
 
     private val groupName: String?,
-    private val messageRepository: MessageRepository  // Agrega esta línea
+    private val messageRepository: MessageRepository,
     private val socketRepository: CommonSocketRepository,
 ) : ViewModel() {
 
@@ -127,12 +127,12 @@ class SocketViewModel @Inject constructor(
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
-    private val messageRepository: MessageRepository
+    private val messageRepository: MessageRepository,
     private val socketRepository: CommonSocketRepository,
     private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, socketRepository, groupName, messageRepository) as T
+        return SocketViewModel(groupRepository, groupName, messageRepository, socketRepository) as T
 
     }
 }

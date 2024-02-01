@@ -39,7 +39,7 @@ class SocketActivity() : ComponentActivity() {
     private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
     private lateinit var messageRepository: MessageRepository
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName, messageRepository) }
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
 
@@ -159,7 +159,7 @@ class SocketActivity() : ComponentActivity() {
                   
                     groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    socketViewModelt.leaveRoom(groupName, userId)
+                    socketViewModelt.leaveRoom(groupName, userId!!)
                 } catch (e: Exception) {
                     // Handle exceptions if any
                     Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")
