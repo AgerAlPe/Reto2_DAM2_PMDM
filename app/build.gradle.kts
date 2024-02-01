@@ -5,6 +5,8 @@ plugins {
     id("org.jetbrains.kotlin.plugin.parcelize")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -105,6 +107,10 @@ dependencies {
 
     // para utilizar eventBus
     implementation("org.greenrobot:eventbus:3.2.0")
+
+    // para fireBase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
+    implementation("com.google.firebase:firebase-messaging")
 }
 
 // Allow references to generated code

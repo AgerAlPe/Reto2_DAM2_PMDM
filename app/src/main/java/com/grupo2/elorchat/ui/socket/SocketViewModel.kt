@@ -99,7 +99,7 @@ class SocketViewModel @Inject constructor(
     // Function to leave the socket room
     fun leaveRoom(room : String, userId : Int) {
         viewModelScope.launch {
-            _leave.value = leaveSocketRoom(room , userId)
+            //_leave.value = leaveSocketRoom(room , userId)
         }
     }
 
@@ -110,13 +110,6 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    fun onSendMessage(message: String) {
-        Log.d(TAG, "onSendMessage $message")
-        // la sala esta hardcodeada..
-        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
-        val jsonObject = JSONObject(Gson().toJson(socketMessage))
-        mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
-    }
 }
 
 
