@@ -110,6 +110,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
             android:padding="8dp"
             android:background="@drawable/rounded_background"
             android:orientation="vertical">
@@ -130,6 +131,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:padding="8dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical">
+
+            <!-- Contenido del cuarto LinearLayout para cerrar sesión -->
+            <TextView
+                android:id="@+id/logoutTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Sesión"
+                android:textSize="18sp"
+                android:paddingLeft="12dp"
+                android:paddingRight="12dp"/>
+
+            <!-- Botón para cerrar sesión -->
+            <Button
+                android:id="@+id/logoutButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cerrar Sesión"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"/>
         </LinearLayout>

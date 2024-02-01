@@ -59,5 +59,9 @@
     <string name="private_group">PRIVATE</string>
     <string name="public_group">PUBLIC</string>
     <string name="settings">SETTINGS</string>
-
+    <string name="confirm_logout_title">Logout</string>
+    <string name="confirm_logout_message">Are you sure you want to log out?</string>
+    <string name="positive_button_yes">Yes</string>
+    <string name="negative_button_no">No</string>
+    <string name="closing_session">Closing session...</string>
 </resources>

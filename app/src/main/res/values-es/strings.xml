@@ -14,7 +14,6 @@
     <string name="rememberMe">Recuérdame</string>
     <string name="acceptButtonString">Aceptar</string>
     <string name="home">Inicio</string>
-    <string name="favorite">Favoritos</string>
     <string name="email_change">Cambiar correo electrónico</string>
     <string name="welcome">¡Bienvenido!</string>
     <string name="invalid_username">Nombre de usuario no válido</string>
@@ -50,4 +49,10 @@
     <string name="settings">AJUSTES</string>
     <string name="private_group">PRIVADOS</string>
     <string name="public_group">PUBLICOS</string>
+    <string name="confirm_logout_title">Cerrar Sesión</string>
+    <string name="confirm_logout_message">¿Estás seguro de que quieres cerrar sesión?</string>
+    <string name="positive_button_yes">Sí</string>
+    <string name="negative_button_no">No</string>
+    <string name="closing_session">Cerrando sesión...</string>
+
 </resources>

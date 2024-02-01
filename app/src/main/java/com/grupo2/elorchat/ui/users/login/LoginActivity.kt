@@ -29,12 +29,13 @@ import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.socket.SocketService
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }

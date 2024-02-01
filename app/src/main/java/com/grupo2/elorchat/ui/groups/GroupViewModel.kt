@@ -116,9 +116,6 @@ class GroupViewModel @Inject constructor(
                 filterPrivateGroups()
                 filterPublicGroups()
 
-
-                Log.i("filta", publicGroups.value?.data.orEmpty().toString())
-
                 // Update LiveData with the latest list of groups
                 _groups.postValue(allGroups)
             } catch (e: Exception) {

@@ -1,6 +1,8 @@
 package com.grupo2.elorchat.ui.groups.settings
 
 import android.app.AlertDialog
+import android.content.Intent
+import android.content.res.Resources
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -25,6 +27,7 @@ import android.widget.ArrayAdapter
 
 import com.grupo2.elorchat.databinding.FragmentSettingsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
+import com.grupo2.elorchat.ui.users.login.LoginActivity
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -58,7 +61,7 @@ class SettingsFragment : Fragment() {
 
         // Configura el Spinner
         val languageSpinner = binding.languageSpinner
-        val languageArray = resources.getStringArray(R.array.languages_array) // Crea un array en res/values/arrays.xml
+        val languageArray = resources.getStringArray(R.array.languages_array)  // Utiliza la función para generar el array
         val adapter = ArrayAdapter(
             requireContext(),
             android.R.layout.simple_spinner_item,
@@ -86,7 +89,27 @@ class SettingsFragment : Fragment() {
                 }
             }
 
+        val logoutButton = view.findViewById<Button>(R.id.logoutButton)
+        logoutButton.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
+
         return view
+    }
+
+    // Función para generar el array de idiomas automáticamente
+    private fun generateLanguageArray(): Array<String> {
+        val languageResourceIds = resources.getStringArray(R.array.languages_array).map { resourceName ->
+            resources.getIdentifier(resourceName, "string", requireActivity().packageName)
+        }
+
+        return languageResourceIds.mapNotNull { resourceId ->
+            try {
+                resources.getString(resourceId)
+            } catch (e: Resources.NotFoundException) {
+                null
+            }
+        }.toTypedArray()
     }
 
     private fun showForgotPasswordDialog(userEmail: String) {
@@ -155,6 +178,23 @@ class SettingsFragment : Fragment() {
             showToast("Invalid input, please check your entries.")
         }
     }
+
+    private fun showLogoutConfirmationDialog() {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(getString(R.string.confirm_logout_title))
+            .setMessage(getString(R.string.confirm_logout_message))
+            .setPositiveButton(getString(R.string.positive_button_yes)) { _, _ ->
+                showToast(getString(R.string.closing_session))
+                val intent = Intent(requireContext(), LoginActivity::class.java)
+                startActivity(intent)
+                requireActivity().finish()
+            }
+            .setNegativeButton(getString(R.string.negative_button_no)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
 
     private fun validateInput(
         email: String,

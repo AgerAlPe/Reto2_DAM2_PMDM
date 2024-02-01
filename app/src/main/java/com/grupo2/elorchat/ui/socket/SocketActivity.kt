@@ -38,7 +38,8 @@ class SocketActivity() : ComponentActivity() {
     private val groupRepository = RemoteGroupDataSource()
     private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
-    private lateinit var messageRepository: MessageRepository
+    @Inject
+    lateinit var messageRepository: MessageRepository
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
@@ -172,20 +173,10 @@ class SocketActivity() : ComponentActivity() {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
-                    //val group = obtainGroupById(groupId)
-
-                    // Verificar si el objeto Group se obtuvo correctamente y cambiar isUserOnGroup a false
-                    //group?.let {
-                    //    it.isUserOnGroup = false
-                    //    // Actualizar la lista de grupos
-                    //    groupViewModel.updateGroupList()
-                    //}
-
-
+                    groupViewModel.updateGroupList()
                     // Set the result to indicate success
                     setResult(Activity.RESULT_OK)
-                    // Finish the current activity
-
+                    finish()
                 }
                 Resource.Status.ERROR -> {
                     Toast.makeText(this, "Error leaving the chat: ${result.message}", Toast.LENGTH_SHORT).show()

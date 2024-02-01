@@ -128,12 +128,11 @@ class SocketService : Service() {
 
     private fun updateMessageListWithNewMessage(incommingMessage: Message) {
         try {
-
-
-
+            Log.i(TAG, incommingMessage.toString())
             serviceScope.launch {
                 withContext(Dispatchers.IO) {
                     messageRepository.insertMessage(incommingMessage)
+                    Log.i(TAG, "Añadido a Room: " + incommingMessage.toString())
                 }
                 EventBus.getDefault().post(incommingMessage)
 

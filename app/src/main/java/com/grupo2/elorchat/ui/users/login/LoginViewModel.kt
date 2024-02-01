@@ -25,39 +25,42 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _loggedUser = MutableLiveData<Resource<AuthenticationResponse>>()
-    val loggedUser : LiveData<Resource<AuthenticationResponse>> get() = _loggedUser
+    val loggedUser: LiveData<Resource<AuthenticationResponse>> get() = _loggedUser
 
     private val _userData = MutableLiveData<Resource<User>>()
-    val userData : LiveData<Resource<User>> get() = _userData
+    val userData: LiveData<Resource<User>> get() = _userData
 
     fun loginOfUser(user: LoginUser) {
         viewModelScope.launch {
-            _loggedUser.value =  loggedUser(user)
+            _loggedUser.value = loggedUser(user)
         }
     }
+
     private suspend fun loggedUser(user: LoginUser): Resource<AuthenticationResponse> {
         return withContext(Dispatchers.IO) {
             commonUserRepository.loginUser(user)
         }
     }
 
-    //GET THE INFO FOR LOGGED USER
+    // GET THE INFO FOR LOGGED USER
     fun getUserData(userEmail: String) {
         viewModelScope.launch {
-            _userData.value =  userData(userEmail)
+            _userData.value = userData(userEmail)
         }
     }
+
     private suspend fun userData(userEmail: String): Resource<User> {
         return withContext(Dispatchers.IO) {
             commonUserRepository.getUserByEmail(userEmail)
         }
     }
 }
+
 class LoginViewModelFactory(
     private val commonUserRepository: CommonUserRepository,
     private val userRepository: UserRepository
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return LoginViewModel(commonUserRepository, userRepository,) as T
+        return LoginViewModel(commonUserRepository, userRepository) as T
     }
 }

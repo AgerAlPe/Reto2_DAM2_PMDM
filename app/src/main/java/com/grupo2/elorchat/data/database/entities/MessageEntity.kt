@@ -21,12 +21,11 @@ data class MessageEntity(
 )
 
 suspend fun MessageEntity.toMessage(userRepository: UserRepository): Message {
-    val user = userRepository.getUser(this.userId)
-
     return Message(
         id = this.id,
         message = this.message,
-        user = user,
+        userId = this.userId,
+        name = userRepository.getUser(this.userId).name,
         chatId = this.chatId,
         createdAt = this.createdAt
     )
@@ -36,7 +35,7 @@ fun Message.toMessageEntity(): MessageEntity {
     return MessageEntity(
         id = this.id,
         message = this.message,
-        userId = this.user.id!!,
+        userId = this.userId,
         chatId = this.chatId,
         createdAt = getCurrentFormattedDate()
     )
