@@ -24,6 +24,7 @@ import com.grupo2.elorchat.data.database.AppDatabase
 
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.TextView
 
 import com.grupo2.elorchat.databinding.FragmentSettingsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
@@ -46,6 +47,13 @@ class SettingsFragment : Fragment() {
     ): View {
         binding = FragmentSettingsBinding.inflate(inflater, container, false)
         val view = binding.root
+
+        //TODO Hay que conseguir los datos del usuario logueado
+        //val loggedInUser = getLoggedInUser()
+        //view.findViewById<TextView>(R.id.titleTextView).text = loggedInUser.userName
+        //view.findViewById<TextView>(R.id.subtitleTextView).text = loggedInUser.subtitle
+        //view.findViewById<TextView>(R.id.descriptionTextView).text = loggedInUser.description
+
 
         view.findViewById<Button>(R.id.forgotPasswordButton).setOnClickListener {
             lifecycleScope.launch {

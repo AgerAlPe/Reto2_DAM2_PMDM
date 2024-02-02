@@ -50,16 +50,9 @@ class SocketViewModel @Inject constructor(
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
-
     private val _joined = MutableLiveData<Resource<Void>>()
 
-    val joined : LiveData<Resource<Void>> get() = _joined
-
     private val _leave = MutableLiveData<Resource<Void>>()
-
-    val  leave : LiveData<Resource<Void>> get() = _leave
-
-    private val SOCKET_ROOM = groupName
 
     fun thisGroupsMessages(groupId : Int) {
         Log.i(TAG, "Id Grupo: " + groupId)
@@ -69,22 +62,10 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-
-
     private suspend fun showThisGroupsMessages(groupId: Int): Resource<List<Message>> {
         return withContext(Dispatchers.IO) {
             groupRepository.getMessagesFromGroup(groupId)
         }
-    }
-
-
-    fun onSendMessage(message: String) {
-        Log.d(TAG, "onSendMessage $message")
-        // la sala esta hardcodeada..
-        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
-        val jsonObject = JSONObject(Gson().toJson(socketMessage))
-        // mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
-
     }
 
     fun onNewMessageReceived(message: Message) {
@@ -102,7 +83,6 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    // Function to leave the socket room
     fun leaveRoom(room : String, userId : Int) {
         viewModelScope.launch {
             _leave.value = leaveSocketRoom(room , userId)
@@ -112,7 +92,6 @@ class SocketViewModel @Inject constructor(
     private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
         return withContext(Dispatchers.IO) {
             socketRepository.joinRoom(room , userId)
-
         }
     }
 
@@ -121,9 +100,7 @@ class SocketViewModel @Inject constructor(
             socketRepository.leaveRoom(room , userId)
         }
     }
-
 }
-
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
@@ -133,6 +110,5 @@ class SocketViewModelFactory(
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
         return SocketViewModel(groupRepository, groupName, messageRepository, socketRepository) as T
-
     }
 }

@@ -16,6 +16,7 @@ import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -26,7 +27,9 @@ import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.time.LocalDateTime
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SocketService : Service() {
     private lateinit var serviceScope: CoroutineScope
     private val TAG = "SocketService"
@@ -36,7 +39,8 @@ class SocketService : Service() {
 
     private val mBinder: IBinder = SocketBinder()
 
-    private lateinit var messageRepository: MessageRepository
+    @Inject
+    lateinit var messageRepository: MessageRepository
 
 
     inner class SocketBinder : Binder() {
@@ -126,25 +130,20 @@ class SocketService : Service() {
         }
     }
 
-    private fun updateMessageListWithNewMessage(incommingMessage: Message) {
+    private fun updateMessageListWithNewMessage(incomingMessage: Message) {
         try {
-            Log.i(TAG, incommingMessage.toString())
-            serviceScope.launch {
-                withContext(Dispatchers.IO) {
-                    messageRepository.insertMessage(incommingMessage)
-                    Log.i(TAG, "Añadido a Room: " + incommingMessage.toString())
+            Log.i(TAG, incomingMessage.toString())
+                serviceScope.launch {
+                    withContext(Dispatchers.IO) {
+                        messageRepository.insertMessage(incomingMessage)
+                        Log.i(TAG, "Añadido a Room: " + incomingMessage.toString())
+                    }
+                    EventBus.getDefault().post(incomingMessage)
                 }
-                EventBus.getDefault().post(incommingMessage)
-
-            }
-
-
         } catch (ex: Exception) {
             Log.e(TAG, ex.message ?: "Unknown error")
         }
     }
-
-
 
     // yo soy quien envia este mensaje
     fun sendMessage(message: String, groupName: String) {

@@ -23,7 +23,6 @@
             android:name=".ui.socket.SocketService"
             android:enabled="true"
             android:exported="true"></service>
-
         <activity
             android:name=".ui.users.login.OfflineLoginActivity"
             android:exported="false" />
@@ -35,7 +34,8 @@
             android:exported="true" />
         <activity
             android:name=".ui.groups.GroupActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.users.register.RegisterActivity"
             android:exported="false" />

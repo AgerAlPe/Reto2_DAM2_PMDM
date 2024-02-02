@@ -76,6 +76,10 @@ class GroupViewModel @Inject constructor(
     private var originalPublicGroups: List<Group> = emptyList()
     private var originalPrivateGroups: List<Group> = emptyList()
 
+    companion object {
+        private const val TAG = "GroupViewModel"
+    }
+
     init {
         updateGroupList()
     }
@@ -97,74 +101,29 @@ class GroupViewModel @Inject constructor(
     fun updateGroupList() {
         viewModelScope.launch {
             try {
-                val userId = appDatabase.getUserDao().getAllUser().first().id
-                val repoResponse = getAllUserGroupsFromRepository(userId!!)
+                val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
+                val repoResponse = userId?.let { getAllUserGroupsFromRepository(it) }
                 val allGroupsFromRepository = getAllGroupsFromRepository()
-                originalGroups = repoResponse.data.orEmpty()
 
-                // Create a temporary list to update isUserOnGroup property
+                val originalGroups = repoResponse?.data.orEmpty()
                 val updatedGroups = allGroupsFromRepository.data.orEmpty().toMutableList()
 
-                // Update the isUserOnGroup property
                 updatedGroups.forEach { group ->
                     group.isUserOnGroup = originalGroups.any { userGroup -> userGroup.id == group.id }
                 }
 
-                // Assign the updated list to allGroups
                 allGroups = updatedGroups
+                originalPublicGroups = allGroups.filterNot { it.isPrivate }
+                originalPrivateGroups = allGroups.filter { it.isPrivate }
 
                 filterPrivateGroups()
                 filterPublicGroups()
 
-                // Update LiveData with the latest list of groups
                 _groups.postValue(allGroups)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while updating group list: ${e.message}")
             }
         }
-    }
-
-    private fun updateIsUserOnGroupStatus() {
-        viewModelScope.launch {
-            try {
-                val userId = appDatabase.getUserDao().getAllUser().first().id
-                val allGroupsFromRepository = getAllGroupsFromRepository()
-                val userGroupsFromRepository = getAllUserGroupsFromRepository(userId!!)
-
-
-                allGroupsFromRepository.data?.let { allGroups ->
-                    userGroupsFromRepository.data?.let { userGroups ->
-                        allGroups.forEach { group ->
-                            group.isUserOnGroup = userGroups.any { userGroup -> userGroup.id == group.id }
-                        }
-
-                    }
-                }
-
-                allGroupsFromRepository.data?.let { allGroups ->
-                    userGroupsFromRepository.data?.let { userGroups ->
-                        Log.d("GroupViewModel", "All Groups: $allGroups")
-                        Log.d("GroupViewModel", "User Groups: $userGroups")
-                    }
-                }
-
-                allGroups = allGroupsFromRepository.data.orEmpty()
-                originalPublicGroups = publicGroups.value?.data.orEmpty()
-                originalPrivateGroups = privateGroups.value?.data.orEmpty()
-
-                filterPrivateGroups()
-                filterPublicGroups()
-
-                _publicGroups.value = Resource.success(allGroups)
-            } catch (e: Exception) {
-                _publicGroups.value = Resource.error("Error updating isUserOnGroup status", null)
-                Log.e("GroupViewModel", "Exception in updateIsUserOnGroupStatus: ${e.message}", e)
-            }
-        }
-    }
-
-    companion object {
-        private const val TAG = "GroupViewModel"
     }
 
     private fun filterPrivateGroups() {
@@ -211,7 +170,6 @@ class GroupViewModel @Inject constructor(
     }
 
     fun filterPublicGroupsByName(query: String) {
-        Log.i("filta", publicGroups.value?.data.orEmpty().toString())
         val filteredPublicGroups = if (query.isNotBlank()) {
             originalPublicGroups.filter { group ->
                 group.name.contains(query, ignoreCase = true)
@@ -289,7 +247,6 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-
     fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) {
         viewModelScope.launch {
             _changePassword.value =  userPassword(changePasswordRequest)
@@ -315,11 +272,6 @@ class GroupViewModel @Inject constructor(
 
         _firstUserEmail.value = userEmail
     }
-
-        //fun obtainGroupById(groupId: Int): LiveData<Group?> {
-        //    return roomGroupRepository.getGroupById(groupId)
-        //}
-
 }
 
 sealed class GroupEvent {
