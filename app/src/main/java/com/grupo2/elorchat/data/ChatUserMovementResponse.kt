@@ -6,5 +6,5 @@ import retrofit2.Response
 
 @Parcelize
 class ChatUserMovementResponse (
-    val response: String?,
+    val response: String,
 ): Parcelable

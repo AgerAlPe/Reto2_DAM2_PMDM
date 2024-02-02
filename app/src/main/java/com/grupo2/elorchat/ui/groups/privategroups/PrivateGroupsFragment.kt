@@ -90,16 +90,25 @@ class PrivateGroupsFragment : Fragment() {
     }
 
     private fun handleUserMovementAdd(response: ChatUserMovementResponse) {
-        response.response?.let { Log.i("respuesta", it) }
-        if (response.response.toString().equals("Prueba")){
-            Toast.makeText(requireContext(), "Se ha añadido el usuario", Toast.LENGTH_SHORT).show()
+        response.response.let { Log.i("respuesta", it) }
+        when (response.response) {
+            "User Joined Chat" -> showToast("Usuario se ha añadido con exito")
+            // Add more conditions as needed
+        else -> showToast("error al añadir usuario")
         }
     }
 
     private fun handleUserMovementLeave(response: ChatUserMovementResponse) {
-        response.response?.let { Log.i("respuesta", it) }
-        if (response.response.toString().equals("Prueba")){
-            Toast.makeText(requireContext(), "Se ha eliminado el usuario", Toast.LENGTH_SHORT).show()
+        response.response.let { Log.i("respuesta", it) }
+        when (response.response) {
+            "End of input at line 1 column 1 path \$" -> showToast("Usuario se ha kickeado con exito")
+            // Add more conditions as needed
+        else -> showToast("error al eliminar usuario")
         }
+    }
+
+    private fun showToast(message: String) {
+        // Show a Toast with the provided message
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

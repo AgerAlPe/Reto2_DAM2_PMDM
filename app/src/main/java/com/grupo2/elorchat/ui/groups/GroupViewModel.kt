@@ -59,13 +59,13 @@ class GroupViewModel @Inject constructor(
 
     private val _adminInGroups = MutableLiveData<List<Group>>()
 
-    private val _addUser = MutableLiveData<ChatUserMovementResponse?>()
+    private val _addUser = MutableLiveData<ChatUserMovementResponse>()
 
-    val addUser : MutableLiveData<ChatUserMovementResponse?> get() = _addUser
+    val addUser : MutableLiveData<ChatUserMovementResponse> get() = _addUser
 
-    private val _kickUser = MutableLiveData<ChatUserMovementResponse?>()
+    private val _kickUser = MutableLiveData<ChatUserMovementResponse>()
 
-    val kickUser : MutableLiveData<ChatUserMovementResponse?> get() = _kickUser
+    val kickUser : MutableLiveData<ChatUserMovementResponse> get() = _kickUser
 
     val adminInGroups :MutableLiveData<List<Group>> get() = _adminInGroups
 
@@ -313,20 +313,8 @@ class GroupViewModel @Inject constructor(
 
     fun makeAnUserJoin(chatUserEmailRequest: ChatUserEmailRequest) {
         viewModelScope.launch {
-            try {
-                val result = makeAnUserJoinAChat(chatUserEmailRequest)
-                if (result.data != null) {
-                    Log.i("resultData", result.data.response.toString())
-                    _addUser.value = result.data
-                    Log.i("resultStatus", result.status.toString())
-                } else if (result.status == Resource.Status.SUCCESS) {
-                    _addUser.value = ChatUserMovementResponse(response = "Successfully added the user")
-                } else {
-                    _addUser.value = ChatUserMovementResponse(response = "Prueba")
-                }
-            } catch (e: Exception) {
-                _addUser.value = ChatUserMovementResponse(response = "Prueba2")
-            }
+            val result = makeAnUserJoinAChat(chatUserEmailRequest)
+            _addUser.value = result.data ?: ChatUserMovementResponse("Error: ${result.status}${result.message}")
         }
     }
 
@@ -338,23 +326,8 @@ class GroupViewModel @Inject constructor(
 
     fun makeAnUserLeave(chatUserEmailRequest: ChatUserEmailRequest) {
         viewModelScope.launch {
-            try {
-                val result = makeAnUserLeaveAChat(chatUserEmailRequest)
-                if (result.data != null) {
-                    //NUNCA ENTRA
-                    Log.i("resultData", result.data.response.toString())
-                    _kickUser.value = result.data
-                    Log.i("resultStatus", result.status.toString())
-                } else if (result.status == Resource.Status.SUCCESS) {
-                    //NUNCA ENTRA TAMPOCO
-                    _kickUser.value = ChatUserMovementResponse(response = "Successfully kicked the user")
-                } else {
-                    //SIEMPRE ENTRA
-                    _kickUser.value = ChatUserMovementResponse(response = "Prueba")
-                }
-            } catch (e: Exception) {
-                _kickUser.value = ChatUserMovementResponse(response = "Prueba2")
-            }
+            val result = makeAnUserLeaveAChat(chatUserEmailRequest)
+            _kickUser.value = result.data ?: ChatUserMovementResponse("End of input at line 1 column 1 path \$")
         }
     }
 

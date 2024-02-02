@@ -82,12 +82,6 @@ class PrivateGroupAdapter(
                         }
                         true
                     }
-                    R.id.menu_purge -> {
-                        Log.i("PruebaBotonPurge", "Se esta intentando purgar el grupo")
-                        // Handle the "PURGE" menu item click
-                        // You can replace this with your logic
-                        true
-                    }
                     else -> false
                 }
             }
