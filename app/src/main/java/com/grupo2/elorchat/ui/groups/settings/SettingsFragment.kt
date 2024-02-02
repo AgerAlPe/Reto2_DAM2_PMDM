@@ -2,8 +2,10 @@ package com.grupo2.elorchat.ui.groups.settings
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -25,6 +27,7 @@ import com.grupo2.elorchat.data.database.AppDatabase
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import androidx.core.app.ActivityCompat.recreate
 
 import com.grupo2.elorchat.databinding.FragmentSettingsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
@@ -32,6 +35,8 @@ import com.grupo2.elorchat.ui.users.login.LoginActivity
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import java.io.File
+import java.util.Locale
 
 @AndroidEntryPoint
 class SettingsFragment : Fragment() {
@@ -67,35 +72,32 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        // Configura el Spinner
         val languageSpinner = binding.languageSpinner
-        val languageArray = resources.getStringArray(R.array.languages_array)  // Utiliza la función para generar el array
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            languageArray
-        )
+
+        // Obtener la lista de idiomas disponibles
+        val availableLanguages = getAvailableLanguages()
+
+        // Crear un ArrayAdapter usando la lista de idiomas
+        val adapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, availableLanguages)
+
+        // Establecer el estilo del dropdown
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+
+        // Establecer el adaptador en el Spinner
         languageSpinner.adapter = adapter
 
-        // Maneja la selección del idioma
-        languageSpinner.onItemSelectedListener =
-            object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(
-                    parent: AdapterView<*>?,
-                    view: View?,
-                    position: Int,
-                    id: Long
-                ) {
-                    // Manejar la selección del idioma
-                    val selectedLanguage = languageArray[position]
-                    // Puedes guardar la selección en las preferencias compartidas o aplicar cambios según necesites
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                    // Manejar caso de nada seleccionado
-                }
+        // Manejar la selección del idioma
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
+                // Cambiar el idioma cuando se selecciona un nuevo elemento en el Spinner
+                val selectedLanguage = availableLanguages[position]
+                setLocale(selectedLanguage)
             }
+
+            override fun onNothingSelected(parentView: AdapterView<*>) {
+                // No es necesario hacer nada aquí
+            }
+        }
 
         val logoutButton = view.findViewById<Button>(R.id.logoutButton)
         logoutButton.setOnClickListener {
@@ -105,19 +107,38 @@ class SettingsFragment : Fragment() {
         return view
     }
 
-    // Función para generar el array de idiomas automáticamente
-    private fun generateLanguageArray(): Array<String> {
-        val languageResourceIds = resources.getStringArray(R.array.languages_array).map { resourceName ->
-            resources.getIdentifier(resourceName, "string", requireActivity().packageName)
+    // Método para obtener la lista de idiomas disponibles
+    private fun getAvailableLanguages(): List<String> {
+        val languages: MutableList<String> = ArrayList()
+        val resDir = File(requireContext().applicationInfo.sourceDir)
+        val valuesDirs = resDir.parentFile.listFiles { file -> file.isDirectory && file.name.startsWith("values") }
+
+        valuesDirs?.forEach { valuesDir ->
+            // Buscar el archivo strings.xml en cada directorio values
+            val stringsFile = File(valuesDir, "strings.xml")
+            if (stringsFile.exists()) {
+                // Extraer el nombre del idioma del nombre del directorio values
+                val language = valuesDir.name.replace("values-", "")
+                languages.add(language)
+            }
         }
 
-        return languageResourceIds.mapNotNull { resourceId ->
-            try {
-                resources.getString(resourceId)
-            } catch (e: Resources.NotFoundException) {
-                null
-            }
-        }.toTypedArray()
+        return languages
+    }
+
+
+
+
+    // Método para cambiar el idioma de la aplicación
+    private fun setLocale(languageCode: String) {
+        val resources: Resources = resources
+        val config: Configuration = resources.configuration
+        val dm: DisplayMetrics = resources.displayMetrics
+        config.setLocale(Locale(languageCode))
+        resources.updateConfiguration(config, dm)
+
+        // Recargar la actividad para que los cambios tengan efecto
+        requireActivity().recreate()
     }
 
     private fun showForgotPasswordDialog(userEmail: String) {

@@ -16,7 +16,7 @@
         android:id="@+id/GroupImageView"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:contentDescription="Group image"
+        android:contentDescription="@string/group_image"
         android:src="@drawable/circle_launcher" />
 
     <!-- Contenedor para el contenido del grupo -->
@@ -43,12 +43,12 @@
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:textColor="@android:color/black"
-            tools:text="This is this group's last message" />
+            tools:text="@string/this_is_this_group_s_last_message" />
     </LinearLayout>
 
     <Button
         android:id="@+id/joinButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Join" />
+        android:text="@string/join" />
 </LinearLayout>

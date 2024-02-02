@@ -10,10 +10,10 @@
 
     <!-- Contenedor para el contenido del mensaje y la información del remitente -->
     <ImageView
-        android:id="@+id/messengerImageView"
+        android:id="@+id/messagerIcon"
         android:layout_width="70dp"
         android:layout_height="match_parent"
-        android:contentDescription="Image de usuario"
+        android:contentDescription="@string/user_icon"
         android:src="@drawable/baseline_account_circle_24" />
 
     <LinearLayout
@@ -30,7 +30,7 @@
 
             <!-- Nombre del remitente -->
             <TextView
-                android:id="@+id/MessagerName"
+                android:id="@+id/messagerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"
@@ -61,7 +61,8 @@
                 android:id="@+id/archiveIcon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:src="@drawable/baseline_article_24" />
+                android:src="@drawable/baseline_article_24"
+                android:contentDescription="TODO" />
 
             <LinearLayout
                 android:id="@+id/ArchiveInfo"
@@ -72,25 +73,25 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/messageText"
+                    android:id="@+id/archiveNameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     tools:text="Archive Name" />
 
                 <TextView
-                    android:id="@+id/messageText2"
+                    android:id="@+id/archiveSizeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
                     android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
-                    android:textSize="6sp"
-                    tools:text="This is a message" />
+                    android:textSize="10sp"
+                    tools:ignore="SmallSp" />
             </LinearLayout>
 
             <ImageView

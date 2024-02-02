@@ -15,9 +15,18 @@ interface ChatUserDao {
     @Query("SELECT * FROM chat_user WHERE user_id = :userId AND chat_id = :chatId")
     suspend fun getChatUser(userId: Int, chatId: Int): ChatUserEntity?
 
-    @Query("DELETE FROM chat_user WHERE user_id = :userId AND chat_id = :chatId")
-    suspend fun deleteChatUser(userId: Int, chatId: Int)
+    @Query("SELECT * FROM chat_user WHERE chat_id = :chatId")
+    suspend fun getChatsForUser(chatId: Int): List<ChatUserEntity>
 
     @Query("SELECT * FROM chat_user WHERE chat_id = :chatId")
-    suspend fun getChatUsersInChat(chatId: Int): List<ChatUserEntity>
+    suspend fun getUsersInChat(chatId: Int): List<ChatUserEntity>
+
+    @Query("DELETE FROM chat_user WHERE chat_id = :chatId AND user_id = :userId")
+    suspend fun deleteChatUsersForChatAndUser(chatId: Int, userId: Int)
+
+    @Query("DELETE FROM chat_user WHERE chat_id = :chatId")
+    suspend fun deleteChatUsersForChat(chatId: Int)
+
+    @Query("DELETE FROM chat_user WHERE user_id = :userId")
+    suspend fun deleteChatUsersForUser(userId: Int)
 }

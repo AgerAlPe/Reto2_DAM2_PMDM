@@ -10,7 +10,7 @@
 
     <!-- Contenedor para el contenido del mensaje y la información del remitente -->
     <ImageView
-        android:id="@+id/messengerImageView"
+        android:id="@+id/messagerIcon"
         android:layout_width="70dp"
         android:layout_height="match_parent"
         android:contentDescription="Image de usuario"
@@ -30,7 +30,7 @@
 
             <!-- Nombre del remitente -->
             <TextView
-                android:id="@+id/MessagerName"
+                android:id="@+id/messagerName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="10dp"

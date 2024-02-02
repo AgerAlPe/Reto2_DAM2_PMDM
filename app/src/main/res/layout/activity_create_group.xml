@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Espacio Vertical -->
-
-    <!-- Nombre del Grupo -->
-
-    <!-- Tipo de Grupo (Seleccionable) -->
-
-    <!-- Botón de Confirmación -->
+    <ImageView
+        android:id="@+id/groupLogo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/groupNameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/circle_launcher" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/groupNameLayout"
@@ -28,40 +31,41 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/groupName"
             style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nombre del Grupo" />
+            android:hint="@string/group_name" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/groupTypeToggleGroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:singleSelection="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupNameLayout">
+        app:layout_constraintTop_toBottomOf="@+id/groupNameLayout"
+        app:singleSelection="true">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/publicButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Público" />
+            android:text="@string/public_group" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/privateButton"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Privado" />
+            android:text="@string/private_group" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
@@ -69,11 +73,12 @@
         android:id="@+id/createGroupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Crear Grupo"
+        android:text="@string/create_group"
         app:cornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/groupTypeToggleGroup" />
+        app:layout_constraintTop_toBottomOf="@+id/groupTypeToggleGroup"
+        app:layout_constraintVertical_bias="0.40" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -24,7 +24,7 @@
         android:id="@+id/createChat"
         android:layout_width="65dp"
         android:layout_height="65dp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/button_to_create_chat_groups"
         android:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

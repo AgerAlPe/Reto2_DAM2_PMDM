@@ -21,32 +21,32 @@
 
             <!-- Contenido del primer LinearLayout -->
             <TextView
-                android:id="@+id/titleTextView"
+                android:id="@+id/userNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UserName"
+                android:text="@string/username"
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"/>
 
             <TextView
-                android:id="@+id/subtitleTextView"
+                android:id="@+id/userSurnameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="a"
-                android:textSize="24sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/usersurname"
+                android:textSize="24sp" />
 
             <TextView
-                android:id="@+id/descriptionTextView"
+                android:id="@+id/userRoleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="B"
-                android:textSize="18sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/role"
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -63,16 +63,16 @@
                 android:id="@+id/DateTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Miembro desde:"
-                android:textSize="18sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/member_since"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/Date2TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10/20/24"
+                android:text=""
                 android:textSize="18sp"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"/>
@@ -92,19 +92,19 @@
                 android:id="@+id/forgotPasswordTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Contraseña"
-                android:textSize="18sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/account_settings"
+                android:textSize="18sp" />
 
             <!-- Botón de recuperación de contraseña -->
             <Button
                 android:id="@+id/forgotPasswordButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cambiar Contraseña"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/change_password" />
         </LinearLayout>
 
         <LinearLayout
@@ -120,10 +120,10 @@
                 android:id="@+id/languageTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Seleccionar Idioma"
-                android:textSize="18sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/select_language"
+                android:textSize="18sp" />
 
             <!-- Spinner para seleccionar el idioma -->
             <Spinner
@@ -144,23 +144,15 @@
             android:orientation="vertical">
 
             <!-- Contenido del cuarto LinearLayout para cerrar sesión -->
-            <TextView
-                android:id="@+id/logoutTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cerrar Sesión"
-                android:textSize="18sp"
-                android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
 
             <!-- Botón para cerrar sesión -->
             <Button
                 android:id="@+id/logoutButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cerrar Sesión"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/close_session" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>
