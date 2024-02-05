@@ -22,7 +22,7 @@
     <string name="fctDualString" translatable="false">FCT/DUAL</string>
     <string name="rememberMe">Remember Me</string>
     <string name="acceptButtonString">Accept</string>
-    <string name="registerButtonString">Register</string>
+    <string name="register">Register</string>
     <string name="nameString">NAME</string>
     <string name="surnameString">SURNAME</string>
     <string name="login">Login</string>
@@ -84,6 +84,7 @@
     <string name="this_is_this_group_s_last_message">This is this group\'s last message</string>
     <string name="join">Join</string>
     <string name="user_icon">User Icon</string>
+    <string name="enter_your_icon">Enter your icon</string>
     <string name="enter_your_email">Enter your email</string>
     <string name="confirm_your_name">Confirm your name</string>
     <string name="confirm_your_surnames">Confirm your surnames</string>
@@ -95,4 +96,13 @@
     <string name="cycle_name">Cycle name</string>
     <string name="year_to_course">Year to course</string>
     <string name="internship_type">Internship type</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="basque">Basque</string>
+    <string name="light_mode">Light mode</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="select_app_mode">Select App Mode</string>
+    <string name="send_photo">Send Photo</string>
+    <string name="send_coordinates">Send GPS Coordinates</string>
+    <string name="send_file">Send File</string>
 </resources>

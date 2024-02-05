@@ -21,7 +21,7 @@
     <string name="views">Vistas</string>
     <string name="emailString">CORREO ELECTRÓNICO</string>
     <string name="filter">Filtrar</string>
-    <string name="registerButtonString">Registrarse</string>
+    <string name="register">Registrarse</string>
     <string name="nameString">NOMBRE</string>
     <string name="surnameString">APELLIDOS</string>
     <string name="login">Inicio de sesión</string>
@@ -74,6 +74,7 @@
     <string name="this_is_this_group_s_last_message">Este es el último mensaje de este grupo</string>
     <string name="join">Unirse</string>
     <string name="user_icon">Ícono de Usuario</string>
+    <string name="enter_your_icon">Ingresa tu ícono</string>
     <string name="enter_your_email">Ingresa tu correo electrónico</string>
     <string name="confirm_your_name">Confirma tu nombre</string>
     <string name="confirm_your_surnames">Confirma tus apellidos</string>
@@ -85,4 +86,13 @@
     <string name="cycle_name">Nombre del Ciclo</string>
     <string name="year_to_course">Año del Curso</string>
     <string name="internship_type">Tipo de Prácticas</string>
+    <string name="english">Inglés</string>
+    <string name="spanish">Español</string>
+    <string name="basque">Euskera</string>
+    <string name="light_mode">Modo Claro</string>
+    <string name="dark_mode">Modo Oscuro</string>
+    <string name="select_app_mode">Seleccionar Modo de la Aplicación</string>
+    <string name="send_photo">Enviar Foto</string>
+    <string name="send_coordinates">Enviar Coordenadas GPS</string>
+    <string name="send_file">Enviar Archivo</string>
 </resources>

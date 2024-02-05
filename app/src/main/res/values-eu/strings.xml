@@ -21,7 +21,7 @@
     <string name="views">Ikuspegiak</string>
     <string name="emailString">POSTA ELEKTRONIKOA</string>
     <string name="filter">Iragazi</string>
-    <string name="registerButtonString">Erregistratu</string>
+    <string name="register">Erregistratu</string>
     <string name="nameString">IZENA</string>
     <string name="surnameString">ABIZENAK</string>
     <string name="login">Sarrera</string>
@@ -74,6 +74,7 @@
     <string name="this_is_this_group_s_last_message">Hau da talde honen azken mezua</string>
     <string name="join">Batu</string>
     <string name="user_icon">Erabiltzailearen Ikonoa</string>
+    <string name="enter_your_icon">Sartu zure ikonoa</string>
     <string name="enter_your_email">Sartu zure posta elektronikoa</string>
     <string name="confirm_your_name">Berretsi zure izena</string>
     <string name="confirm_your_surnames">Berretsi zure abizenak</string>
@@ -85,4 +86,13 @@
     <string name="cycle_name">Zikloaren Izena</string>
     <string name="year_to_course">Urtea ikasturtea</string>
     <string name="internship_type">Praktiken Mota</string>
+    <string name="english">Ingelesa</string>
+    <string name="spanish">Espainola</string>
+    <string name="basque">Euskara</string>
+    <string name="light_mode">Argi Modua</string>
+    <string name="dark_mode">Ilun Modua</string>
+    <string name="select_app_mode">Aukeratu Aplikazioaren Modua</string>
+    <string name="send_photo">Argazkia Bidali</string>
+    <string name="send_coordinates">GPS Koordenadak Bidali</string>
+    <string name="send_file">Fitxategia Bidali</string>
 </resources>

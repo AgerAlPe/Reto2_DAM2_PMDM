@@ -12,7 +12,7 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/login_toolbar"
+            android:id="@+id/register_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -25,23 +25,38 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="@string/login" />
-
-        <ImageView
-            android:id="@+id/user_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:importantForAccessibility="no"
-            app:srcCompat="@drawable/circle_launcher" />
+            app:title="@string/register" />
 
         <ImageView
             android:id="@+id/register_icon"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:importantForAccessibility="no"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
             app:srcCompat="@drawable/circle_launcher" />
+
+        <ImageView
+            android:id="@+id/user_icon"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/baseline_add_account_circle_24"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:id="@+id/iconLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/enter_your_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_icon" />
 
         <LinearLayout
             android:layout_width="match_parent"

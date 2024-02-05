@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="16dp"
     tools:context=".ui.groups.settings.SettingsFragment">
     <LinearLayout
@@ -11,7 +12,7 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/UserData"
+            android:id="@+id/userDataLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
@@ -28,7 +29,8 @@
                 android:textSize="36sp"
                 android:textStyle="bold"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:textColor="@android:color/white"/>
 
             <TextView
                 android:id="@+id/userSurnameTextView"
@@ -37,7 +39,8 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/usersurname"
-                android:textSize="24sp" />
+                android:textSize="24sp"
+                android:textColor="@android:color/white"/>
 
             <TextView
                 android:id="@+id/userRoleTextView"
@@ -46,19 +49,9 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/role"
-                android:textSize="18sp" />
-        </LinearLayout>
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
 
-        <LinearLayout
-            android:id="@+id/User"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:padding="8dp"
-            android:background="@drawable/rounded_background"
-            android:orientation="vertical">
-
-            <!-- Contenido del segundo LinearLayout -->
             <TextView
                 android:id="@+id/DateTextView"
                 android:layout_width="wrap_content"
@@ -66,16 +59,17 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/member_since"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@android:color/white" />
 
             <TextView
                 android:id="@+id/Date2TextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18sp"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text=""
+                android:textSize="18sp" />
         </LinearLayout>
 
         <LinearLayout
@@ -95,7 +89,8 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/account_settings"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
 
             <!-- Botón de recuperación de contraseña -->
             <Button
@@ -104,16 +99,18 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
-                android:text="@string/change_password" />
+                android:text="@string/change_password"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/languageLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
-            android:padding="8dp"
             android:background="@drawable/rounded_background"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="8dp">
 
             <!-- Contenido del tercer LinearLayout con selector de idiomas -->
             <TextView
@@ -123,16 +120,101 @@
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
                 android:text="@string/select_language"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
 
-            <!-- Spinner para seleccionar el idioma -->
-            <Spinner
-                android:id="@+id/languageSpinner"
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/languageToggleGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
+                android:gravity="center"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <!-- Botones para seleccionar el idioma -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/englishButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/english"
+                    app:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/spanishButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/spanish"
+                    app:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/basqueButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/basque"
+                    app:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"/>
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/appModeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:background="@drawable/rounded_background"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <!-- Contenido del nuevo LinearLayout para cambiar de modo claro y oscuro -->
+            <TextView
+                android:id="@+id/appModeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
-                android:paddingRight="12dp"/>
+                android:paddingRight="12dp"
+                android:text="@string/select_app_mode"
+                android:textSize="18sp"
+                android:textColor="@android:color/white"/>
+
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/appModeToggleGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <!-- Botones para cambiar entre modos claro y oscuro -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/lightModeButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/light_mode"
+                    app:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/darkModeButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/dark_mode"
+                    app:backgroundTint="@color/colorAccent"
+                    android:textColor="@android:color/white"/>
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
         </LinearLayout>
 
         <LinearLayout
@@ -152,7 +234,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="12dp"
                 android:paddingRight="12dp"
-                android:text="@string/close_session" />
+                android:text="@string/close_session"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

@@ -9,6 +9,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- New Colors for Dark Theme -->
+        <item name="android:windowBackground">@color/colorMainBackgroundDark</item>
+        <item name="android:colorBackground">@color/colorNavBarDetailsDark</item>
+        <item name="android:textColor">@color/colorTextDark</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryAccentDark</item>
+        <item name="android:textColorPrimary">@color/colorTextDark</item>
+
     </style>
 
     <style name="Theme.ElorChat.Starting" parent="Theme.SplashScreen">

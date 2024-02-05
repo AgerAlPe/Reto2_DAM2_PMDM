@@ -7,7 +7,6 @@
     android:layout_marginStart="5dp"
     android:layout_marginEnd="10dp"
     android:layout_marginBottom="5dp"
-    android:background="@color/cardview_light_background"
     android:orientation="horizontal"
     android:gravity="center_vertical">
 
@@ -42,7 +41,6 @@
             android:layout_height="0dp"
             android:layout_weight="1"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@android:color/black"
             tools:text="@string/this_is_this_group_s_last_message" />
     </LinearLayout>
 

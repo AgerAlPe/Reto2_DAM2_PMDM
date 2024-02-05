@@ -9,6 +9,13 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <!-- New Colors for Light Theme -->
+        <item name="android:windowBackground">@color/colorMainBackgroundLight</item>
+        <item name="android:colorBackground">@color/colorNavBarDetailsLight</item>
+        <item name="android:textColor">@color/colorTextLight</item>
+        <item name="colorPrimaryVariant">@color/colorPrimaryAccentLight</item>
+        <item name="android:textColorPrimary">@color/colorTextLight</item>
     </style>
 
     <style name="Theme.ElorChat.Starting" parent="Theme.SplashScreen">
@@ -21,4 +28,5 @@
     <style name="CustomCheckBox" parent="Widget.AppCompat.CompoundButton.CheckBox">
         <item name="android:button">@drawable/custom_checkbox_selector</item>
     </style>
+
 </resources>

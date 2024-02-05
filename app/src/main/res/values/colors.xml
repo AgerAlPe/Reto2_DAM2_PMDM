@@ -1,17 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Theme Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorPrimary">#302962</color>
-    <color name="colorPrimaryDark">#1e2732</color>
-    <color name="colorAccent">#2E7D32</color>
+    <color name="colorPrimaryDark">#262245</color>
+    <color name="colorAccent">#8DA5CF</color>
     <color name="colorTitle">#ffffff</color>
-    <color name="colorLightGray">#ececec</color>
-    <color name="colorGray">#dedede</color>
-    <color name="colorDarkGray">#b4b4b4</color>
+    <color name="colorBackground">#302962</color>
+
+    <!-- Light Theme Colors -->
+    <color name="colorMainBackgroundLight">#FFFFFF</color>
+    <color name="colorNavBarDetailsLight">#302962</color>
+    <color name="colorPrimaryAccentLight">#50B3CBCB</color>
+    <color name="colorTextOnDarkLight">#1e2732</color>
+    <color name="colorTextLight">#000000</color>
+
+    <!-- Dark Theme Colors -->
+    <color name="colorMainBackgroundDark">#1e2732</color>
+    <color name="colorNavBarDetailsDark">#283340</color>
+    <color name="colorPrimaryAccentDark">#50B3CBCB</color>
+    <color name="colorTextOnLightDark">#302962</color>
+    <color name="colorTextDark">#ffffff</color>
+
+    <!-- Other Colors -->
+    <color name="colorLightGray">#F5F5F5</color>
+    <color name="colorGray">#E0E0E0</color>
+    <color name="colorDarkGray">#B0B0B0</color>
     <color name="colorBlue">#2962FF</color>
 
-    <color name="colorBackground">#302962</color>
-    <color name="colorText">#ffffff</color>
-    <color name="colorAccent2">#C2D6BA</color>
 </resources>
