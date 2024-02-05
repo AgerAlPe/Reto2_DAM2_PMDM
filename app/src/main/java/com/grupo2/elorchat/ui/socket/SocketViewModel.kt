@@ -34,7 +34,7 @@ import javax.inject.Inject
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
     private val socketRepository: CommonSocketRepository,
-    private val groupName: String?
+    private val groupName: String?,
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
