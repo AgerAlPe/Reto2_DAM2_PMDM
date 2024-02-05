@@ -20,6 +20,7 @@ import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
+import com.grupo2.elorchat.ui.groups.publicgroups.PublicGroupAdapter
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -40,6 +41,7 @@ class SocketActivity() : ComponentActivity() {
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
+    private lateinit var groupListAdapter: PublicGroupAdapter
 
     private lateinit var socketService: SocketService
     private var isBind = false
@@ -57,6 +59,7 @@ class SocketActivity() : ComponentActivity() {
         groupName = intent.getStringExtra("groupName") ?: ""
 
         binding.toolbar.title = groupName
+
 
         // Initialize messageDao here
         // messageDao = AppDatabase.getInstance(application).getMessageDao()
@@ -154,12 +157,22 @@ class SocketActivity() : ComponentActivity() {
         binding.leaveButton.setOnClickListener {
             Log.d("ButtonClickListener", "Leave Chat button clicked")
 
+            // UI update logic before function call
+            // Find the position of the updated group in the adapter
+            val position = groupListAdapter.currentList.indexOfFirst { it.id == groupId }
+
+            if (position != -1) {
+                // Update the specific Group object in the adapter
+                groupListAdapter.currentList[position].isUserOnGroup = false
+
+                // Notify the adapter about the change
+                groupListAdapter.notifyItemChanged(position)
+            }
+
             lifecycleScope.launch {
                 try {
                     val userId = appDatabase.getUserDao().getAllUser().first().id
-
                     groupId?.let { it1 -> groupViewModel.leaveChat(userId, it1) }
-
                     socketViewModelt.leaveRoom(groupName, userId)
                 } catch (e: Exception) {
                     // Handle exceptions if any
@@ -172,14 +185,27 @@ class SocketActivity() : ComponentActivity() {
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
-                    // You can perform additional actions on success if needed
-                    groupViewModel.updateGroupList()
 
+                    // Ensure adapter is initialized before updating
+                    if (::groupListAdapter.isInitialized) {
+                        // Find the position of the updated group in the adapter
+                        val position = groupListAdapter.currentList.indexOfFirst { it.id == groupId }
+
+                        if (position != -1) {
+                            // Update the specific Group object in the adapter
+                            Log.d("DataSourceBefore", groupListAdapter.currentList.toString())
+                            groupListAdapter.currentList[position].isUserOnGroup = false
+                            groupListAdapter.notifyItemChanged(position)
+                            Log.d("DataSourceAfter", groupListAdapter.currentList.toString())
+                            groupListAdapter.submitList(groupListAdapter.currentList.toMutableList())
+                            groupListAdapter.notifyDataSetChanged()
+                        }
+                    }
 
                     // Set the result to indicate success
                     setResult(Activity.RESULT_OK)
                     // Finish the current activity
-
+                    finish()
                 }
                 Resource.Status.ERROR -> {
                     Toast.makeText(this, "Error leaving the chat: ${result.message}", Toast.LENGTH_SHORT).show()

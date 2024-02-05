@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.groups.publicgroups
 
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,7 +13,7 @@ import com.grupo2.elorchat.databinding.GroupBinding
 
 class PublicGroupAdapter(
     private val onGroupClickListener: (Group) -> Unit,
-    private val onJoinButtonClickListener: (Group) -> Unit
+    private val onJoinButtonClickListener: (Group, Boolean) -> Unit
 ) : ListAdapter<Group, PublicGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -27,21 +28,11 @@ class PublicGroupAdapter(
             onGroupClickListener(group)
         }
 
-        // Log the values for debugging
-        Log.d("GroupAdapter", "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}")
-
         // Check if the user is already in the group
         if (group.isUserOnGroup) {
-            Log.d("GroupAdapter", "User is already in the group, hiding joinButton")
-            holder.joinButton.visibility = View.GONE
+            holder.setLeaveButtonState(group)
         } else {
-            Log.d("GroupAdapter", "User is not in the group, showing joinButton")
-            holder.joinButton.visibility = View.VISIBLE
-            holder.joinButton.setOnClickListener {
-                group.isUserOnGroup = true
-                holder.joinButton.visibility = View.GONE
-                onJoinButtonClickListener(group)
-            }
+            holder.setJoinButtonState(group)
         }
     }
 
@@ -52,9 +43,40 @@ class PublicGroupAdapter(
 
         fun bind(group: Group) {
             binding.GroupName.text = group.name
+
+            // Set the initial state of the joinButton
+            joinButton.text = if (group.isUserOnGroup) "Leave" else "Join"
+
+            // Update the joinButton text based on the isUserOnGroup property
+            joinButton.setOnClickListener {
+                it.isEnabled = false // Disable the button temporarily
+
+                if (group.isUserOnGroup) {
+                    group.isUserOnGroup = false
+                    setJoinButtonState(group)
+                    onJoinButtonClickListener(group, false)
+                } else {
+                    group.isUserOnGroup = true
+                    setLeaveButtonState(group)
+                    onJoinButtonClickListener(group, true)
+                }
+
+                Handler().postDelayed({
+                    it.isEnabled = true // Re-enable the button after a delay
+                }, 500) // You can adjust the delay time as needed
+            }
+        }
+
+        fun setJoinButtonState(group: Group) {
+            joinButton.text = "Join"
+        }
+
+        fun setLeaveButtonState(group: Group) {
+            joinButton.text = "Leave"
         }
     }
 }
+
 class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
 
     override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {

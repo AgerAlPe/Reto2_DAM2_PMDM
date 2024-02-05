@@ -34,11 +34,8 @@ import kotlinx.coroutines.launch
 class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
 
     private lateinit var groupListAdapter: PublicGroupAdapter
-    private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
-    private val groupRepository = RemoteGroupDataSource()
-    private val socketRepository = RemoteSocketDataSource()
     private val viewModel: GroupViewModel by viewModels()
-    private val socketViewModel : SocketViewModel by viewModels()
+    private val socketViewModel: SocketViewModel by viewModels()
     private val SOCKET_ACTIVITY_REQUEST_CODE = 123
 
     override fun onCreateView(
@@ -63,6 +60,7 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
                     Resource.Status.SUCCESS -> {
                         if (it.data != null) {
                             groupListAdapter.submitList(it.data)
+                            groupListAdapter.notifyDataSetChanged()
                         }
                     }
 
@@ -107,52 +105,31 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
         startActivityForResult(intent, SOCKET_ACTIVITY_REQUEST_CODE)
     }
 
-    private fun refreshFragmentData() {
-        // Your logic to refresh the fragment data
-        viewModel.updateGroupList()
-        // Add any other logic needed to refresh the entire view
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == SOCKET_ACTIVITY_REQUEST_CODE) {
-            // Check if the result is OK and perform the refresh/update action
-            if (resultCode == Activity.RESULT_OK) {
-                // Refresh the fragment data
-                refreshFragmentData()
-            }
-        }
-    }
-
-    private fun onJoinButtonClickItem(group: Group) {
+    private fun onJoinButtonClickItem(group: Group, join: Boolean) {
         lifecycleScope.launch {
             try {
                 val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
 
-                if (userId != null) {
-                    viewModel.joinChat(ChatUser(userId, group.id, false))
+                userId?.let { safeUserId ->
+                    if (group.isUserOnGroup) {
+                        // User is not in the group, join the group
+                        // Update the LiveData immediately before making the database call
 
-                    socketViewModel.joinRoom(group.name, userId)
+                        viewModel.joinChat(ChatUser(safeUserId, group.id, false)).observe(this@PublicGroupsFragment, Observer { result ->
+                            handleJoinLeaveResult(result, group, join)
+                        })
+                        socketViewModel.joinRoom(group.name, safeUserId)
+                    } else {
+                        // User is already in the group, leave the group
+                        // Update the LiveData immediately before making the database call
 
-                    viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
-                        when (result.status) {
-                            Resource.Status.SUCCESS -> {
-                                Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()
-                                group.isUserOnGroup = true
-                                viewModel.updateGroupList()
-                                // You can add any additional actions on success if needed
-                            }
-                            Resource.Status.ERROR -> {
-                                Toast.makeText(requireContext(), "Error joining the chat: ${result.message}", Toast.LENGTH_SHORT).show()
-                                // Handle error state, if needed
-                            }
-                            Resource.Status.LOADING -> {
-                                // Handle loading state if needed
-                            }
-                        }
-                    })
-                } else {
+                        viewModel.leaveChat(safeUserId, group.id).observe(this@PublicGroupsFragment, Observer { result ->
+                            handleJoinLeaveResult(result, group, join)
+
+                        })
+                        socketViewModel.leaveRoom(group.name, safeUserId)
+                    }
+                } ?: run {
                     Log.e("YourActivity", "userId is null")
                     // Handle the case where userId is null
                 }
@@ -161,5 +138,45 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
                 // Handle exceptions if any
             }
         }
+    }
+
+
+    private fun handleJoinLeaveResult(result: Resource<*>, group: Group, join: Boolean) {
+        when (result?.status) {
+            Resource.Status.SUCCESS -> {
+                if (join) {
+                    handleJoinSuccess(result.data as ChatUser, group)
+                } else {
+                    handleLeaveSuccess(group)
+                }
+            }
+            Resource.Status.ERROR -> {
+                val errorMessage = if (join) "Error joining the chat" else "Error leaving the chat"
+                Toast.makeText(requireContext(), "$errorMessage: ${result.message}", Toast.LENGTH_SHORT).show()
+                // Handle error state, if needed
+            }
+            Resource.Status.LOADING -> {
+                // Handle loading state if needed
+            }
+            else -> {
+                // Handle the case when result?.status is null
+            }
+        }
+        // Notify the adapter that the data has changed
+        groupListAdapter.notifyDataSetChanged()
+    }
+
+    private fun handleJoinSuccess(chatUser: ChatUser, group: Group) {
+        val message = "Successfully joined the chat"
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
+        // You can add any additional actions on success if needed
+    }
+
+    private fun handleLeaveSuccess(group: Group) {
+        val message = "Successfully left the chat"
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+
+        // You can add any additional actions on success if needed
     }
 }
