@@ -9,12 +9,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.ui.groups.settings.SettingsFragment
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class GroupActivity : AppCompatActivity() {
+class GroupActivity : AppCompatActivity(), SettingsFragment.LanguageChangeListener {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager2: ViewPager2
@@ -68,4 +69,10 @@ class GroupActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun onLanguageChanged() {
+        recreate() // Esto reiniciará la actividad con el nuevo idioma
+    }
+
+
 }

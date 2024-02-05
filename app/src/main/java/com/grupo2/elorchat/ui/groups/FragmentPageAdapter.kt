@@ -23,7 +23,7 @@ class FragmentPageAdapter(
         return if(position == 0) {
             PrivateGroupsFragment()
         }else if (position == 1) {
-            PublicGroupsFragment(appDatabase)
+            PublicGroupsFragment()
         }else {
             SettingsFragment()
         }

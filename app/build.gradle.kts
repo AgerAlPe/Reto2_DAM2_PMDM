@@ -68,6 +68,8 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation("com.google.android.material:material:1.11.0")
+
 
     //DataStore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")

@@ -6,14 +6,14 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.databinding.GroupBinding
+import com.grupo2.elorchat.databinding.ItemGroupBinding
 
 class PrivateGroupAdapter(
     private val onClickListener: (Group) -> Unit,
 ) : ListAdapter<Group, PrivateGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GroupViewHolder(binding)
     }
 
@@ -25,7 +25,7 @@ class PrivateGroupAdapter(
         }
     }
 
-    inner class GroupViewHolder(private val binding: GroupBinding) :
+    inner class GroupViewHolder(private val binding: ItemGroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(group: Group) {

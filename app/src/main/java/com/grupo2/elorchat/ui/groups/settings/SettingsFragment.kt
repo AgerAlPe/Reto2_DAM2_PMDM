@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Bundle
+import android.os.Handler
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.Patterns
@@ -26,8 +27,15 @@ import com.grupo2.elorchat.data.database.AppDatabase
 
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat.recreate
+import androidx.core.content.ContextCompat
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.grupo2.elorchat.ElorChat.Companion.userPreferences
+import com.grupo2.elorchat.UserPreferences
 
 import com.grupo2.elorchat.databinding.FragmentSettingsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
@@ -59,6 +67,8 @@ class SettingsFragment : Fragment() {
         //view.findViewById<TextView>(R.id.subtitleTextView).text = loggedInUser.subtitle
         //view.findViewById<TextView>(R.id.descriptionTextView).text = loggedInUser.description
 
+        val languageToggleGroup: MaterialButtonToggleGroup = binding.languageToggleGroup
+        val appModeToggleGroup: MaterialButtonToggleGroup = binding.appModeToggleGroup
 
         view.findViewById<Button>(R.id.forgotPasswordButton).setOnClickListener {
             lifecycleScope.launch {
@@ -72,73 +82,79 @@ class SettingsFragment : Fragment() {
             }
         }
 
-        val languageSpinner = binding.languageSpinner
+        binding.logoutButton.setOnClickListener {
+            showLogoutConfirmationDialog()
+        }
 
-        // Obtener la lista de idiomas disponibles
-        val availableLanguages = getAvailableLanguages()
-
-        // Crear un ArrayAdapter usando la lista de idiomas
-        val adapter: ArrayAdapter<String> = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, availableLanguages)
-
-        // Establecer el estilo del dropdown
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-
-        // Establecer el adaptador en el Spinner
-        languageSpinner.adapter = adapter
-
-        // Manejar la selección del idioma
-        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parentView: AdapterView<*>, selectedItemView: View?, position: Int, id: Long) {
-                // Cambiar el idioma cuando se selecciona un nuevo elemento en el Spinner
-                val selectedLanguage = availableLanguages[position]
-                setLocale(selectedLanguage)
-            }
-
-            override fun onNothingSelected(parentView: AdapterView<*>) {
-                // No es necesario hacer nada aquí
+        languageToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.englishButton -> setLocale("en", userPreferences)
+                    R.id.spanishButton -> setLocale("es", userPreferences)
+                    R.id.basqueButton -> setLocale("eu", userPreferences)
+                }
             }
         }
 
-        val logoutButton = view.findViewById<Button>(R.id.logoutButton)
-        logoutButton.setOnClickListener {
-            showLogoutConfirmationDialog()
+        // Recuperar el modo almacenado y configurarlo automáticamente
+        val storedAppMode = userPreferences.fetchAppMode()
+        if (storedAppMode != null) {
+            setAppMode(storedAppMode)
+        }
+
+        appModeToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (isChecked) {
+                when (checkedId) {
+                    R.id.lightModeButton -> setAppMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    R.id.darkModeButton -> setAppMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+            }
         }
 
         return view
     }
 
-    // Método para obtener la lista de idiomas disponibles
-    private fun getAvailableLanguages(): List<String> {
-        val languages: MutableList<String> = ArrayList()
-        val resDir = File(requireContext().applicationInfo.sourceDir)
-        val valuesDirs = resDir.parentFile.listFiles { file -> file.isDirectory && file.name.startsWith("values") }
-
-        valuesDirs?.forEach { valuesDir ->
-            // Buscar el archivo strings.xml en cada directorio values
-            val stringsFile = File(valuesDir, "strings.xml")
-            if (stringsFile.exists()) {
-                // Extraer el nombre del idioma del nombre del directorio values
-                val language = valuesDir.name.replace("values-", "")
-                languages.add(language)
-            }
-        }
-
-        return languages
+    interface AppModeChangeListener {
+        fun onAppModeChanged()
     }
 
+    private fun setAppMode(mode: Int) {
+        // Almacena el modo seleccionado
+        userPreferences.saveAppMode(mode)
 
+        // Configura el modo de la aplicación
+        AppCompatDelegate.setDefaultNightMode(mode)
 
+        // Notificar a la actividad para que pueda reiniciar y aplicar los cambios
+        if (activity is AppModeChangeListener) {
+            (activity as AppModeChangeListener).onAppModeChanged()
+        }
+    }
 
-    // Método para cambiar el idioma de la aplicación
-    private fun setLocale(languageCode: String) {
-        val resources: Resources = resources
-        val config: Configuration = resources.configuration
-        val dm: DisplayMetrics = resources.displayMetrics
-        config.setLocale(Locale(languageCode))
-        resources.updateConfiguration(config, dm)
+    interface LanguageChangeListener {
+        fun onLanguageChanged()
+    }
 
-        // Recargar la actividad para que los cambios tengan efecto
-        requireActivity().recreate()
+    private fun setLocale(languageCode: String, userPreferences: UserPreferences) {
+        val storedLanguage = userPreferences.fetchSelectedLanguage()
+
+        if (storedLanguage != null && Locale.getDefault().language != languageCode) {
+            val locale = Locale(storedLanguage)
+            Locale.setDefault(locale)
+            val config = Configuration().apply {
+                setLocale(locale)
+            }
+
+            requireContext().resources.updateConfiguration(config, requireContext().resources.displayMetrics)
+
+            // Notificar a la actividad para que pueda reiniciar y aplicar los cambios de idioma
+            (activity as? LanguageChangeListener)?.onLanguageChanged()
+
+            // Postergar la recreación de la actividad
+            Handler().postDelayed({
+                activity?.recreate()
+            }, 1000) // Ajusta este valor según sea necesario
+        }
     }
 
     private fun showForgotPasswordDialog(userEmail: String) {

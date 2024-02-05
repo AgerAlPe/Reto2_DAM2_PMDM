@@ -17,7 +17,7 @@ class ElorChat : Application() {
     override fun onCreate() {
         super.onCreate()
         context = this;
-        userPreferences = UserPreferences()
+        userPreferences = UserPreferences(this)
         // Required initialization logic here!
     }
 

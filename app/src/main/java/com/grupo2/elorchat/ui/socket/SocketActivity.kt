@@ -8,11 +8,15 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.Gravity
+import android.view.View
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
@@ -68,6 +72,12 @@ class SocketActivity() : ComponentActivity() {
             viewModel.thisGroupsMessages(groupId!!)
         }
 
+        val addMessageImageView: ImageView = findViewById(R.id.addMessageImageView)
+
+        addMessageImageView.setOnClickListener { view ->
+            showPopupMenu(view)
+        }
+
         viewModel.messages.observe(this) { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
@@ -97,6 +107,30 @@ class SocketActivity() : ComponentActivity() {
         Log.d("ButtonClickListener", "Connect button clicked")
     }
 
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menuInflater.inflate(R.menu.message_type, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.send_photo -> {
+                    // Lógica para enviar una foto
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.send_coordinates -> {
+                    // Lógica para enviar coordenadas GPS
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.send_file -> {
+                    // Lógica para enviar un archivo
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+        }
+
+        popupMenu.show()
+    }
 
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
