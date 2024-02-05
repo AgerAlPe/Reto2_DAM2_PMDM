@@ -25,7 +25,7 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
 
         fun bind(message: Message) {
             binding.messageText.text = message.message
-            binding.MessagerName.text = message.name
+            binding.messagerName.text = message.name
             binding.messageDate.text = message.createdAt
             // You can bind other properties as needed
         }

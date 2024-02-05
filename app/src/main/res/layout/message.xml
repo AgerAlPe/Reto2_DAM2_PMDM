@@ -49,7 +49,7 @@
 
         <!-- Contenido del mensaje -->
         <TextView
-            android:id="@+id/archiveNameText"
+            android:id="@+id/messageText"
             android:layout_width="wrap_content"
             android:maxWidth="250dp"
             android:layout_height="wrap_content"
