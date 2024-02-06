@@ -11,5 +11,4 @@ class ChatUser (
     val isAdmin: Boolean
 ): Parcelable {
     constructor(id: Int, userId: Int, chatId: Int) : this(id, userId, chatId, false)
-
 }
