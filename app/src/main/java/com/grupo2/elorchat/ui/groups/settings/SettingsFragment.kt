@@ -2,13 +2,8 @@ package com.grupo2.elorchat.ui.groups.settings
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.os.Bundle
-import android.os.Handler
-import android.util.DisplayMetrics
 import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,27 +15,22 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.ChangePasswordRequest
-import com.grupo2.elorchat.data.database.AppDatabase
 
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.core.app.ActivityCompat.recreate
-import androidx.core.content.ContextCompat
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
+import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.ElorChat.Companion.userPreferences
 import com.grupo2.elorchat.UserPreferences
 
 import com.grupo2.elorchat.databinding.FragmentSettingsBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
 import com.grupo2.elorchat.ui.users.login.LoginActivity
+import com.grupo2.elorchat.utils.LanguageManager
 import com.grupo2.elorchat.utils.Resource
+import com.grupo2.elorchat.utils.ThemeManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.io.File
@@ -86,75 +76,49 @@ class SettingsFragment : Fragment() {
             showLogoutConfirmationDialog()
         }
 
+        when (userPreferences.fetchSelectedLanguage()) {
+            "en" -> languageToggleGroup.check(R.id.englishButton)
+            "es" -> languageToggleGroup.check(R.id.spanishButton)
+            "eu" -> languageToggleGroup.check(R.id.basqueButton)
+        }
+
         languageToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
-                    R.id.englishButton -> setLocale("en", userPreferences)
-                    R.id.spanishButton -> setLocale("es", userPreferences)
-                    R.id.basqueButton -> setLocale("eu", userPreferences)
+                    R.id.englishButton -> LanguageManager.applyLanguage("en", requireActivity() as AppCompatActivity, userPreferences)
+                    R.id.spanishButton -> LanguageManager.applyLanguage("es", requireActivity() as AppCompatActivity, userPreferences)
+                    R.id.basqueButton -> LanguageManager.applyLanguage("eu", requireActivity() as AppCompatActivity, userPreferences)
                 }
             }
         }
 
-        // Recuperar el modo almacenado y configurarlo automáticamente
-        val storedAppMode = userPreferences.fetchAppMode()
-        if (storedAppMode != null) {
-            setAppMode(storedAppMode)
+        when (userPreferences.fetchAppMode()) {
+            AppCompatDelegate.MODE_NIGHT_NO -> appModeToggleGroup.check(R.id.lightModeButton)
+            AppCompatDelegate.MODE_NIGHT_YES -> appModeToggleGroup.check(R.id.darkModeButton)
         }
 
         appModeToggleGroup.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (isChecked) {
                 when (checkedId) {
-                    R.id.lightModeButton -> setAppMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    R.id.darkModeButton -> setAppMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    R.id.lightModeButton -> {
+                        ThemeManager.applyAppMode(
+                            AppCompatDelegate.MODE_NIGHT_NO,
+                            activity as AppCompatActivity,
+                            userPreferences
+                        )
+                    }
+                    R.id.darkModeButton -> {
+                        ThemeManager.applyAppMode(
+                            AppCompatDelegate.MODE_NIGHT_YES,
+                            activity as AppCompatActivity,
+                            userPreferences
+                        )
+                    }
                 }
             }
         }
 
         return view
-    }
-
-    interface AppModeChangeListener {
-        fun onAppModeChanged()
-    }
-
-    private fun setAppMode(mode: Int) {
-        // Almacena el modo seleccionado
-        userPreferences.saveAppMode(mode)
-
-        // Configura el modo de la aplicación
-        AppCompatDelegate.setDefaultNightMode(mode)
-
-        // Notificar a la actividad para que pueda reiniciar y aplicar los cambios
-        if (activity is AppModeChangeListener) {
-            (activity as AppModeChangeListener).onAppModeChanged()
-        }
-    }
-
-    interface LanguageChangeListener {
-        fun onLanguageChanged()
-    }
-
-    private fun setLocale(languageCode: String, userPreferences: UserPreferences) {
-        val storedLanguage = userPreferences.fetchSelectedLanguage()
-
-        if (storedLanguage != null && Locale.getDefault().language != languageCode) {
-            val locale = Locale(storedLanguage)
-            Locale.setDefault(locale)
-            val config = Configuration().apply {
-                setLocale(locale)
-            }
-
-            requireContext().resources.updateConfiguration(config, requireContext().resources.displayMetrics)
-
-            // Notificar a la actividad para que pueda reiniciar y aplicar los cambios de idioma
-            (activity as? LanguageChangeListener)?.onLanguageChanged()
-
-            // Postergar la recreación de la actividad
-            Handler().postDelayed({
-                activity?.recreate()
-            }, 1000) // Ajusta este valor según sea necesario
-        }
     }
 
     private fun showForgotPasswordDialog(userEmail: String) {

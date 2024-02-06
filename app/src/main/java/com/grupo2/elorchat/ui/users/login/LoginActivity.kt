@@ -15,8 +15,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
+import com.grupo2.elorchat.ElorChat.Companion.userPreferences
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.database.AppDatabase
@@ -27,7 +29,9 @@ import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.socket.SocketService
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
+import com.grupo2.elorchat.utils.LanguageManager
 import com.grupo2.elorchat.utils.Resource
+import com.grupo2.elorchat.utils.ThemeManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -62,6 +66,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userPreferences.fetchAppMode()?.let { mode ->
+            ThemeManager.applyAppMode(mode, this as AppCompatActivity, userPreferences)
+        }
+
+
+
+
         setContentView(R.layout.activity_login)
 
         val btnLogin = findViewById<Button>(R.id.buttonAccept)

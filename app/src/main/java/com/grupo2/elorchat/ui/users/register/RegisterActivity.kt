@@ -8,6 +8,7 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
@@ -31,6 +32,11 @@ class RegisterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        ElorChat.userPreferences.fetchAppMode()?.let {
+            AppCompatDelegate.setDefaultNightMode(it)
+        }
+
         setContentView(R.layout.fragment_scrolling_register)
 
         var id = 0

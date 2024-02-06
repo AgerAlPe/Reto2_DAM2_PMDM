@@ -3,6 +3,7 @@ package com.grupo2.elorchat
 import android.app.Application
 import android.content.Context
 import android.content.res.Configuration
+import com.grupo2.elorchat.utils.ThemeManager
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
