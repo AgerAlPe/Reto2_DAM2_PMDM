@@ -1,7 +1,6 @@
 package com.grupo2.elorchat.ui.users.login
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
@@ -13,10 +12,10 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
-import androidx.appcompat.app.AppCompatActivity;
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.UserEntity
@@ -66,6 +65,10 @@ class LoginActivity : AppCompatActivity() {
 
         val btnChangePassword = findViewById<Button>(R.id.retrievePassButton)
 
+        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+
+        Log.i("androidToken", androidId)
+
         var loginUser = LoginUser("", "")
 
         lifecycleScope.launch(Dispatchers.IO) {
@@ -104,7 +107,7 @@ class LoginActivity : AppCompatActivity() {
                                 viewModel.getUserData(loginUser.email)
 
                                 startService(socketServiceIntent)
-                                bindService(socketServiceIntent, socketServiceConnection, Context.BIND_AUTO_CREATE)
+                                bindService(socketServiceIntent, socketServiceConnection, BIND_AUTO_CREATE)
                             } else {
                                 Toast.makeText(this, "Authentication failed. Token is null.", Toast.LENGTH_SHORT).show()
                             }

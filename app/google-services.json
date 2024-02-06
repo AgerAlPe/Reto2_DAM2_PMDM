@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "680706949989",
+    "project_id": "laravel-fcm-251ea",
+    "storage_bucket": "laravel-fcm-251ea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680706949989:android:527ac6672b14a45763d78c",
+        "android_client_info": {
+          "package_name": "com.grupo2.elorchat"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMVM5E-LkVa0D_7BW5EhcgLgai4H5XOkc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
