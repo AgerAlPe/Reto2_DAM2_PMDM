@@ -327,7 +327,12 @@ class GroupViewModel @Inject constructor(
     fun makeAnUserLeave(chatUserEmailRequest: ChatUserEmailRequest) {
         viewModelScope.launch {
             val result = makeAnUserLeaveAChat(chatUserEmailRequest)
-            _kickUser.value = result.data ?: ChatUserMovementResponse("End of input at line 1 column 1 path \$")
+            Log.i("resultMessage", result.message.toString())
+            if (result.message.toString().contains("400")) {
+                _kickUser.value = ChatUserMovementResponse("ERROR 400")
+            } else {
+                _kickUser.value = result.data ?: ChatUserMovementResponse("End of input at line 1 column 1 path \$")
+            }
         }
     }
 
