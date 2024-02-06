@@ -12,6 +12,9 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
+import com.grupo2.elorchat.data.database.entities.toMessage
+import com.grupo2.elorchat.data.database.entities.toMessageEntity
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
@@ -33,8 +36,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
+
+    private val groupName: String?,
+    private val messageRepository: MessageRepository,
     private val socketRepository: CommonSocketRepository,
-    private val groupName: String?
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -47,13 +52,7 @@ class SocketViewModel @Inject constructor(
 
     private val _joined = MutableLiveData<Resource<Void>>()
 
-    val joined : LiveData<Resource<Void>> get() = _joined
-
     private val _leave = MutableLiveData<Resource<Void>>()
-
-    val  leave : LiveData<Resource<Void>> get() = _leave
-
-    private val SOCKET_ROOM = groupName
 
     fun thisGroupsMessages(groupId : Int) {
         Log.i(TAG, "Id Grupo: " + groupId)
@@ -63,22 +62,10 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-
-
     private suspend fun showThisGroupsMessages(groupId: Int): Resource<List<Message>> {
         return withContext(Dispatchers.IO) {
             groupRepository.getMessagesFromGroup(groupId)
         }
-    }
-
-
-    fun onSendMessage(message: String) {
-        Log.d(TAG, "onSendMessage $message")
-        // la sala esta hardcodeada..
-        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
-        val jsonObject = JSONObject(Gson().toJson(socketMessage))
-        // mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
-
     }
 
     fun onNewMessageReceived(message: Message) {
@@ -96,7 +83,6 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    // Function to leave the socket room
     fun leaveRoom(room : String, userId : Int) {
         viewModelScope.launch {
             //_leave.value = leaveSocketRoom(room , userId)
@@ -106,19 +92,24 @@ class SocketViewModel @Inject constructor(
     private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
         return withContext(Dispatchers.IO) {
             socketRepository.joinRoom(room , userId)
+        }
+    }
 
+    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            socketRepository.leaveRoom(room , userId)
         }
     }
 
 }
 
-
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
+    private val messageRepository: MessageRepository,
     private val socketRepository: CommonSocketRepository,
     private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, socketRepository, groupName) as T
+        return SocketViewModel(groupRepository, groupName, messageRepository, socketRepository) as T
     }
 }

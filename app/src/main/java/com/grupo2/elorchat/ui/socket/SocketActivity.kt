@@ -8,14 +8,19 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.Gravity
+import android.view.View
+import android.widget.ImageView
+import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
@@ -37,7 +42,9 @@ class SocketActivity() : ComponentActivity() {
     private val groupRepository = RemoteGroupDataSource()
     private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
-    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, socketRepository, groupName) }
+    @Inject
+    lateinit var messageRepository: MessageRepository
+    private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
 
@@ -58,14 +65,17 @@ class SocketActivity() : ComponentActivity() {
 
         binding.toolbar.title = groupName
 
-        // Initialize messageDao here
-        // messageDao = AppDatabase.getInstance(application).getMessageDao()
-
         messageAdapter = MessageAdapter()
         binding.listMessages.adapter = messageAdapter
 
         if (groupId != null) {
             viewModel.thisGroupsMessages(groupId!!)
+        }
+
+        val addMessageImageView: ImageView = findViewById(R.id.addMessageImageView)
+
+        addMessageImageView.setOnClickListener { view ->
+            showPopupMenu(view)
         }
 
         viewModel.messages.observe(this) { result ->
@@ -97,6 +107,30 @@ class SocketActivity() : ComponentActivity() {
         Log.d("ButtonClickListener", "Connect button clicked")
     }
 
+    private fun showPopupMenu(view: View) {
+        val popupMenu = PopupMenu(this, view)
+        popupMenu.menuInflater.inflate(R.menu.message_type, popupMenu.menu)
+
+        popupMenu.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.send_photo -> {
+                    // Lógica para enviar una foto
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.send_coordinates -> {
+                    // Lógica para enviar coordenadas GPS
+                    return@setOnMenuItemClickListener true
+                }
+                R.id.send_file -> {
+                    // Lógica para enviar un archivo
+                    return@setOnMenuItemClickListener true
+                }
+                else -> return@setOnMenuItemClickListener false
+            }
+        }
+
+        popupMenu.show()
+    }
 
     private fun onConnectedChange(binding: ActivitySocketBinding) {
         viewModel.connected.observe(this, Observer {
@@ -157,10 +191,10 @@ class SocketActivity() : ComponentActivity() {
             lifecycleScope.launch {
                 try {
                     val userId = appDatabase.getUserDao().getAllUser().first().id
+                  
+                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    groupId?.let { it1 -> groupViewModel.leaveChat(userId, it1) }
-
-                    socketViewModelt.leaveRoom(groupName, userId)
+                    socketViewModelt.leaveRoom(groupName, userId!!)
                 } catch (e: Exception) {
                     // Handle exceptions if any
                     Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")
@@ -174,12 +208,9 @@ class SocketActivity() : ComponentActivity() {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
                     // You can perform additional actions on success if needed
                     groupViewModel.updateGroupList()
-
-
                     // Set the result to indicate success
                     setResult(Activity.RESULT_OK)
-                    // Finish the current activity
-
+                    finish()
                 }
                 Resource.Status.ERROR -> {
                     Toast.makeText(this, "Error leaving the chat: ${result.message}", Toast.LENGTH_SHORT).show()

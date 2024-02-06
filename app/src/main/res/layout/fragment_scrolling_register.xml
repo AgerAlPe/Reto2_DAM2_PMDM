@@ -11,32 +11,52 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/register_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="15dp"
-            android:orientation="vertical"/>
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio=""
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+            app:title="@string/register" />
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/register_icon"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:importantForAccessibility="no"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            app:srcCompat="@drawable/circle_launcher" />
 
-            <ImageView
-                android:id="@+id/user_icon"
-                android:layout_height="wrap_content"
-                android:importantForAccessibility="no"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_launcher_background" />
+        <ImageView
+            android:id="@+id/user_icon"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:importantForAccessibility="no"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/baseline_add_account_circle_24"
+            android:layout_marginTop="8dp"/>
 
-            <ImageView
-                android:id="@+id/register_icon"
-                android:layout_height="wrap_content"
-                android:importantForAccessibility="no"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/ic_launcher_background" />
-        </LinearLayout>
+        <TextView
+            android:id="@+id/iconLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/enter_your_icon"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/user_icon" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -44,16 +64,11 @@
             android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_height="match_parent"
-                android:orientation="vertical"
                 android:layout_width="0dp"
-                android:layout_weight="1" />
-
-            <LinearLayout
                 android:layout_height="match_parent"
+                android:layout_weight="8"
                 android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="8">
+                android:padding="10dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/emailLayout"
@@ -66,7 +81,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Enter your email"
+                    app:helperText="@string/enter_your_email"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -76,12 +91,12 @@
                         android:layout_height="wrap_content"
                         android:autofillHints=""
                         android:ems="10"
-                        android:hint="@string/emailString"
-                        android:minHeight="48dp"
-                        android:textColorHint="#8D6E63"
-                        android:inputType="none"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
+                        android:hint="@string/emailString"
+                        android:inputType="none"
+                        android:minHeight="48dp"
+                        android:textColorHint="#8D6E63"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,7 +111,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm your name"
+                    app:helperText="@string/confirm_your_name"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -121,7 +136,7 @@
                     app:boxBackgroundColor="#ECEFF1"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm your surnames"
+                    app:helperText="@string/confirm_your_surnames"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -151,7 +166,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm your phone number"
+                    app:helperText="@string/confirm_your_phone_number"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -179,7 +194,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm your DNI~ID"
+                    app:helperText="@string/confirm_your_dni_id"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -208,7 +223,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Confirm your direction of residence"
+                    app:helperText="@string/confirm_your_direction_of_residence"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -238,7 +253,7 @@
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
                     app:endIconMode="password_toggle"
-                    app:helperText="Enter your new password"
+                    app:helperText="@string/enter_your_new_password"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -268,7 +283,7 @@
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
                     app:endIconMode="password_toggle"
-                    app:helperText="Repeat your new password"
+                    app:helperText="@string/repeat_your_new_password"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -296,7 +311,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Cycle name"
+                    app:helperText="@string/cycle_name"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -306,13 +321,13 @@
                         android:layout_height="wrap_content"
                         android:autofillHints=""
                         android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:hint="@string/cycleString"
+                        android:inputType="none"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -327,7 +342,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Year to course"
+                    app:helperText="@string/year_to_course"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -337,13 +352,13 @@
                         android:layout_height="wrap_content"
                         android:autofillHints=""
                         android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:hint="@string/courseString"
+                        android:inputType="none"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -358,7 +373,7 @@
                     app:boxCornerRadiusTopStart="8dp"
                     app:boxStrokeColor="#78909C"
                     app:boxStrokeWidth="2dp"
-                    app:helperText="Internship type"
+                    app:helperText="@string/internship_type"
                     app:hintTextColor="#546E7A">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -368,13 +383,13 @@
                         android:layout_height="wrap_content"
                         android:autofillHints=""
                         android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:hint="@string/fctDualString"
+                        android:inputType="none"
                         android:minHeight="48dp"
                         android:text=""
                         android:textColorHint="#8D6E63"
-                        android:inputType="none"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
                         tools:ignore="DuplicateSpeakableTextCheck,VisualLintTextFieldSize,TextContrastCheck" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -387,12 +402,6 @@
                     tools:ignore="DuplicateSpeakableTextCheck,TextContrastCheck" />
 
             </LinearLayout>
-
-            <LinearLayout
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"/>
 
         </LinearLayout>
 

@@ -19,6 +19,8 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.database.repository.MessageRepository
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
@@ -29,9 +31,10 @@ import com.grupo2.elorchat.ui.socket.SocketViewModel
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
+class PublicGroupsFragment @Inject constructor() : Fragment() {
 
     private lateinit var groupListAdapter: PublicGroupAdapter
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
@@ -40,6 +43,9 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     private val viewModel: GroupViewModel by viewModels()
     private val socketViewModel : SocketViewModel by viewModels()
     private val SOCKET_ACTIVITY_REQUEST_CODE = 123
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -128,10 +134,10 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     private fun onJoinButtonClickItem(group: Group) {
         lifecycleScope.launch {
             try {
-                val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
+                val userId = userRepository.getAllUsers().firstOrNull()?.id
 
                 if (userId != null) {
-                    viewModel.joinChat(ChatUser(userId, group.id, false))
+                    viewModel.joinChat(ChatUser(0, userId, group.id, false))
 
                     socketViewModel.joinRoom(group.name, userId)
 

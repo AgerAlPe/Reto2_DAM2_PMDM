@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:text="Leave Chat"
+        android:text="@string/leave_chat"
         android:background="@drawable/rounded_button"
         android:padding="10dp"
         android:textColor="@android:color/holo_red_dark" />
@@ -50,7 +50,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:background="@drawable/rounded_background"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/image_for_attaching_files"
             android:src="@drawable/baseline_add_24" />
 
         <EditText
@@ -60,12 +60,13 @@
             android:layout_gravity="center"
             android:layout_margin="10dp"
             android:layout_weight="1"
+            android:autofillHints=""
             android:background="@drawable/edit_text_shadow"
-            android:hint="Say something..."
+            android:hint="@string/say_something"
             android:inputType="text"
             android:minHeight="48dp"
             android:padding="10dp"
-            android:autofillHints="" />
+            android:textColorHint="#757575" />
 
         <ImageView
             android:id="@+id/btn_send_message"
@@ -73,7 +74,7 @@
             android:layout_height="30dp"
             android:layout_gravity="center"
             android:background="@drawable/rounded_background"
-            android:contentDescription="TODO"
+            android:contentDescription="@string/send_message"
             android:enabled="false"
             android:src="@drawable/outline_send_24" />
 
