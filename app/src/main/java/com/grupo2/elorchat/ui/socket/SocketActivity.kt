@@ -23,9 +23,14 @@ import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.viewModels
+
 import androidx.core.content.ContextCompat
+
+import androidx.appcompat.app.AppCompatDelegate
+
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
@@ -79,6 +84,10 @@ class SocketActivity() : ComponentActivity() {
     lateinit var appDatabase: AppDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ElorChat.userPreferences.fetchAppMode()?.let {
+            AppCompatDelegate.setDefaultNightMode(it)
+        }
+
         super.onCreate(savedInstanceState)
         val binding = ActivitySocketBinding.inflate(layoutInflater)
         setContentView(binding.root)

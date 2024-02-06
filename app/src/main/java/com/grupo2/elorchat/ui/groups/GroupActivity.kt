@@ -5,17 +5,20 @@ import android.os.Bundle
 import android.view.View
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
+import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.ui.groups.settings.SettingsFragment
+import com.grupo2.elorchat.utils.LanguageManager
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class GroupActivity : AppCompatActivity(), SettingsFragment.LanguageChangeListener {
+class GroupActivity : AppCompatActivity() {
 
     private lateinit var tabLayout: TabLayout
     private lateinit var viewPager2: ViewPager2
@@ -27,6 +30,11 @@ class GroupActivity : AppCompatActivity(), SettingsFragment.LanguageChangeListen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ElorChat.userPreferences.fetchSelectedLanguage()?.let { languageCode ->
+            LanguageManager.applyLanguage(languageCode, this as AppCompatActivity,
+                ElorChat.userPreferences
+            )
+        }
         setContentView(R.layout.activity_chats)
 
         tabLayout = findViewById(R.id.tabLayout)
@@ -69,10 +77,4 @@ class GroupActivity : AppCompatActivity(), SettingsFragment.LanguageChangeListen
             }
         })
     }
-
-    override fun onLanguageChanged() {
-        recreate() // Esto reiniciará la actividad con el nuevo idioma
-    }
-
-
 }
