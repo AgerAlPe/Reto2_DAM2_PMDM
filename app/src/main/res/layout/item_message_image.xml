@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/messagerIcon"
         android:layout_width="70dp"
-        android:layout_height="match_parent"
+        android:layout_height="70dp"
         android:contentDescription="User icon"
         android:src="@drawable/baseline_account_circle_24" />
 
@@ -45,16 +45,15 @@
                 android:paddingHorizontal="10dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 tools:text="10/20/24 15:43" />
+
         </LinearLayout>
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="match_parent"
+            android:layout_height="125dp"
+            android:src="@drawable/ic_launcher_background" />
+
         <!-- Contenido del mensaje -->
-        <TextView
-            android:id="@+id/messageText"
-            android:layout_width="wrap_content"
-            android:maxWidth="250dp"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            tools:text="This is a message" />
     </LinearLayout>
 </LinearLayout>
