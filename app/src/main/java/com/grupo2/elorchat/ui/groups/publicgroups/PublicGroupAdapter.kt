@@ -56,6 +56,11 @@ class PublicGroupAdapter(
             binding.joinButton.setImageResource(R.drawable.baseline_person_add_24)
         }
     }
+
+    // Method to update the dataset
+    fun updateGroups(groups: List<Group>) {
+        submitList(groups)
+    }
 }
 class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
 

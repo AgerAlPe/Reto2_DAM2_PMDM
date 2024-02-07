@@ -272,6 +272,7 @@ class GroupViewModel @Inject constructor(
                 chatUserRepository.insertChatUser(chatUser)
                 joinChatFromRepo(chatUser)
                 _joinChat.value = Resource.success(chatUser)
+                updateGroupList()
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while joining the chat: ${e.message}")
                 _joinChat.value = Resource.error("Error joining the chat", null)
@@ -290,8 +291,9 @@ class GroupViewModel @Inject constructor(
             try {
                 _leaveChatResult.value = Resource.loading()
                 chatUserRepository.deleteChatUsersForChatAndUser(chatId, userId)
-                leaveChatFromRepo(chatId, userId)
+                leaveChatFromRepo(userId, chatId)
                 _leaveChatResult.value = Resource.success(Unit)
+                updateGroupList()
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while leaving the chat: ${e.message}")
                 _leaveChatResult.value = Resource.error("Error leaving the chat", null)
