@@ -58,7 +58,8 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
 
         groupListAdapter = PublicGroupAdapter(
             onGroupClickListener = ::onGroupsListClickItem,
-            onJoinButtonClickListener = ::onJoinButtonClickItem
+            onJoinButtonClickListener = ::onJoinButtonClickItem,
+            viewModel
         )
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
