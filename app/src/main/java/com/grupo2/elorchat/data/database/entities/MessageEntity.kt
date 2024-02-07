@@ -4,8 +4,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.repository.UserRepository
+import com.grupo2.elorchat.ui.socket.MessageAdapter
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,11 +37,12 @@ fun Message.toMessageEntity(): MessageEntity {
         message = this.message,
         userId = this.userId,
         chatId = this.chatId,
-        createdAt = getCurrentFormattedDate()
+        createdAt = getCurrentFormattedDate(this.createdAt)
     )
 }
-
-private fun getCurrentFormattedDate(): String {
-    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    return dateFormat.format(Date())
+private fun getCurrentFormattedDate(createdAt: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    val date = inputFormat.parse(createdAt)
+    return outputFormat.format(date)
 }
