@@ -44,7 +44,7 @@ class PrivateGroupsFragment : Fragment() {
 
         groupListAdapter = PrivateGroupAdapter(
             ::onGroupsListClickItem,
-
+            viewModel
         )
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
