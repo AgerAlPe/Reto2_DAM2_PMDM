@@ -14,6 +14,8 @@ import java.util.Locale
 
 class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
+    private var recyclerView: RecyclerView? = null // Declare recyclerView as nullable
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MessageViewHolder(binding)
@@ -49,10 +51,25 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
         }
     }
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = null // Clear reference to avoid memory leaks
+        super.onDetachedFromRecyclerView(recyclerView)
+    }
+
+    override fun submitList(list: List<Message>?) {
+        super.submitList(list)
+        recyclerView?.scrollToPosition(itemCount - 1) // Scroll to the last item when the list is updated
+
     fun getCurrentFormattedDate(createdAt: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX", Locale.getDefault())
         val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         val date = inputFormat.parse(createdAt)
         return outputFormat.format(date)
+
     }
 }

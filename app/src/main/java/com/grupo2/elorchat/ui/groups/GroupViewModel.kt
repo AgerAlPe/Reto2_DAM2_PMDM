@@ -224,6 +224,22 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    fun createGroup(group: Group) {
+        viewModelScope.launch {
+            try {
+                val result = createGroupFromRepository(group)
+                if (result.status == Resource.Status.SUCCESS) {
+                    // If group creation was successful, update the list of groups
+                    updateGroupList()
+                }
+                _create.value = result
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while creating group: ${e.message}")
+                _create.value = Resource.error("Error creating group", null)
+            }
+        }
+    }
+
     suspend fun createGroupFromRepository(group: Group): Resource<Int> {
         return withContext(Dispatchers.IO) {
             groupRepository.createGroup(group)
@@ -234,6 +250,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 chatUserRepository.insertChatUser(chatUser)
+                joinChatFromRepo(chatUser)
                 _joinChat.value = Resource.success(chatUser)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while joining the chat: ${e.message}")
@@ -253,6 +270,7 @@ class GroupViewModel @Inject constructor(
             try {
                 _leaveChatResult.value = Resource.loading()
                 chatUserRepository.deleteChatUsersForChatAndUser(chatId, userId)
+                leaveChatFromRepo(chatId, userId)
                 _leaveChatResult.value = Resource.success(Unit)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while leaving the chat: ${e.message}")
