@@ -6,11 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.databinding.ItemMessageBinding
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
@@ -32,7 +28,7 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
         fun bind(message: Message) {
             binding.messageText.text = message.message
             binding.messagerName.text = message.name
-            binding.messageDate.text = getCurrentFormattedDate(message.createdAt)
+            binding.messageDate.text = message.createdAt
             // You can bind other properties as needed
         }
     }

@@ -32,6 +32,7 @@ class PrivateGroupsFragment : Fragment() {
 
     private lateinit var groupListAdapter: PrivateGroupAdapter
     private val viewModel: GroupViewModel by viewModels()
+    private val SOCKET_ACTIVITY_REQUEST_CODE = 123
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,9 +43,10 @@ class PrivateGroupsFragment : Fragment() {
         val view = binding.root
         val searchGroup = binding.searchGroup
 
+
         groupListAdapter = PrivateGroupAdapter(
             ::onGroupsListClickItem,
-
+            viewModel
         )
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
@@ -98,10 +100,17 @@ class PrivateGroupsFragment : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
+        if (!group.isUserOnGroup) {
+            Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())
+            putExtra("groupName", group.name)
         }
-        startActivity(intent)
+
+        startActivityForResult(intent, SOCKET_ACTIVITY_REQUEST_CODE)
     }
 
     private fun handleUserMovementAdd(response: ChatUserMovementResponse) {
