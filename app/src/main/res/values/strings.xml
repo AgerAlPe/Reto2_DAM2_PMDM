@@ -104,7 +104,9 @@
     <string name="select_app_mode">Select App Mode</string>
     <string name="send_photo">Send Photo</string>
     <string name="send_coordinates">Send GPS Coordinates</string>
-    <string name="send_file">Send File</string>    <string name="add_user">Add User</string>
+    <string name="send_file">Send File</string>
+    <string name="add_user">Add User</string>
     <string name="kick_user">Kick User</string>
+    <string name="returnButton">RETURN</string>
 
 </resources>

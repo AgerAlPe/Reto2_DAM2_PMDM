@@ -95,4 +95,7 @@
     <string name="send_photo">Enviar Foto</string>
     <string name="send_coordinates">Enviar Coordenadas GPS</string>
     <string name="send_file">Enviar Archivo</string>
+    <string name="add_user">Añadir Usuario</string>
+    <string name="kick_user">Expulsar Usuario</string>
+    <string name="returnButton">Volver</string>
 </resources>
