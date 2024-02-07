@@ -12,20 +12,24 @@ import java.util.Locale
 object LanguageManager {
 
     fun applyLanguage(languageCode: String, activity: AppCompatActivity, userPreferences: UserPreferences) {
-        // Almacena el idioma seleccionado
-        userPreferences.saveSelectedLanguage(languageCode)
+        // Verificar si el idioma actual es igual al idioma que se está tratando de aplicar
+        if (userPreferences.fetchSelectedLanguage() != languageCode) {
+            // Almacena el idioma seleccionado
+            userPreferences.saveSelectedLanguage(languageCode)
 
-        // Configura el idioma de la aplicación
-        val locale = Locale(languageCode)
-        Locale.setDefault(locale)
-        val config = Configuration().apply {
-            setLocale(locale)
+            // Configura el idioma de la aplicación
+            val locale = Locale(languageCode)
+            Locale.setDefault(locale)
+            val config = Configuration().apply {
+                setLocale(locale)
+            }
+            activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
+
+            // Postergar la recreación de la actividad
+            Handler(Looper.getMainLooper()).postDelayed({
+                activity.recreate()
+            }, 100) // Ajusta este valor según sea necesario
         }
-        activity.resources.updateConfiguration(config, activity.resources.displayMetrics)
-
-        // Postergar la recreación de la actividad
-        Handler(Looper.getMainLooper()).postDelayed({
-            activity.recreate()
-        }, 100) // Ajusta este valor según sea necesario
     }
 }
+
