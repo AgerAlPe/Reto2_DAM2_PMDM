@@ -99,6 +99,7 @@ class SocketActivity() : ComponentActivity() {
         binding.toolbar.title = groupName
 
         messageAdapter = MessageAdapter()
+
         binding.listMessages.adapter = messageAdapter
 
         if (groupId != null) {
