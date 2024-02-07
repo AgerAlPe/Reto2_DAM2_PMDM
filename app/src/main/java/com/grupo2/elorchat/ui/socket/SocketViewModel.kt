@@ -12,7 +12,11 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
+import com.grupo2.elorchat.data.database.entities.toMessage
+import com.grupo2.elorchat.data.database.entities.toMessageEntity
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
+import com.grupo2.elorchat.data.repository.CommonSocketRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.utils.Resource
@@ -24,14 +28,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime.now
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
+
     private val groupName: String?,
-    private val messageDao: MessageDao
+    private val messageRepository: MessageRepository,
+    private val socketRepository: CommonSocketRepository,
 ) : ViewModel() {
 
     private val TAG = "SocketViewModel"
@@ -42,29 +50,9 @@ class SocketViewModel @Inject constructor(
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
-    private val SOCKET_HOST = "http://10.5.7.76:8085/"
-    private val AUTHORIZATION_HEADER = "Authorization"
+    private val _joined = MutableLiveData<Resource<Void>>()
 
-    private lateinit var mSocket: Socket
-
-    private val SOCKET_ROOM = groupName
-
-    fun startSocket() {
-        Log.i("SocketViewModel", "Starting socket")
-
-        val socketOptions = createSocketOptions()
-        mSocket = IO.socket(SOCKET_HOST, socketOptions)
-
-        mSocket.on(SocketEvents.ON_CONNECT.value, onConnect())
-        mSocket.on(SocketEvents.ON_DISCONNECT.value, onDisconnect())
-        mSocket.on(SocketEvents.ON_MESSAGE_RECEIVED.value, onNewMessage())
-
-        viewModelScope.launch {
-            Log.i("SocketViewModel", "Connecting to the socket")
-            connect()
-            Log.i("SocketViewModel", "connect fun3")
-        }
-    }
+    private val _leave = MutableLiveData<Resource<Void>>()
 
     fun thisGroupsMessages(groupId : Int) {
         Log.i(TAG, "Id Grupo: " + groupId)
@@ -80,150 +68,48 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-
-    private suspend fun connect() {
-        withContext(Dispatchers.IO) {
-            Log.i("SocketViewModel", "connect fun")
-            mSocket.connect();
-            Log.i("SocketViewModel", "connect fun2")
+    fun onNewMessageReceived(message: Message) {
+        viewModelScope.launch {
+            // Update the LiveData with the new message
+            val currentMessages = _messages.value?.data?.toMutableList() ?: mutableListOf()
+            currentMessages.add(message)
+            _messages.value = Resource.success(currentMessages)
         }
     }
 
-    private fun createSocketOptions(): IO.Options {
-        val options = IO.Options()
-
-        // Add custom headers
-        val headers = mutableMapOf<String, MutableList<String>>()
-
-        headers[AUTHORIZATION_HEADER] = mutableListOf(ElorChat.userPreferences.fetchAuthToken().toString())
-
-        options.extraHeaders = headers
-        return options
-    }
-
-    private fun onConnect(): Emitter.Listener {
-        return Emitter.Listener {
-            // Manejar el mensaje recibido
-            Log.d(TAG, "conectado")
-
-            // no vale poner value por que da error al estar en otro hilo
-            // IllegalStateException: Cannot invoke setValue on a background thread
-            // en funcion asincrona obligado post
-            _connected.postValue(Resource.success(true))
-        }
-    }
-    private fun onDisconnect(): Emitter.Listener {
-        return Emitter.Listener {
-            Log.d(TAG, "desconectado")
-            _connected.postValue(Resource.success(false))
+    fun joinRoom(room : String, userId : Int) {
+        viewModelScope.launch {
+            _joined.value = joinSocketRoom(room , userId)
         }
     }
 
-    private fun onNewMessage(): Emitter.Listener {
-        return Emitter.Listener {
-            // en teoria deberia ser siempre jsonObject, obviamente si siempre lo gestionamos asi
-            if (it[0] is JSONObject) {
-                onNewMessageJsonObject(it[0])
-            } else if (it[0] is String) {
-                onNewMessageString(it[0])
-            }
+    fun leaveRoom(room : String, userId : Int) {
+        viewModelScope.launch {
+            //_leave.value = leaveSocketRoom(room , userId)
         }
     }
 
-    private fun onNewMessageString(data: Any) {
-        try {
-            // Manejar el mensaje recibido
-            val message = data as String
-            Log.d(TAG, "mensaje recibido $message")
-            // ojo aqui no estoy actualizando la lista. aunque no deberiamos recibir strings
-        } catch (ex: Exception) {
-            Log.e(TAG, "onNewMessageString" + ex.message!!)
+    private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            socketRepository.joinRoom(room , userId)
         }
     }
 
-    private fun onNewMessageJsonObject(data: Any) {
-        Log.i(TAG, "Mensaje que envias: " + data.toString())
-        try {
-            val jsonObject = data as JSONObject
-            val jsonObjectString = jsonObject.toString()
-
-            // Assuming you have a MessageResponse class for deserialization
-            val messageResponse = Gson().fromJson(jsonObjectString, Message::class.java)
-
-            // Creating a Message instance from MessageResponse
-            Log.i(TAG, "Fecha: " + messageResponse.createdAt)
-
-            val message = Message(
-                id = messageResponse.id,
-                message = messageResponse.message,
-                name = messageResponse.name,
-                userId = messageResponse.userId,
-                chatId = messageResponse.chatId,
-                createdAt = now().toString()
-            )
-
-            updateMessageListWithNewMessage(message)
-        } catch (ex: Exception) {
-            Log.e(TAG, "onNewMessageJsonObject " + ex.message ?: "Unknown error")
+    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            socketRepository.leaveRoom(room , userId)
         }
     }
 
-    private fun updateMessageListWithNewMessage(socketMessage: Message) {
-        try {
-            val incomingMessage = SOCKET_ROOM?.let {
-                Message(
-                    id = socketMessage.id,  // You might need to set an appropriate default value for id
-                    message = socketMessage.message,
-                    name = socketMessage.name,
-                    userId = socketMessage.userId,  // You might need to set an appropriate default value for userId
-                    chatId = socketMessage.chatId,  // You might need to set an appropriate default value for groupId
-                    createdAt = socketMessage.createdAt  // You might need to set an appropriate default value for createdAt
-                )
-
-            }
-
-            val messageEntity = MessageEntity(
-                text = socketMessage.message,
-                authorId = socketMessage.userId,
-                chatId =  socketMessage.chatId
-            )
-
-            viewModelScope.launch {
-                messageDao.insertMessage(messageEntity)
-            }
-
-            val msgsList = _messages.value?.data?.toMutableList()
-            if (msgsList != null) {
-
-                if (incomingMessage.toString().isNotEmpty()) {
-                    incomingMessage?.let { msgsList.add(it) }
-                }
-
-                _messages.postValue(Resource.success(msgsList))
-            } else {
-                _messages.postValue(Resource.success(listOfNotNull(incomingMessage)))
-            }
-        } catch (ex: Exception) {
-            Log.e(TAG, ex.message ?: "Unknown error")
-        }
-    }
-
-    fun onSendMessage(message: String) {
-        Log.d(TAG, "onSendMessage $message")
-        // la sala esta hardcodeada..
-        val socketMessage = SOCKET_ROOM?.let { SocketMessageReq(it, message) }
-        val jsonObject = JSONObject(Gson().toJson(socketMessage))
-        mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
-    }
 }
-
 
 class SocketViewModelFactory(
     private val groupRepository: CommonGroupRepository,
-    private val groupName: String?,
-    private val messageDao: MessageDao
+    private val messageRepository: MessageRepository,
+    private val socketRepository: CommonSocketRepository,
+    private val groupName: String?
 ): ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        return SocketViewModel(groupRepository, groupName, messageDao) as T
+        return SocketViewModel(groupRepository, groupName, messageRepository, socketRepository) as T
     }
 }

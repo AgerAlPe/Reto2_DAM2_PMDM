@@ -5,10 +5,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class ChatUser (
+    val id: Int,
     val userId: Int,
     val chatId: Int,
-    val admin: Boolean
+    val isAdmin: Boolean
 ): Parcelable {
-    constructor(userId: Int, chatId: Int) : this(userId, chatId, false)
-
+    constructor(id: Int, userId: Int, chatId: Int) : this(id, userId, chatId, false)
 }

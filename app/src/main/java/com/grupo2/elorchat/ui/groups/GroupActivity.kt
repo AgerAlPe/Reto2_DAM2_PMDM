@@ -10,12 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.utils.Resource
+import com.grupo2.elorchat.ui.groups.settings.SettingsFragment
+import com.grupo2.elorchat.utils.LanguageManager
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +39,11 @@ class GroupActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ElorChat.userPreferences.fetchSelectedLanguage()?.let { languageCode ->
+            LanguageManager.applyLanguage(languageCode, this as AppCompatActivity,
+                ElorChat.userPreferences
+            )
+        }
         setContentView(R.layout.activity_chats)
 
         tabLayout = findViewById(R.id.tabLayout)

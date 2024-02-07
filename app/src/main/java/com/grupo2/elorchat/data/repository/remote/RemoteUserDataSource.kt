@@ -1,10 +1,8 @@
 package com.grupo2.elorchat.data.repository.remote
 
-import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.RegisterUser
 import com.grupo2.elorchat.data.repository.CommonUserRepository
-import com.grupo2.elorchat.utils.Resource
 
 class RemoteUserDataSource: BaseDataSource(), CommonUserRepository {
     override suspend fun loginUser(user: LoginUser) = getResult {

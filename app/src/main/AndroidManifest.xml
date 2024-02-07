@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.grupo2.elorchat">
+    package="com.grupo2.elorchat"
+    tools:ignore="CoarseFineLocation">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".ElorChat"
@@ -19,6 +21,10 @@
         android:theme="@style/Theme.ElorChat"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
+        <service
+            android:name=".ui.socket.SocketService"
+            android:enabled="true"
+            android:exported="true"></service>
         <activity
             android:name=".ui.users.login.OfflineLoginActivity"
             android:exported="false" />
@@ -30,7 +36,8 @@
             android:exported="true" />
         <activity
             android:name=".ui.groups.GroupActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan"/>
         <activity
             android:name=".ui.users.register.RegisterActivity"
             android:exported="false" />
@@ -47,6 +54,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".ui.socket.SocketService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service android:name=".MyFirebaseMessagingService" android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
     </application>
+
 
 </manifest>

@@ -6,12 +6,6 @@ import com.grupo2.elorchat.data.ChatUserEmailRequest
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 
-import com.grupo2.elorchat.utils.Resource
-
-import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Path
-
 
 class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
     override suspend fun getGroups() = getResult {

@@ -1,0 +1,47 @@
+package com.grupo2.elorchat.ui.groups.privategroups
+
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.databinding.ItemGroupBinding
+
+class PrivateGroupAdapter(
+    private val onClickListener: (Group) -> Unit,
+) : ListAdapter<Group, PrivateGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
+        val binding = ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return GroupViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: GroupViewHolder, position: Int) {
+        val group = getItem(position)
+        holder.bind(group)
+        holder.itemView.setOnClickListener {
+            onClickListener(group)
+        }
+    }
+
+    inner class GroupViewHolder(private val binding: ItemGroupBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(group: Group) {
+            binding.GroupName.text = group.name
+            // You may need to set other views or handle other bindings here
+        }
+    }
+
+    class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
+
+        override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
+            return (oldItem.id == newItem.id && oldItem.name == newItem.name)
+        }
+    }
+}

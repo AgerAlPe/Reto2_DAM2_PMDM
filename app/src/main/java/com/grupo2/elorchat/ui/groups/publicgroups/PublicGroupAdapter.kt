@@ -1,4 +1,4 @@
-package com.grupo2.elorchat.ui.groups
+package com.grupo2.elorchat.ui.groups.publicgroups
 
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.databinding.GroupBinding
+import com.grupo2.elorchat.databinding.ItemGroupBinding
 
 class PublicGroupAdapter(
     private val onGroupClickListener: (Group) -> Unit,
@@ -17,7 +17,7 @@ class PublicGroupAdapter(
 ) : ListAdapter<Group, PublicGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GroupViewHolder(binding)
     }
 
@@ -39,13 +39,14 @@ class PublicGroupAdapter(
             Log.d("GroupAdapter", "User is not in the group, showing joinButton")
             holder.joinButton.visibility = View.VISIBLE
             holder.joinButton.setOnClickListener {
+                group.isUserOnGroup = true
                 holder.joinButton.visibility = View.GONE
                 onJoinButtonClickListener(group)
             }
         }
     }
 
-    inner class GroupViewHolder(private val binding: GroupBinding) :
+    inner class GroupViewHolder(private val binding: ItemGroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         val joinButton = binding.joinButton
@@ -55,15 +56,14 @@ class PublicGroupAdapter(
             binding.joinButton.setImageResource(R.drawable.baseline_person_add_24)
         }
     }
+}
+class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
+
+    override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
-
-        override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
-            return (oldItem.id == newItem.id && oldItem.name == newItem.name)
-        }
+    override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
+        return (oldItem.id == newItem.id && oldItem.name == newItem.name)
     }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_margin="10dp">
+
+    <!-- Avatar del remitente -->
+
+    <!-- Contenedor para el contenido del mensaje y la información del remitente -->
+    <ImageView
+        android:id="@+id/messagerIcon"
+        android:layout_width="70dp"
+        android:layout_height="match_parent"
+        android:contentDescription="Image de usuario"
+        android:src="@drawable/baseline_account_circle_24" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <!-- Nombre del remitente -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <!-- Nombre del remitente -->
+            <TextView
+                android:id="@+id/messagerName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                tools:text="FirstName" />
+
+            <!-- Fecha del mensaje -->
+            <TextView
+                android:id="@+id/messageDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="10dp"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                tools:text="10/20/24 15:43" />
+        </LinearLayout>
+
+        <!-- Contenido del mensaje -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:padding="10dp"
+            android:background="@drawable/rounded_background"
+            android:gravity="center">
+
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/mapView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:contentDescription="@string/acceptButtonString" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+</LinearLayout>
