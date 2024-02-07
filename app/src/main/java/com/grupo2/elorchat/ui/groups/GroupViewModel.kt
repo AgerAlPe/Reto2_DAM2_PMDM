@@ -3,16 +3,15 @@ package com.grupo2.elorchat.ui.groups
 
 import android.util.Log
 import androidx.lifecycle.LiveData
-
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-
 import com.grupo2.elorchat.data.ChatUser
-
 import com.grupo2.elorchat.ElorChat.Companion.context
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.ChangePasswordRequest
-
+import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
@@ -34,8 +33,6 @@ class GroupViewModel @Inject constructor(
     private val roomGroupRepository: GroupRepository,
     private val chatUserRepository: ChatUserRepository
 ) : ViewModel() {
-
-    private val dataStoreManager by lazy { DataStoreManager.getInstance(context) }
 
     private val _items = MutableLiveData<Resource<List<Group>>?>()
 
@@ -62,9 +59,20 @@ class GroupViewModel @Inject constructor(
 
     private val _firstUserEmail = MutableLiveData<String>()
 
+    private val _adminInGroups = MutableLiveData<List<Group>>()
+
+    private val _addUser = MutableLiveData<ChatUserMovementResponse>()
+
+    val addUser : MutableLiveData<ChatUserMovementResponse> get() = _addUser
+
+    private val _kickUser = MutableLiveData<ChatUserMovementResponse>()
+
+    val kickUser : MutableLiveData<ChatUserMovementResponse> get() = _kickUser
+
+    val adminInGroups :MutableLiveData<List<Group>> get() = _adminInGroups
+
     val firstUserEmail: LiveData<String> get() = _firstUserEmail
     val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
-
 
     val leaveChat: MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat: MutableLiveData<Resource<ChatUser>> get() = _joinChat
@@ -86,6 +94,7 @@ class GroupViewModel @Inject constructor(
 
     init {
         updateGroupList()
+        getAdminGroups()
     }
 
     private val _joinChatListener = MutableLiveData<Resource<ChatUser>>()
@@ -283,6 +292,56 @@ class GroupViewModel @Inject constructor(
         }
 
         _firstUserEmail.value = userEmail
+    }
+
+    private fun getAdminGroups() {
+        viewModelScope.launch {
+            try {
+                val userId = appDatabase.getUserDao().getAllUser().first().id
+                Log.i("userID", userId.toString())
+                val adminGroupsResponse = getAllGroupsWhereUserIsAdmin(userId)
+                _adminInGroups.postValue(adminGroupsResponse.data.orEmpty())
+                Log.i(TAG, "Admin Groups: $adminGroupsResponse")
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while getting admin groups: ${e.message}")
+            }
+        }
+    }
+    private suspend fun getAllGroupsWhereUserIsAdmin(userId: Int): Resource<List<Group>> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.getChatsWhereUserIsAdmin(userId)
+        }
+    }
+
+    fun makeAnUserJoin(chatUserEmailRequest: ChatUserEmailRequest) {
+        viewModelScope.launch {
+            val result = makeAnUserJoinAChat(chatUserEmailRequest)
+            _addUser.value = result.data ?: ChatUserMovementResponse("Error: ${result.status}${result.message}")
+        }
+    }
+
+    private suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserJoinAChat(chatUserEmailRequest)
+        }
+    }
+
+    fun makeAnUserLeave(chatUserEmailRequest: ChatUserEmailRequest) {
+        viewModelScope.launch {
+            val result = makeAnUserLeaveAChat(chatUserEmailRequest)
+            Log.i("resultMessage", result.message.toString())
+            if (result.message.toString().contains("400")) {
+                _kickUser.value = ChatUserMovementResponse("ERROR 400")
+            } else {
+                _kickUser.value = result.data ?: ChatUserMovementResponse("End of input at line 1 column 1 path \$")
+            }
+        }
+    }
+
+    private suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserLeaveAChat(chatUserEmailRequest)
+        }
     }
 }
 

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.databinding.ItemGroupBinding
 
@@ -52,6 +53,7 @@ class PublicGroupAdapter(
 
         fun bind(group: Group) {
             binding.GroupName.text = group.name
+            binding.joinButton.setImageResource(R.drawable.baseline_person_add_24)
         }
     }
 }
