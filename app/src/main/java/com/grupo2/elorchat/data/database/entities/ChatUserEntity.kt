@@ -12,7 +12,7 @@ class ChatUserEntity(
     @ColumnInfo(name = "id") val id: Int = 0,
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "chat_id") val chatId: Int,
-    @ColumnInfo(name = "isAdmin") val isAdmin: Boolean
+    @ColumnInfo(name = "isAdmin") val admin: Boolean
 )
 
 fun ChatUserEntity.toChatUser(): ChatUser {
@@ -20,7 +20,7 @@ fun ChatUserEntity.toChatUser(): ChatUser {
         id = this.id,
         userId = this.userId,
         chatId = this.chatId,
-        isAdmin = this.isAdmin
+        admin = this.admin
     )
 }
 
@@ -29,6 +29,6 @@ fun ChatUser.toChatUserEntity(): ChatUserEntity {
         id = this.id,
         userId = this.userId,
         chatId = this.chatId,
-        isAdmin = this.isAdmin
+        admin = this.admin
     )
 }

@@ -8,7 +8,7 @@ class ChatUser (
     val id: Int,
     val userId: Int,
     val chatId: Int,
-    val isAdmin: Boolean
+    val admin: Boolean
 ): Parcelable {
     constructor(id: Int, userId: Int, chatId: Int) : this(id, userId, chatId, false)
 }

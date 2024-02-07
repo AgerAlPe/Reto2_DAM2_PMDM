@@ -299,8 +299,10 @@ class GroupViewModel @Inject constructor(
             try {
                 val userId = appDatabase.getUserDao().getAllUser().first().id
                 Log.i("userID", userId.toString())
-                val adminGroupsResponse = getAllGroupsWhereUserIsAdmin(userId)
-                _adminInGroups.postValue(adminGroupsResponse.data.orEmpty())
+                val adminGroupsResponse = userId?.let { getAllGroupsWhereUserIsAdmin(it) }
+                if (adminGroupsResponse != null) {
+                    _adminInGroups.postValue(adminGroupsResponse.data.orEmpty())
+                }
                 Log.i(TAG, "Admin Groups: $adminGroupsResponse")
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while getting admin groups: ${e.message}")
