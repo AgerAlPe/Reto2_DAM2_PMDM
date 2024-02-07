@@ -105,8 +105,9 @@ class CreateGroupActivity : AppCompatActivity() {
 
             when (result.status) {
                 Resource.Status.SUCCESS -> {
-                    val groupId = result.data // Assuming the result.data is the group ID
 
+                    val groupId = result.data // Assuming the result.data is the group ID
+                    viewModel.updateGroupList()
                     // Assuming the group creation was successful, you can now join the chat
                     if (groupId != null) {
                         joinChat(groupId)
@@ -132,7 +133,7 @@ class CreateGroupActivity : AppCompatActivity() {
         Log.i("JOINCHATuserId", userRoles.id.toString())
         Log.i("JOINCHATGroupId", groupId.toString())
 
-        val chatUser = ChatUser(0 , userRoles.id!!, groupId, true)
+        val chatUser = ChatUser(userRoles.id!!, groupId, true)
         viewModel.joinChat(chatUser)
     }
 

@@ -137,7 +137,8 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
                 val userId = userRepository.getAllUsers().firstOrNull()?.id
 
                 if (userId != null) {
-                    viewModel.joinChat(ChatUser(0, userId, group.id, false))
+
+                    viewModel.joinChat(ChatUser(userId, group.id, false))
 
                     socketViewModel.joinRoom(group.name, userId)
 

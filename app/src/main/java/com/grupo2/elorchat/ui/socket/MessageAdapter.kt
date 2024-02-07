@@ -10,6 +10,8 @@ import com.grupo2.elorchat.databinding.ItemMessageBinding
 
 class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(MessageDiffCallback()) {
 
+    private var recyclerView: RecyclerView? = null // Declare recyclerView as nullable
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MessageViewHolder {
         val binding = ItemMessageBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MessageViewHolder(binding)
@@ -43,5 +45,20 @@ class MessageAdapter : ListAdapter<Message, MessageAdapter.MessageViewHolder>(Me
                     oldItem.chatId == newItem.chatId &&
                     oldItem.createdAt == newItem.createdAt
         }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this.recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        this.recyclerView = null // Clear reference to avoid memory leaks
+        super.onDetachedFromRecyclerView(recyclerView)
+    }
+
+    override fun submitList(list: List<Message>?) {
+        super.submitList(list)
+        recyclerView?.scrollToPosition(itemCount - 1) // Scroll to the last item when the list is updated
     }
 }
