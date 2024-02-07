@@ -385,6 +385,30 @@ class GroupViewModel @Inject constructor(
             groupRepository.makeAnUserLeaveAChat(chatUserEmailRequest)
         }
     }
+    private val _deleteGroup = MutableLiveData<Resource<Void>>()
+    val deleteGroup: LiveData<Resource<Void>> get() = _deleteGroup
+    fun deleteGroup(groupId: Int) {
+        viewModelScope.launch {
+            try {
+                val result = deleteGroupFromRepo(groupId)
+                if (result.status == Resource.Status.SUCCESS) {
+                    // If group deletion was successful, update the list of groups
+                    updateGroupList()
+                }
+                _deleteGroup.value = result
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while deleting group: ${e.message}")
+                _deleteGroup.value = Resource.error("Error deleting group", null)
+            }
+        }
+    }
+
+    private suspend fun deleteGroupFromRepo(groupId: Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.deleteGroup(groupId)
+        }
+    }
+
 }
 
 sealed class GroupEvent {

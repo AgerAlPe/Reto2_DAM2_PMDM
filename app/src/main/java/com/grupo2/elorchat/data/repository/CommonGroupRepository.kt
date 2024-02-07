@@ -30,4 +30,6 @@ interface CommonGroupRepository {
 
     suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest) : Resource<ChatUserMovementResponse>
 
+    suspend fun deleteGroup(chatId: Int) : Resource<Void>
+
 }

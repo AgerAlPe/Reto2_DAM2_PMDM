@@ -49,4 +49,8 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
     override suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest) = getResult {
         RetrofitClient.apiInterface.makeAnUserLeaveAChat(chatUserEmailRequest)
     }
+
+    override suspend fun deleteGroup(chatId: Int) = getResult {
+        RetrofitClient.apiInterface.deleteGroup(chatId)
+    }
 }

@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.data.repository.remote
 
+import androidx.room.Delete
 import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.ChatUserEmailRequest
@@ -64,5 +65,8 @@ interface APIInterface {
 
     @GET("sockets/leaveRoom/{room}/{idUser}")
     suspend fun leaveRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>
+
+    @DELETE("chats/{chatId}")
+    suspend fun deleteGroup(@Path("chatId") chatId : Int ) : Response<Void>
 
 }
