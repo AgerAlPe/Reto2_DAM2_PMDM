@@ -5,4 +5,7 @@
     <item
         android:id="@+id/menu_kick_user"
         android:title="@string/kick_user"/>
+    <item
+        android:id="@+id/deletePrivateGroup"
+        android:title="@string/Delete_Group"/>
 </menu>

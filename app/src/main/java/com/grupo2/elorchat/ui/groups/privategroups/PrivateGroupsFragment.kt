@@ -82,6 +82,7 @@ class PrivateGroupsFragment : Fragment() {
                 handleUserMovementLeave(response)
             }
         }
+        
 
         searchGroup.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

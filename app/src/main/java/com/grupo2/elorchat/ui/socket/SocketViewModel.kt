@@ -85,7 +85,7 @@ class SocketViewModel @Inject constructor(
 
     fun leaveRoom(room : String, userId : Int) {
         viewModelScope.launch {
-            //_leave.value = leaveSocketRoom(room , userId)
+            _leave.value = leaveSocketRoom(room , userId)
         }
     }
 
