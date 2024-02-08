@@ -25,4 +25,7 @@ interface GroupDao {
 
     @Query("SELECT * FROM group_table WHERE id = :groupId")
     suspend fun getGroupById(groupId: Int): GroupEntity?
+
+//    @Query("Delete FROM group_table WHERE id = :groupId")
+//    suspend fun deleteGroup(groupId: Int): GroupEntity?
 }

@@ -99,6 +99,7 @@ class SocketActivity() : ComponentActivity() {
         binding.toolbar.title = groupName
 
         messageAdapter = MessageAdapter()
+
         binding.listMessages.adapter = messageAdapter
 
         if (groupId != null) {
@@ -108,7 +109,6 @@ class SocketActivity() : ComponentActivity() {
         val addMessageImageView: ImageView = findViewById(R.id.addMessageImageView)
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
 
 
         addMessageImageView.setOnClickListener { view ->
@@ -375,8 +375,14 @@ class SocketActivity() : ComponentActivity() {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNotificationMessage(message: Message) {
-        // Notify the ViewModel about the new message
-        viewModel.onNewMessageReceived(message)
+        // Check if the received message is from the current group
+        if (message.chatId == groupId) {
+            // Notify the ViewModel about the new message
+            viewModel.onNewMessageReceived(message)
+        } else {
+            // Optionally, you can ignore messages from other groups or handle them differently
+            Log.d(TAG, "Received a message from a different group: ${message}")
+        }
     }
 
     private var serviceConnection: ServiceConnection = object : ServiceConnection {

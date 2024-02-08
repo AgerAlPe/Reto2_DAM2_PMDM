@@ -77,21 +77,21 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    fun joinRoom(room : String, userId : Int) {
+    fun joinRoom(room : String, isAdmin : Boolean) {
         viewModelScope.launch {
-            _joined.value = joinSocketRoom(room , userId)
+            _joined.value = joinSocketRoom(room , isAdmin)
         }
     }
 
     fun leaveRoom(room : String, userId : Int) {
         viewModelScope.launch {
-            //_leave.value = leaveSocketRoom(room , userId)
+            _leave.value = leaveSocketRoom(room , userId)
         }
     }
 
-    private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
+    private suspend fun joinSocketRoom(room : String, isAdmin : Boolean): Resource<Void> {
         return withContext(Dispatchers.IO) {
-            socketRepository.joinRoom(room , userId)
+            socketRepository.joinRoom(room , isAdmin)
         }
     }
 

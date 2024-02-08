@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -40,10 +41,14 @@ class PrivateGroupAdapter(
         private val viewModel: GroupViewModel
     ) : RecyclerView.ViewHolder(binding.root) {
 
+
         fun bind(group: Group) {
             val isAdminGroup = viewModel.adminInGroups.value?.any { it.id == group.id } ?: false
 
             binding.GroupName.text = group.name
+
+            //Put the delete button from the public adapter to GONE
+            binding.deleteButton.visibility = View.GONE
 
             if (isAdminGroup) {
                 setupAdminUI(group)
@@ -78,10 +83,38 @@ class PrivateGroupAdapter(
                         }
                         true
                     }
+                    R.id.deletePrivateGroup -> {
+                        // Show confirmation dialog
+                        showDeleteConfirmationDialog(view.context) {
+                            // If user confirms, perform deletion of private group
+                            viewModel.deleteGroup(group.id)
+                        }
+                        true
+                    }
                     else -> false
                 }
             }
             popupMenu.show()
+        }
+
+        private fun showDeleteConfirmationDialog(context: Context, onConfirm: () -> Unit) {
+            val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_confirm_delete, null)
+            val dialog = AlertDialog.Builder(context)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+
+            dialogView.findViewById<Button>(R.id.btn_yes).setOnClickListener {
+                // Call onConfirm when "Yes" button is clicked
+                onConfirm.invoke()
+                dialog.dismiss()
+            }
+
+            dialogView.findViewById<Button>(R.id.btn_no).setOnClickListener {
+                dialog.dismiss()
+            }
+
+            dialog.show()
         }
 
         private fun showUserDialog(
