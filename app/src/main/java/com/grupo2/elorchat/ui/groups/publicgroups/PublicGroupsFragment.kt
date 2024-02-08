@@ -100,10 +100,10 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
-        if (!group.isUserOnGroup) {
+        /*if (!group.isUserOnGroup) {
             Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
             return
-        }
+        }*/
 
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())
@@ -146,7 +146,7 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
                         when (result.status) {
                             Resource.Status.SUCCESS -> {
                                 Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()
-                                group.isUserOnGroup = true
+                                //group.isUserOnGroup = true
                                 viewModel.updateGroupList()
                                 // You can add any additional actions on success if needed
                             }

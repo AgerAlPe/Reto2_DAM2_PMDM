@@ -114,7 +114,7 @@ class GroupViewModel @Inject constructor(
             try {
                 // Obtener la lista de grupos a los que el usuario se ha unido localmente
                 val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
-                val localGroups = userId?.let { chatUserRepository.getChatsForUser(it) }?.data.orEmpty()
+                // localGroups = userId?.let { chatUserRepository.getChatsForUser(it) }?.data.orEmpty()
 
                 // Obtener la lista completa de grupos desde la fuente remota (cuando la aplicación está en línea)
                 val allGroupsFromRepository = getAllGroupsFromRepository()
@@ -128,7 +128,7 @@ class GroupViewModel @Inject constructor(
                 allUserGroups?.data?.let { userGroups ->
                     userGroups.forEach { group ->
                         if (allGroupIds.add(group.id)) {
-                            group.isUserOnGroup = true
+                            //group.isUserOnGroup = true
                             updatedGroups.add(group)
                         }
                     }
@@ -149,10 +149,10 @@ class GroupViewModel @Inject constructor(
 
                 // Filtrar grupos originales
                 originalPublicGroups = allGroups.filterNot { it.isPrivate }
-                originalPrivateGroups = allGroups.filter { it.isPrivate && it.isUserOnGroup }
+                //originalPrivateGroups = allGroups.filter { it.isPrivate && it.isUserOnGroup }
 
                 // Aplicar filtros si es necesario (filtrar según la búsqueda)
-                filterPrivateGroups()
+                //filterPrivateGroups()
                 filterPublicGroups()
 
                 // Publicar la lista actualizada
@@ -164,7 +164,7 @@ class GroupViewModel @Inject constructor(
     }
 
 
-    private fun filterPrivateGroups() {
+    /*private fun filterPrivateGroups() {
         viewModelScope.launch {
             try {
                 // Filter private groups from originalPrivateGroups
@@ -185,7 +185,7 @@ class GroupViewModel @Inject constructor(
                 )
             }
         }
-    }
+    }*/
 
     private fun filterPublicGroups() {
         viewModelScope.launch {
@@ -195,7 +195,7 @@ class GroupViewModel @Inject constructor(
 
                 // Insert filtered public groups into the database
                 val publicGroupsEntities = newPublicGroups.map {
-                    GroupEntity(it.id, it.name, it.isPrivate)
+                    GroupEntity(null, it.name, it.isPrivate, it.id)
                 }
                 appDatabase.getGroupDao().insertAll(publicGroupsEntities)
 
@@ -290,7 +290,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _leaveChatResult.value = Resource.loading()
-                chatUserRepository.deleteChatUsersForChatAndUser(chatId, userId)
+                chatUserRepository.deleteUserFromGroup(chatId, userId)
                 leaveChatFromRepo(userId, chatId)
                 _leaveChatResult.value = Resource.success(Unit)
                 updateGroupList()

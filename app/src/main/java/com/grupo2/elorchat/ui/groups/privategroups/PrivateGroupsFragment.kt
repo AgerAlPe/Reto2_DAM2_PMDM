@@ -100,10 +100,12 @@ class PrivateGroupsFragment : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
-        if (!group.isUserOnGroup) {
-            Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
-            return
-        }
+        /* if (!group.isUserOnGroup) {
+             Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
+             return
+         }
+
+      */
 
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())

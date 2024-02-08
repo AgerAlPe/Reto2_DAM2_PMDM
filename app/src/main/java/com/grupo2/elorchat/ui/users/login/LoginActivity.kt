@@ -145,6 +145,7 @@ class LoginActivity : AppCompatActivity() {
             when (userDataResult.status) {
                 Resource.Status.SUCCESS -> {
                     userDataResult.data?.let { userData ->
+                        viewModel.syncLogUserInfo(userData.id!!)
 
                         lifecycleScope.launch(Dispatchers.IO) {
                             userRepository.insertUser(userData)

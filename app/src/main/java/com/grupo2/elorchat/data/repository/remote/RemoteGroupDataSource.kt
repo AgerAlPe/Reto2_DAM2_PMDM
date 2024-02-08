@@ -5,11 +5,20 @@ import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.ChatUserEmailRequest
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
+import com.grupo2.elorchat.utils.Resource
 
 
 class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
     override suspend fun getGroups() = getResult {
         RetrofitClient.apiInterface.getGroups()
+    }
+
+    override suspend fun getPublicGroups() = getResult {
+        RetrofitClient.apiInterface.getPublicGroups()
+    }
+
+    override suspend fun getChatUser(userId : Int) = getResult {
+        RetrofitClient.apiInterface.getChatUser(userId)
     }
 
     override suspend fun createGroup(group : Group) = getResult {

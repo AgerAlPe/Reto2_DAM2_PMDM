@@ -12,6 +12,10 @@ interface CommonGroupRepository {
 
     suspend fun getGroups() : Resource<List<Group>>
 
+    suspend fun getPublicGroups() : Resource<List<Group>>
+
+    suspend fun getChatUser(userId: Int) : Resource<List<ChatUser>>
+
     suspend fun createGroup(group: Group) : Resource<Int>
 
     suspend fun getMessagesFromGroup(groupId : Int) : Resource<List<Message>>

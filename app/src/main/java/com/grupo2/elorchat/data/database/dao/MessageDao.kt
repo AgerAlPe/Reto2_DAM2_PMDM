@@ -14,6 +14,9 @@ interface MessageDao {
     @Query("SELECT * FROM message_table where id = :userId")
     suspend fun getAllUserMessage(userId:Int):List<MessageEntity>
 
+    @Query("SELECT * FROM message_table where id = :chatId")
+    suspend fun getAllChatMessage(chatId:Int):List<MessageEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(message: List<MessageEntity>)
 

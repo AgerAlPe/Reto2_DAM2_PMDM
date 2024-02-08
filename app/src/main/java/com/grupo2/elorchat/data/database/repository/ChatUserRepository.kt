@@ -14,32 +14,35 @@ class ChatUserRepository @Inject constructor(private val chatUserDao: ChatUserDa
         chatUserDao.insertChatUser(chatUser.toChatUserEntity())
     }
 
+    suspend fun insertChatUsers(chatUsers: List<ChatUser>) {
+        val chatUserEntities = chatUsers.map { it.toChatUserEntity() }
+        chatUserDao.insertChatUsers(chatUserEntities)
+    }
+
     suspend fun getChatUser(userId: Int, chatId: Int): ChatUser? {
         val chatUserEntity = chatUserDao.getChatUser(userId, chatId)
         return chatUserEntity?.toChatUser()
     }
 
-    suspend fun getChatsForUser(chatId: Int): Resource<List<ChatUser>> {
+    suspend fun getChatsForUser(chatId: Int): List<ChatUser> {
         val chatUserEntities = chatUserDao.getChatsForUser(chatId)
-        val chatUsers = chatUserEntities.map { it.toChatUser() }
-        return Resource.success(chatUsers)
+        return chatUserEntities.map { it.toChatUser() }
     }
 
-    suspend fun getUsersInChat(chatId: Int): Resource<List<ChatUser>> {
-        val chatUserEntities = chatUserDao.getUsersInChat(chatId)
-        val chatUsers = chatUserEntities.map { it.toChatUser() }
-        return Resource.success(chatUsers)
+    suspend fun getUserChats(userId: Int): List<ChatUser> {
+        val chatUserEntities = chatUserDao.getUserChats(userId)
+        return chatUserEntities.map { it.toChatUser() }
     }
 
-    suspend fun deleteChatUsersForChatAndUser(chatId: Int, userId: Int) {
-        chatUserDao.deleteChatUsersForChatAndUser(chatId, userId)
+    suspend fun deleteUserFromGroup(chatId: Int, userId: Int) {
+        chatUserDao.deleteUserFromGroup(chatId, userId)
     }
 
-    suspend fun deleteChatUsersForChat(chatId: Int) {
-        chatUserDao.deleteChatUsersForChat(chatId)
+    suspend fun deleteAllUserFromGroup(chatId: Int) {
+        chatUserDao.deleteAllUserFromGroup(chatId)
     }
 
-    suspend fun deleteChatUsersForUser(userId: Int) {
-        chatUserDao.deleteChatUsersForUser(userId)
+    suspend fun deleteUserFromAllGroups(userId: Int) {
+        chatUserDao.deleteUserFromAllGroups(userId)
     }
 }

@@ -16,6 +16,11 @@ class MessageRepository @Inject constructor(
         return messageEntities.map { it.toMessage(userRepository) }
     }
 
+    suspend fun getAllChatMessages(chatId: Int): List<Message> {
+        val messageEntities = messageDao.getAllChatMessage(chatId)
+        return messageEntities.map { it.toMessage(userRepository) }
+    }
+
     suspend fun getAllUserMessages(userId: Int): List<Message> {
         val messageEntities = messageDao.getAllUserMessage(userId)
         return messageEntities.map { it.toMessage(userRepository) }

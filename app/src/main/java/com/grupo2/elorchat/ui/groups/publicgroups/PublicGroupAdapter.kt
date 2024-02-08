@@ -29,7 +29,7 @@ class PublicGroupAdapter(
         }
 
         // Log the values for debugging
-        Log.d("GroupAdapter", "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}")
+        /*Log.d("GroupAdapter", "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}")
 
         // Check if the user is already in the group
         if (group.isUserOnGroup) {
@@ -43,7 +43,7 @@ class PublicGroupAdapter(
                 holder.joinButton.visibility = View.GONE
                 onJoinButtonClickListener(group)
             }
-        }
+        }*/
     }
 
     inner class GroupViewHolder(private val binding: ItemGroupBinding) :
