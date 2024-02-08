@@ -255,7 +255,7 @@ class SocketActivity() : ComponentActivity() {
             }
         }
 
-        groupViewModel.leaveChatResult.observe(this, Observer { result ->
+        socketViewModelt.leave.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
