@@ -60,8 +60,8 @@ interface APIInterface {
     @POST("chats/leaveChatEmail")
     suspend fun makeAnUserLeaveAChat(@Body chatUserEmailRequest: ChatUserEmailRequest) : Response<ChatUserMovementResponse>
 
-    @GET("sockets/joinRoom/{room}/{idUser}")
-    suspend fun joinRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>
+    @GET("sockets/joinRoom/{room}/{isAdmin}")
+    suspend fun joinRoomSocket(@Path("room") room : String, @Path("isAdmin") isAdmin : Boolean) : Response<Void>
 
     @GET("sockets/leaveRoom/{room}/{idUser}")
     suspend fun leaveRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>

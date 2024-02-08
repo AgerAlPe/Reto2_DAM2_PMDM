@@ -77,9 +77,9 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    fun joinRoom(room : String, userId : Int) {
+    fun joinRoom(room : String, isAdmin : Boolean) {
         viewModelScope.launch {
-            _joined.value = joinSocketRoom(room , userId)
+            _joined.value = joinSocketRoom(room , isAdmin)
         }
     }
 
@@ -89,9 +89,9 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
+    private suspend fun joinSocketRoom(room : String, isAdmin : Boolean): Resource<Void> {
         return withContext(Dispatchers.IO) {
-            socketRepository.joinRoom(room , userId)
+            socketRepository.joinRoom(room , isAdmin)
         }
     }
 

@@ -391,6 +391,7 @@ class GroupViewModel @Inject constructor(
             try {
                 val result = deleteGroupFromRepo(groupId)
                 if (result.status == Resource.Status.SUCCESS) {
+//                    deleteGroupFromDao(groupId)
                     // If group deletion was successful, update the list of groups
                     updateGroupList()
                     updateGroupsLists()
@@ -408,6 +409,16 @@ class GroupViewModel @Inject constructor(
             groupRepository.deleteGroup(groupId)
         }
     }
+
+//    suspend fun deleteGroupFromDao(groupId: Int): Resource<Unit> {
+//        return try {
+//            // Assuming your DAO is named groupDao
+//            roomGroupRepository.deleteGroup(groupId)
+//            Resource.success(Unit)
+//        } catch (e: Exception) {
+//            Resource.error("Error deleting group", null)
+//        }
+//    }
 
 }
 

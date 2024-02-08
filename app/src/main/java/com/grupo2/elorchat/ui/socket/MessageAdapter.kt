@@ -57,7 +57,7 @@ class MessageAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(MessageDiff
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(message: Message) {
-            if (message.message.length > 500) {
+            if (message.message.length > 2000) {
                 val bitmap = decodeBase64ToBitmap(message.message)
                 val resizedBitmap = resizeBitmap(bitmap, 400, 400) // Adjust the width and height as needed
                 binding.messageText.background = BitmapDrawable(itemView.resources, resizedBitmap)

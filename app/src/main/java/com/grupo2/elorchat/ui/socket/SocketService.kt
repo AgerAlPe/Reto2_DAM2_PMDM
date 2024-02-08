@@ -34,7 +34,7 @@ class SocketService : Service() {
     private lateinit var serviceScope: CoroutineScope
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
-    private val SOCKET_HOST = "http://10.0.2.2:8085/"
+    private val SOCKET_HOST = "http://10.5.7.37:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private val mBinder: IBinder = SocketBinder()
