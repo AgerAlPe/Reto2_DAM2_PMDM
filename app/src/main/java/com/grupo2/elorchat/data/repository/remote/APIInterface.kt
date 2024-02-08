@@ -63,8 +63,8 @@ interface APIInterface {
     @GET("sockets/joinRoom/{room}/{isAdmin}")
     suspend fun joinRoomSocket(@Path("room") room : String, @Path("isAdmin") isAdmin : Boolean) : Response<Void>
 
-    @GET("sockets/leaveRoom/{room}/{idUser}")
-    suspend fun leaveRoomSocket(@Path("room") room : String, @Path("idUser") idUser : Int) : Response<Void>
+    @GET("sockets/leaveRoom/{room}")
+    suspend fun leaveRoomSocket(@Path("room") room : String) : Response<Void>
 
     @DELETE("chats/{chatId}")
     suspend fun deleteGroup(@Path("chatId") chatId : Int ) : Response<Void>

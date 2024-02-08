@@ -244,11 +244,10 @@ class SocketActivity() : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    val userId = appDatabase.getUserDao().getAllUser().first().id
+                    socketViewModelt.leaveRoom(groupName)
+//                  groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    socketViewModelt.leaveRoom(groupName, userId!!)
                 } catch (e: Exception) {
                     // Handle exceptions if any
                     Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")

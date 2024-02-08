@@ -9,6 +9,6 @@ interface CommonSocketRepository {
 
     suspend fun joinRoom(room : String, isAdmin : Boolean) : Resource<Void>
 
-    suspend fun leaveRoom(room : String, userId : Int) : Resource<Void>
+    suspend fun leaveRoom(room : String) : Resource<Void>
 
 }
