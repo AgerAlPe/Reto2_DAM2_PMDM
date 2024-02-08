@@ -17,7 +17,9 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.databinding.ItemMessageBinding
 import com.grupo2.elorchat.databinding.ItemMessageGpsBinding
+import java.text.SimpleDateFormat
 import java.util.Base64
+import java.util.Locale
 
 class MessageAdapter : ListAdapter<Message, RecyclerView.ViewHolder>(MessageDiffCallback()) {
 

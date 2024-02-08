@@ -83,9 +83,9 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    fun leaveRoom(room : String, userId : Int) {
+    fun leaveRoom(room : String) {
         viewModelScope.launch {
-            _leave.value = leaveSocketRoom(room , userId)
+            _leave.value = leaveSocketRoom(room)
         }
     }
 
@@ -96,9 +96,9 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
+    private suspend fun leaveSocketRoom(room : String): Resource<Void> {
         return withContext(Dispatchers.IO) {
-            socketRepository.leaveRoom(room , userId)
+            socketRepository.leaveRoom(room)
         }
     }
 

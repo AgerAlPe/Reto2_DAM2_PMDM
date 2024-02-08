@@ -264,9 +264,9 @@ class SocketActivity() : ComponentActivity() {
                 try {
                     val userId = appDatabase.getUserDao().getAllUser().first().id
 
-                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
+//                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    socketViewModelt.leaveRoom(groupName, userId!!)
+                    socketViewModelt.leaveRoom(groupName)
 
                 } catch (e: Exception) {
                     // Handle exceptions if any

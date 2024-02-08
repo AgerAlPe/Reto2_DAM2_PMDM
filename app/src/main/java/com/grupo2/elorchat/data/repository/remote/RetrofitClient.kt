@@ -16,7 +16,7 @@ object RetrofitClient {
     // NOTE acordarse de que hace falta actualizar el manifest
   
 
-    private const val API_URI = "http://10.5.7.37:8080/api/"
+    private const val API_URI = "https://10.0.2.2:8080/api/"
     val sslContext = prueba()
 
     var client = OkHttpClient.Builder().addInterceptor { chain ->

@@ -9,8 +9,8 @@ class RemoteSocketDataSource: BaseDataSource(), CommonSocketRepository {
         RetrofitClient.apiInterface.joinRoomSocket(room, isAdmin)
     }
 
-    override suspend fun leaveRoom(room: String, userId: Int) = getResult {
-        RetrofitClient.apiInterface.leaveRoomSocket(room, userId)
+    override suspend fun leaveRoom(room: String) = getResult {
+        RetrofitClient.apiInterface.leaveRoomSocket(room)
     }
 
 }
