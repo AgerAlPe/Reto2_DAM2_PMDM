@@ -90,6 +90,7 @@ class SocketViewModel @Inject constructor(
     }
 
     private suspend fun joinSocketRoom(room : String, isAdmin : Boolean): Resource<Void> {
+
         return withContext(Dispatchers.IO) {
             socketRepository.joinRoom(room , isAdmin)
         }
@@ -100,6 +101,7 @@ class SocketViewModel @Inject constructor(
             socketRepository.leaveRoom(room , userId)
         }
     }
+
 
 }
 

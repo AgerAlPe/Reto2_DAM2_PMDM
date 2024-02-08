@@ -4,7 +4,8 @@ package com.grupo2.elorchat.ui.groups
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.ElorChat.Companion.context
@@ -253,6 +254,7 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+
     private fun addGroupToPublicList(group: Group) {
         val currentGroups = _publicGroups.value?.data?.toMutableList() ?: mutableListOf()
         currentGroups.add(group)
@@ -276,14 +278,22 @@ class GroupViewModel @Inject constructor(
                 Log.e(TAG, "Exception while joining the chat: ${e.message}")
                 _joinChat.value = Resource.error("Error joining the chat", null)
             }
+
+    fun joinChat(chatUser: ChatUser): LiveData<Resource<ChatUser>> {
+        return liveData {
+            // Your implementation of joinChat
+            emit(groupRepository.joinChat(chatUser))
+
         }
     }
 
     private suspend fun joinChatFromRepo(chatUser:  ChatUser): Resource<ChatUser> {
         return withContext(Dispatchers.IO) {
+            // Adjust the line below to get the correct Resource type
             groupRepository.joinChat(chatUser)
         }
     }
+
 
     fun leaveChat(userId: Int, chatId: Int) {
         viewModelScope.launch {
@@ -297,13 +307,21 @@ class GroupViewModel @Inject constructor(
                 Log.e(TAG, "Exception while leaving the chat: ${e.message}")
                 _leaveChatResult.value = Resource.error("Error leaving the chat", null)
             }
+
+    private val _leaveChatResult = MutableLiveData<Resource<Unit>>()
+    val leaveChatResult: LiveData<Resource<Unit>> get() = _leaveChatResult
+
+    fun leaveChat(userId: Int, chatId: Int): LiveData<Resource<Void>> {
+        return liveData {
+            // Your implementation of leaveChat
+            emit(groupRepository.leaveChat(userId, chatId))
+            updateGroupList()
+
         }
     }
-
-    private suspend fun leaveChatFromRepo(userId: Int, chatId: Int): Resource<Void> {
-        return withContext(Dispatchers.IO) {
-            groupRepository.leaveChat(userId, chatId)
-        }
+    private suspend fun leaveChatFromRepo(userId: Int, chatId: Int) {
+        // Change the line below to get the correct Resource type
+        groupRepository.leaveChat(userId, chatId)
     }
 
     fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) {

@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.groups.publicgroups
 
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ class PublicGroupAdapter(
     private val onGroupClickListener: (Group) -> Unit,
     private val onJoinButtonClickListener: (Group) -> Unit,
     private val viewModel: GroupViewModel
+
 ) : ListAdapter<Group, PublicGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -29,6 +31,7 @@ class PublicGroupAdapter(
         holder.itemView.setOnClickListener {
             onGroupClickListener(group)
         }
+
     }
 
     inner class GroupViewHolder(private val binding: ItemGroupBinding) :
@@ -69,6 +72,7 @@ class PublicGroupAdapter(
             }
         }
     }
+
 
     // Method to update the dataset
     fun updateGroups(groups: List<Group>) {

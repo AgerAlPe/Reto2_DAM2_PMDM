@@ -1,5 +1,6 @@
 package com.grupo2.elorchat.ui.socket
 
+import android.app.Application
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -17,6 +18,8 @@ import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
+import com.grupo2.elorchat.utils.ssl.MyHostnameVerifier
+import com.grupo2.elorchat.utils.ssl.MyTrustManager
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -24,17 +27,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import okhttp3.OkHttpClient
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.time.LocalDateTime
 import javax.inject.Inject
+import java.util.concurrent.TimeUnit
+import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
+
 
 @AndroidEntryPoint
 class SocketService : Service() {
     private lateinit var serviceScope: CoroutineScope
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
-    private val SOCKET_HOST = "http://10.5.7.37:8085/"
+    private val SOCKET_HOST = "https://10.0.2.2:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private val mBinder: IBinder = SocketBinder()
@@ -47,6 +55,10 @@ class SocketService : Service() {
         fun getService(): SocketService = this@SocketService
     }
 
+    // to get the app
+    fun getApp(): Application {
+        return getApplication()
+    }
     override fun onBind(intent: Intent?): IBinder? {
         return mBinder
     }
@@ -62,12 +74,18 @@ class SocketService : Service() {
 
         val socketOptions = createSocketOptions()
         mSocket = IO.socket(SOCKET_HOST, socketOptions)
+        mSocket.on(SocketEvents.ON_CONNECT.value, onConnect())
+        mSocket.on(SocketEvents.ON_CONNECT_ERROR.value, onConnectError())
+        mSocket.on(SocketEvents.ON_CONNECT_TIMEOUT.value, onConnectTimeout())
 
         mSocket.on(SocketEvents.ON_CONNECT.value, onConnect())
         mSocket.on(SocketEvents.ON_DISCONNECT.value, onDisconnect())
         mSocket.on(SocketEvents.ON_MESSAGE_RECEIVED.value, onNewMessage())
         mSocket.on(SocketEvents.ON_JOINED_ROOM.value, onJoinRoom())
         mSocket.on(SocketEvents.ON_LEFT_ROOM.value, onLeftRoom())
+
+
+
         connect()
     }
 
@@ -85,6 +103,22 @@ class SocketService : Service() {
         headers[AUTHORIZATION_HEADER] = mutableListOf(ElorChat.userPreferences.fetchAuthToken().toString())
         options.extraHeaders = headers
 
+        // for SSL
+        options.secure = true
+        // configuration to accept self-signed certificates
+        // In production it shouldn't be a self-signed certificate
+        val certificatesManager = MyTrustManager(getApp())
+        val sslContext = SSLContext.getInstance("TLS")
+        sslContext.init(null, arrayOf<TrustManager>(certificatesManager.trustManager), null)
+
+        val okHttpClient = OkHttpClient.Builder()
+            .hostnameVerifier(MyHostnameVerifier())
+            .sslSocketFactory(sslContext.socketFactory, certificatesManager.trustManager)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .build()
+        options.callFactory = okHttpClient
+        options.webSocketFactory = okHttpClient
+
         return options
     }
 
@@ -99,6 +133,18 @@ class SocketService : Service() {
         return Emitter.Listener {
             Log.d(TAG, "Disconnected from the socket")
             // Handle the disconnection event
+        }
+    }
+
+    private fun onConnectError(): Emitter.Listener {
+        return Emitter.Listener {
+            Log.e(TAG, "onConnectError")
+            Log.e(TAG, it[0].toString())
+        }
+    }
+    private fun onConnectTimeout(): Emitter.Listener {
+        return Emitter.Listener {
+            Log.e(TAG, "onConnectTimeout")
         }
     }
 
