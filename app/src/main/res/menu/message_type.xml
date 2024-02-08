@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/send_photo"
+        android:title="@string/send_photo" />
+    <item
+        android:id="@+id/send_coordinates"
+        android:title="@string/send_coordinates" />
+    <item
+        android:id="@+id/send_file"
+        android:title="@string/send_file" />
+</menu>

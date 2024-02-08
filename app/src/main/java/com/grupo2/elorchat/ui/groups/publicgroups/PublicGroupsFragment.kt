@@ -19,6 +19,8 @@ import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.database.AppDatabase
+import com.grupo2.elorchat.data.database.repository.MessageRepository
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
@@ -29,14 +31,18 @@ import com.grupo2.elorchat.ui.socket.SocketViewModel
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
-class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
+class PublicGroupsFragment @Inject constructor() : Fragment() {
 
     private lateinit var groupListAdapter: PublicGroupAdapter
     private val viewModel: GroupViewModel by viewModels()
     private val socketViewModel: SocketViewModel by viewModels()
     private val SOCKET_ACTIVITY_REQUEST_CODE = 123
+
+    @Inject
+    lateinit var userRepository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +55,8 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
 
         groupListAdapter = PublicGroupAdapter(
             onGroupClickListener = ::onGroupsListClickItem,
-            onJoinButtonClickListener = ::onJoinButtonClickItem
+            onJoinButtonClickListener = ::onJoinButtonClickItem,
+            viewModel
         )
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
@@ -108,28 +115,32 @@ class PublicGroupsFragment(private val appDatabase: AppDatabase) : Fragment() {
     private fun onJoinButtonClickItem(group: Group, join: Boolean) {
         lifecycleScope.launch {
             try {
-                val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
+                val userId = userRepository.getAllUsers().firstOrNull()?.id
 
-                userId?.let { safeUserId ->
-                    if (group.isUserOnGroup) {
-                        // User is not in the group, join the group
-                        // Update the LiveData immediately before making the database call
+                if (userId != null) {
 
-                        viewModel.joinChat(ChatUser(safeUserId, group.id, false)).observe(this@PublicGroupsFragment, Observer { result ->
-                            handleJoinLeaveResult(result, group, join)
-                        })
-                        socketViewModel.joinRoom(group.name, safeUserId)
-                    } else {
-                        // User is already in the group, leave the group
-                        // Update the LiveData immediately before making the database call
+//                    viewModel.joinChat(ChatUser(userId, group.id, false))
 
-                        viewModel.leaveChat(safeUserId, group.id).observe(this@PublicGroupsFragment, Observer { result ->
-                            handleJoinLeaveResult(result, group, join)
+                    socketViewModel.joinRoom(group.name, false)
 
-                        })
-                        socketViewModel.leaveRoom(group.name, safeUserId)
-                    }
-                } ?: run {
+                    viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
+                        when (result.status) {
+                            Resource.Status.SUCCESS -> {
+                                Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()
+                                group.isUserOnGroup = true
+                                viewModel.updateGroupList()
+                                // You can add any additional actions on success if needed
+                            }
+                            Resource.Status.ERROR -> {
+                                Toast.makeText(requireContext(), "Error joining the chat: ${result.message}", Toast.LENGTH_SHORT).show()
+                                // Handle error state, if needed
+                            }
+                            Resource.Status.LOADING -> {
+                                // Handle loading state if needed
+                            }
+                        }
+                    })
+                } else {
                     Log.e("YourActivity", "userId is null")
                     // Handle the case where userId is null
                 }

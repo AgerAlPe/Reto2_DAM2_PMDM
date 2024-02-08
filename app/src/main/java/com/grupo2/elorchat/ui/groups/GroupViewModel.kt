@@ -1,33 +1,28 @@
 package com.grupo2.elorchat.ui.groups
 
 
-import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
-
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
-
 import com.grupo2.elorchat.data.ChatUser
-
 import com.grupo2.elorchat.ElorChat.Companion.context
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.ChangePasswordRequest
-
+import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.data.User
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.GroupEntity
+import com.grupo2.elorchat.data.database.repository.ChatUserRepository
+import com.grupo2.elorchat.data.database.repository.GroupRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
-import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,20 +30,18 @@ import javax.inject.Inject
 @HiltViewModel
 class GroupViewModel @Inject constructor(
     private val appDatabase: AppDatabase,
-    private val groupRepository: CommonGroupRepository
+    private val groupRepository: CommonGroupRepository,
+    private val roomGroupRepository: GroupRepository,
+    private val chatUserRepository: ChatUserRepository
 ) : ViewModel() {
-
-    private val dataStoreManager by lazy { DataStoreManager.getInstance(context) }
 
     private val _items = MutableLiveData<Resource<List<Group>>?>()
 
-    private var originalGroups: List<Group> = emptyList()
-
     private var allGroups: List<Group> = emptyList()
 
-    private val _privateGroups = MutableLiveData<Resource<List<Group>>?>()
+    private var _privateGroups = MutableLiveData<Resource<List<Group>>?>()
 
-    private val _publicGroups = MutableLiveData<Resource<List<Group>>?>()
+    private var _publicGroups = MutableLiveData<Resource<List<Group>>?>()
 
     private val _delete = MutableLiveData<Resource<Int>?>()
 
@@ -65,9 +58,20 @@ class GroupViewModel @Inject constructor(
 
     private val _firstUserEmail = MutableLiveData<String>()
 
+    private val _adminInGroups = MutableLiveData<List<Group>>()
+
+    private val _addUser = MutableLiveData<ChatUserMovementResponse>()
+
+    val addUser : MutableLiveData<ChatUserMovementResponse> get() = _addUser
+
+    private val _kickUser = MutableLiveData<ChatUserMovementResponse>()
+
+    val kickUser : MutableLiveData<ChatUserMovementResponse> get() = _kickUser
+
+    val adminInGroups :MutableLiveData<List<Group>> get() = _adminInGroups
+
     val firstUserEmail: LiveData<String> get() = _firstUserEmail
     val changePassword : MutableLiveData<Resource<Void>> get() = _changePassword
-
 
     val leaveChat: MutableLiveData<Resource<Void>> get() = _leaveChat
     val joinChat: MutableLiveData<Resource<ChatUser>> get() = _joinChat
@@ -80,50 +84,59 @@ class GroupViewModel @Inject constructor(
     private var originalPublicGroups: List<Group> = emptyList()
     private var originalPrivateGroups: List<Group> = emptyList()
 
+    private val _leaveChatResult = MutableLiveData<Resource<Unit>>()
+    val leaveChatResult: LiveData<Resource<Unit>> get() = _leaveChatResult
+
+    companion object {
+        private const val TAG = "GroupViewModel"
+    }
+
     init {
         updateGroupList()
+        getAdminGroups()
     }
 
     private val _joinChatListener = MutableLiveData<Resource<ChatUser>>()
     val joinChatListener: LiveData<Resource<ChatUser>> get() = _joinChatListener
 
-    fun joinChatListener(chatUser: ChatUser) {
-        viewModelScope.launch {
-            try {
-                _joinChatListener.value = joinChatFromRepo(chatUser)
-            } catch (e: Exception) {
-                // Handle exceptions if any
-                Log.e(TAG, "Exception while joining the chat: ${e.message}")
-            }
-        }
+
+    fun updateGroupsLists() {
+        // Update LiveData objects for public and private groups
+        _publicGroups.value = Resource.success(allGroups.filter { !it.isPrivate })
+        _privateGroups.value = Resource.success(allGroups.filter { it.isPrivate })
     }
 
     fun updateGroupList() {
         viewModelScope.launch {
             try {
-                val userId = appDatabase.getUserDao().getAllUser().first().id
-                val repoResponse = getAllUserGroupsFromRepository(userId)
+                val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
+                val localGroups = userId?.let { chatUserRepository.getChatsForUser(it) }?.data.orEmpty()
                 val allGroupsFromRepository = getAllGroupsFromRepository()
-                originalGroups = repoResponse.data.orEmpty()
+                val allUserGroups = userId?.let { getAllUserGroupsFromRepository(it) }
 
-                // Create a temporary list to update isUserOnGroup property
-                val updatedGroups = allGroupsFromRepository.data.orEmpty().toMutableList()
+                val updatedGroups = mutableListOf<Group>()
+                val allGroupIds = mutableSetOf<Int>()
 
-                // Update the isUserOnGroup property
-                updatedGroups.forEach { group ->
-                    group.isUserOnGroup = originalGroups.any { userGroup -> userGroup.id == group.id }
+                allUserGroups?.data?.forEach { group ->
+                    allGroupIds.add(group.id)
+                    group.isUserOnGroup = true
+                    updatedGroups.add(group)
                 }
 
-                // Assign the updated list to allGroups
+                allGroupsFromRepository.data?.forEach { group ->
+                    if (allGroupIds.add(group.id) && !group.isPrivate) {
+                        updatedGroups.add(group)
+                    }
+                }
+
                 allGroups = updatedGroups
+                originalPublicGroups = allGroups.filterNot { it.isPrivate }
+                originalPrivateGroups = allGroups.filter { it.isPrivate && it.isUserOnGroup }
 
                 filterPrivateGroups()
                 filterPublicGroups()
+                getAdminGroups()
 
-
-                Log.i("filta", publicGroups.value?.data.orEmpty().toString())
-
-                // Update LiveData with the latest list of groups
                 _groups.postValue(allGroups)
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while updating group list: ${e.message}")
@@ -131,67 +144,26 @@ class GroupViewModel @Inject constructor(
         }
     }
 
-    private fun updateIsUserOnGroupStatus() {
-        viewModelScope.launch {
-            try {
-                val userId = appDatabase.getUserDao().getAllUser().first().id
-                val allGroupsFromRepository = getAllGroupsFromRepository()
-                val userGroupsFromRepository = getAllUserGroupsFromRepository(userId)
-
-
-                allGroupsFromRepository.data?.let { allGroups ->
-                    userGroupsFromRepository.data?.let { userGroups ->
-                        allGroups.forEach { group ->
-                            group.isUserOnGroup = userGroups.any { userGroup -> userGroup.id == group.id }
-                        }
-
-                    }
-                }
-
-                allGroupsFromRepository.data?.let { allGroups ->
-                    userGroupsFromRepository.data?.let { userGroups ->
-                        Log.d("GroupViewModel", "All Groups: $allGroups")
-                        Log.d("GroupViewModel", "User Groups: $userGroups")
-                    }
-                }
-
-                allGroups = allGroupsFromRepository.data.orEmpty()
-                originalPublicGroups = publicGroups.value?.data.orEmpty()
-                originalPrivateGroups = privateGroups.value?.data.orEmpty()
-
-                filterPrivateGroups()
-                filterPublicGroups()
-
-                _publicGroups.value = Resource.success(allGroups)
-            } catch (e: Exception) {
-                _publicGroups.value = Resource.error("Error updating isUserOnGroup status", null)
-                Log.e("GroupViewModel", "Exception in updateIsUserOnGroupStatus: ${e.message}", e)
-            }
-        }
-    }
-
-    companion object {
-        private const val TAG = "GroupViewModel"
-    }
 
     private fun filterPrivateGroups() {
         viewModelScope.launch {
             try {
-                val savedGroupsRoom = appDatabase.getGroupDao().getAllPrivateGroups()
-                val newPrivateGroups =
-                    originalGroups.filter { it.isPrivate && !savedGroupsRoom.any { savedGroup -> savedGroup.id == it.id } }
-                val privateGroups =
-                    (newPrivateGroups + savedGroupsRoom.map { Group(it.id, it.name, it.isPrivate) }).distinctBy { it.id }
-                val privateGroupsEntities = privateGroups.map {
+                // Filter private groups from originalPrivateGroups
+                val newPrivateGroups = originalPrivateGroups.filter { it.isUserOnGroup }
+
+                // Insert filtered private groups into the database
+                val privateGroupsEntities = newPrivateGroups.map {
                     GroupEntity(it.id, it.name, it.isPrivate)
                 }
-
                 appDatabase.getGroupDao().insertAll(privateGroupsEntities)
 
-                _privateGroups.value = Resource.success(privateGroups)
+                // Update private groups LiveData
+                _privateGroups.value = Resource.success(newPrivateGroups)
             } catch (e: Exception) {
-                _privateGroups.value =
-                    Resource.error(e.message ?: "Error filtering private groups", null)
+                _privateGroups.value = Resource.error(
+                    e.message ?: "Error filtering private groups",
+                    null
+                )
             }
         }
     }
@@ -199,45 +171,46 @@ class GroupViewModel @Inject constructor(
     private fun filterPublicGroups() {
         viewModelScope.launch {
             try {
-                val savedPublicGroupsRoom = appDatabase.getGroupDao().getAllPublicGroups()
-                val newPublicGroups = allGroups.filterNot { it.isPrivate }
-                val publicGroups =
-                    (newPublicGroups + savedPublicGroupsRoom.map { Group(it.id, it.name, it.isPrivate) }).distinctBy { it.id }
-                val publicGroupsEntities = publicGroups.map {
+                // Filter public groups from originalPublicGroups
+                val newPublicGroups = originalPublicGroups.filter { !it.isPrivate }
+
+                // Insert filtered public groups into the database
+                val publicGroupsEntities = newPublicGroups.map {
                     GroupEntity(it.id, it.name, it.isPrivate)
                 }
-
                 appDatabase.getGroupDao().insertAll(publicGroupsEntities)
 
-                _publicGroups.value = Resource.success(publicGroups)
+                // Update public groups LiveData
+                _publicGroups.value = Resource.success(newPublicGroups)
             } catch (e: Exception) {
-                _publicGroups.value =
-                    Resource.error(e.message ?: "Error filtering public groups", null)
+                _publicGroups.value = Resource.error(
+                    e.message ?: "Error filtering public groups",
+                    null
+                )
             }
         }
     }
 
-    fun filterPublicGroupsByName(query: String) {
-        Log.i("filta", publicGroups.value?.data.orEmpty().toString())
-        val filteredPublicGroups = if (query.isNotBlank()) {
-            originalPublicGroups.filter { group ->
-                group.name.contains(query, ignoreCase = true)
-            }
-        } else {
-            originalPublicGroups
-        }
-        _publicGroups.value = Resource.success(filteredPublicGroups)
+    fun filterPublicGroupsByName(query: String?) {
+        val filteredGroups = query?.takeIf { it.isNotBlank() }
+            ?.let { searchTerm ->
+                originalPublicGroups.filter { group ->
+                    group.name.contains(searchTerm, ignoreCase = true)
+                }
+            } ?: originalPublicGroups
+
+        _publicGroups.value = Resource.success(filteredGroups)
     }
 
-    fun filterPrivateGroupsByName(query: String) {
-        val filteredPrivateGroups = if (query.isNotBlank()) {
-            originalPrivateGroups.filter { group ->
-                group.name.contains(query, ignoreCase = true)
-            }
-        } else {
-            originalPrivateGroups
-        }
-        _privateGroups.value = Resource.success(filteredPrivateGroups)
+    fun filterPrivateGroupsByName(query: String?) {
+        val filteredGroups = query?.takeIf { it.isNotBlank() }
+            ?.let { searchTerm ->
+                originalPrivateGroups.filter { group ->
+                    group.name.contains(searchTerm, ignoreCase = true)
+                }
+            } ?: originalPrivateGroups
+
+        _privateGroups.value = Resource.success(filteredGroups)
     }
 
     private suspend fun getAllGroupsFromRepository(): Resource<List<Group>> {
@@ -252,25 +225,88 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    fun createGroup(group: Group) {
+        viewModelScope.launch {
+            try {
+                val result = createGroupFromRepository(group)
+                if (result.status == Resource.Status.SUCCESS) {
+                    // If group creation was successful, update the list of groups
+                    updateGroupList()
+                    updateGroupsLists()
+                    if (!group.isPrivate){
+                        addGroupToPublicList(group)
+                    }else {
+                        addGroupToPrivateList(group)
+                    }
+
+                }
+                _create.value = result
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while creating group: ${e.message}")
+                _create.value = Resource.error("Error creating group", null)
+            }
+        }
+    }
+
     suspend fun createGroupFromRepository(group: Group): Resource<Int> {
         return withContext(Dispatchers.IO) {
             groupRepository.createGroup(group)
         }
     }
 
+
+    private fun addGroupToPublicList(group: Group) {
+        val currentGroups = _publicGroups.value?.data?.toMutableList() ?: mutableListOf()
+        currentGroups.add(group)
+        _publicGroups.value = Resource.success(currentGroups)
+    }
+
+    private fun addGroupToPrivateList(group: Group) {
+        val currentGroups = _privateGroups.value?.data?.toMutableList() ?: mutableListOf()
+        currentGroups.add(group)
+        _privateGroups.value = Resource.success(currentGroups)
+    }
+
+    fun joinChat(chatUser: ChatUser) {
+        viewModelScope.launch {
+            try {
+                chatUserRepository.insertChatUser(chatUser)
+                joinChatFromRepo(chatUser)
+                _joinChat.value = Resource.success(chatUser)
+                updateGroupList()
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while joining the chat: ${e.message}")
+                _joinChat.value = Resource.error("Error joining the chat", null)
+            }
+
     fun joinChat(chatUser: ChatUser): LiveData<Resource<ChatUser>> {
         return liveData {
             // Your implementation of joinChat
             emit(groupRepository.joinChat(chatUser))
+
         }
     }
 
-    private suspend fun joinChatFromRepo(chatUser: ChatUser): Resource<ChatUser> {
+    private suspend fun joinChatFromRepo(chatUser:  ChatUser): Resource<ChatUser> {
         return withContext(Dispatchers.IO) {
             // Adjust the line below to get the correct Resource type
             groupRepository.joinChat(chatUser)
         }
     }
+
+
+    fun leaveChat(userId: Int, chatId: Int) {
+        viewModelScope.launch {
+            try {
+                _leaveChatResult.value = Resource.loading()
+                chatUserRepository.deleteChatUsersForChatAndUser(chatId, userId)
+                leaveChatFromRepo(userId, chatId)
+                _leaveChatResult.value = Resource.success(Unit)
+                updateGroupList()
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while leaving the chat: ${e.message}")
+                _leaveChatResult.value = Resource.error("Error leaving the chat", null)
+            }
 
     private val _leaveChatResult = MutableLiveData<Resource<Unit>>()
     val leaveChatResult: LiveData<Resource<Unit>> get() = _leaveChatResult
@@ -280,6 +316,7 @@ class GroupViewModel @Inject constructor(
             // Your implementation of leaveChat
             emit(groupRepository.leaveChat(userId, chatId))
             updateGroupList()
+
         }
     }
     private suspend fun leaveChatFromRepo(userId: Int, chatId: Int) {
@@ -287,12 +324,12 @@ class GroupViewModel @Inject constructor(
         groupRepository.leaveChat(userId, chatId)
     }
 
-
     fun changeUserPassword(changePasswordRequest: ChangePasswordRequest) {
         viewModelScope.launch {
             _changePassword.value =  userPassword(changePasswordRequest)
         }
     }
+
     private suspend fun userPassword(changePasswordRequest: ChangePasswordRequest): Resource<Void> {
         return withContext(Dispatchers.IO) {
             groupRepository.changePassword(changePasswordRequest)
@@ -313,6 +350,94 @@ class GroupViewModel @Inject constructor(
 
         _firstUserEmail.value = userEmail
     }
+
+    private fun getAdminGroups() {
+        viewModelScope.launch {
+            try {
+                val userId = appDatabase.getUserDao().getAllUser().first().id
+                Log.i("userID", userId.toString())
+                val adminGroupsResponse = userId?.let { getAllGroupsWhereUserIsAdmin(it) }
+                if (adminGroupsResponse != null) {
+                    _adminInGroups.postValue(adminGroupsResponse.data.orEmpty())
+                }
+                Log.i(TAG, "Admin Groups: $adminGroupsResponse")
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while getting admin groups: ${e.message}")
+            }
+        }
+    }
+    private suspend fun getAllGroupsWhereUserIsAdmin(userId: Int): Resource<List<Group>> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.getChatsWhereUserIsAdmin(userId)
+        }
+    }
+
+    fun makeAnUserJoin(chatUserEmailRequest: ChatUserEmailRequest) {
+        viewModelScope.launch {
+            val result = makeAnUserJoinAChat(chatUserEmailRequest)
+            _addUser.value = result.data ?: ChatUserMovementResponse("Error: ${result.status}${result.message}")
+        }
+    }
+
+    private suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserJoinAChat(chatUserEmailRequest)
+        }
+    }
+
+    fun makeAnUserLeave(chatUserEmailRequest: ChatUserEmailRequest) {
+        viewModelScope.launch {
+            val result = makeAnUserLeaveAChat(chatUserEmailRequest)
+            Log.i("resultMessage", result.message.toString())
+            if (result.message.toString().contains("400")) {
+                _kickUser.value = ChatUserMovementResponse("ERROR 400")
+            } else {
+                _kickUser.value = result.data ?: ChatUserMovementResponse("End of input at line 1 column 1 path \$")
+            }
+        }
+    }
+
+    private suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest): Resource<ChatUserMovementResponse> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.makeAnUserLeaveAChat(chatUserEmailRequest)
+        }
+    }
+    private val _deleteGroup = MutableLiveData<Resource<Void>>()
+    val deleteGroup: LiveData<Resource<Void>> get() = _deleteGroup
+    fun deleteGroup(groupId: Int) {
+        viewModelScope.launch {
+            try {
+                val result = deleteGroupFromRepo(groupId)
+                if (result.status == Resource.Status.SUCCESS) {
+//                    deleteGroupFromDao(groupId)
+                    // If group deletion was successful, update the list of groups
+                    updateGroupList()
+                    updateGroupsLists()
+                }
+                _deleteGroup.value = result
+            } catch (e: Exception) {
+                Log.e(TAG, "Exception while deleting group: ${e.message}")
+                _deleteGroup.value = Resource.error("Error deleting group", null)
+            }
+        }
+    }
+
+    private suspend fun deleteGroupFromRepo(groupId: Int): Resource<Void> {
+        return withContext(Dispatchers.IO) {
+            groupRepository.deleteGroup(groupId)
+        }
+    }
+
+//    suspend fun deleteGroupFromDao(groupId: Int): Resource<Unit> {
+//        return try {
+//            // Assuming your DAO is named groupDao
+//            roomGroupRepository.deleteGroup(groupId)
+//            Resource.success(Unit)
+//        } catch (e: Exception) {
+//            Resource.error("Error deleting group", null)
+//        }
+//    }
+
 }
 
 sealed class GroupEvent {

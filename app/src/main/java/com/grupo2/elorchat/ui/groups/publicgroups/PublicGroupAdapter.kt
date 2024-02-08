@@ -8,16 +8,20 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.grupo2.elorchat.R
 import com.grupo2.elorchat.data.Group
-import com.grupo2.elorchat.databinding.GroupBinding
+import com.grupo2.elorchat.databinding.ItemGroupBinding
+import com.grupo2.elorchat.ui.groups.GroupViewModel
 
 class PublicGroupAdapter(
     private val onGroupClickListener: (Group) -> Unit,
-    private val onJoinButtonClickListener: (Group, Boolean) -> Unit
+    private val onJoinButtonClickListener: (Group) -> Unit,
+    private val viewModel: GroupViewModel
+
 ) : ListAdapter<Group, PublicGroupAdapter.GroupViewHolder>(GroupDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
-        val binding = GroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemGroupBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return GroupViewHolder(binding)
     }
 
@@ -28,62 +32,61 @@ class PublicGroupAdapter(
             onGroupClickListener(group)
         }
 
-        // Check if the user is already in the group
-        if (group.isUserOnGroup) {
-            holder.setLeaveButtonState(group)
-        } else {
-            holder.setJoinButtonState(group)
-        }
     }
 
-    inner class GroupViewHolder(private val binding: GroupBinding) :
+    inner class GroupViewHolder(private val binding: ItemGroupBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        val joinButton = binding.joinButton
-
-        fun bind(group: Group) {
-            binding.GroupName.text = group.name
-
-            // Set the initial state of the joinButton
-            joinButton.text = if (group.isUserOnGroup) "Leave" else "Join"
-
-            // Update the joinButton text based on the isUserOnGroup property
-            joinButton.setOnClickListener {
-                it.isEnabled = false // Disable the button temporarily
-
-                if (group.isUserOnGroup) {
-                    group.isUserOnGroup = false
-                    setJoinButtonState(group)
-                    onJoinButtonClickListener(group, false)
-                } else {
-                    group.isUserOnGroup = true
-                    setLeaveButtonState(group)
-                    onJoinButtonClickListener(group, true)
-                }
-
-                Handler().postDelayed({
-                    it.isEnabled = true // Re-enable the button after a delay
-                }, 500) // You can adjust the delay time as needed
+        init {
+            binding.deleteButton.setOnClickListener {
+                val group = getItem(adapterPosition)
+                viewModel.deleteGroup(group.id)
             }
         }
 
-        fun setJoinButtonState(group: Group) {
-            joinButton.text = "Join"
-        }
+        fun bind(group: Group) {
+            binding.GroupName.text = group.name
+            binding.joinButton.setImageResource(R.drawable.baseline_person_add_24)
+            val isAdminGroup = viewModel.adminInGroups.value?.any { it.id == group.id } ?: false
 
-        fun setLeaveButtonState(group: Group) {
-            joinButton.text = "Leave"
+            // Show or hide the delete button based on whether the user is an admin
+            binding.deleteButton.visibility = if (isAdminGroup) View.VISIBLE else View.GONE
+            binding.deleteButton.setOnClickListener {
+                // Handle delete button click here
+                // You can call a function in your ViewModel to handle group deletion
+                viewModel.deleteGroup(group.id)
+            }
+
+            // Log the values for debugging
+            Log.d(
+                "PublicGroupAdapter",
+                "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}"
+            )
+
+            // Check if the user is already in the group
+            binding.joinButton.visibility = if (group.isUserOnGroup) View.GONE else View.VISIBLE
+            binding.joinButton.setOnClickListener {
+                group.isUserOnGroup = true
+                binding.joinButton.visibility = View.GONE
+                onJoinButtonClickListener(group)
+            }
         }
     }
-}
 
-class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
 
-    override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
-        return oldItem.id == newItem.id
+    // Method to update the dataset
+    fun updateGroups(groups: List<Group>) {
+        submitList(groups)
     }
 
-    override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
-        return (oldItem.id == newItem.id && oldItem.name == newItem.name)
+    class GroupDiffCallback : DiffUtil.ItemCallback<Group>() {
+
+        override fun areItemsTheSame(oldItem: Group, newItem: Group): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Group, newItem: Group): Boolean {
+            return (oldItem.id == newItem.id && oldItem.name == newItem.name)
+        }
     }
 }

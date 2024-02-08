@@ -13,9 +13,11 @@ import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
+import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
 import com.grupo2.elorchat.utils.Resource
+import dagger.hilt.android.AndroidEntryPoint
 import com.grupo2.elorchat.utils.ssl.MyHostnameVerifier
 import com.grupo2.elorchat.utils.ssl.MyTrustManager
 import io.socket.client.IO
@@ -29,10 +31,13 @@ import okhttp3.OkHttpClient
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
 import java.time.LocalDateTime
+import javax.inject.Inject
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 
+
+@AndroidEntryPoint
 class SocketService : Service() {
     private lateinit var serviceScope: CoroutineScope
     private val TAG = "SocketService"
@@ -42,7 +47,8 @@ class SocketService : Service() {
 
     private val mBinder: IBinder = SocketBinder()
 
-    private lateinit var messageDao : MessageDao
+    @Inject
+    lateinit var messageRepository: MessageRepository
 
 
     inner class SocketBinder : Binder() {
@@ -60,7 +66,6 @@ class SocketService : Service() {
     override fun onCreate() {
         super.onCreate()
         serviceScope = CoroutineScope(Dispatchers.Default)
-        messageDao = AppDatabase.getInstance(application).getMessageDao()
         startSocket()
     }
 
@@ -171,29 +176,20 @@ class SocketService : Service() {
         }
     }
 
-    private fun updateMessageListWithNewMessage(incommingMessage: Message) {
+    private fun updateMessageListWithNewMessage(incomingMessage: Message) {
         try {
-            val messageEntity = MessageEntity(
-                text = incommingMessage.message,
-                authorId = incommingMessage.userId,
-                chatId =  incommingMessage.chatId
-            )
-
-            serviceScope.launch {
-                withContext(Dispatchers.IO) {
-                    messageDao.insertMessage(messageEntity)
+            Log.i(TAG, incomingMessage.toString())
+                serviceScope.launch {
+                    withContext(Dispatchers.IO) {
+                        messageRepository.insertMessage(incomingMessage)
+                        Log.i(TAG, "Añadido a Room: " + incomingMessage.toString())
+                    }
+                    EventBus.getDefault().post(incomingMessage)
                 }
-                EventBus.getDefault().post(messageEntity)
-
-            }
-
-
         } catch (ex: Exception) {
             Log.e(TAG, ex.message ?: "Unknown error")
         }
     }
-
-
 
     // yo soy quien envia este mensaje
     fun sendMessage(message: String, groupName: String) {

@@ -1,5 +1,7 @@
 package com.grupo2.elorchat.utils
 
+import com.grupo2.elorchat.data.Group
+
 data class Resource<out T>(val status: Status, val data: T?, val message: String?) {
     enum class Status {
         SUCCESS,

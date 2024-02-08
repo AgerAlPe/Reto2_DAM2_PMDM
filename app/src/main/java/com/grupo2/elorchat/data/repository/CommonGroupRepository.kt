@@ -2,6 +2,8 @@ package com.grupo2.elorchat.data.repository
 
 import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
+import com.grupo2.elorchat.data.ChatUserEmailRequest
+import com.grupo2.elorchat.data.ChatUserMovementResponse
 import com.grupo2.elorchat.data.Group
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.utils.Resource
@@ -21,5 +23,13 @@ interface CommonGroupRepository {
     suspend fun getUserGroups(userId : Int) : Resource<List<Group>>
 
     suspend fun changePassword(changePasswordRequest: ChangePasswordRequest) : Resource<Void>
+
+    suspend fun getChatsWhereUserIsAdmin(userId: Int) : Resource<List<Group>>
+
+    suspend fun makeAnUserJoinAChat(chatUserEmailRequest: ChatUserEmailRequest) : Resource<ChatUserMovementResponse>
+
+    suspend fun makeAnUserLeaveAChat(chatUserEmailRequest: ChatUserEmailRequest) : Resource<ChatUserMovementResponse>
+
+    suspend fun deleteGroup(chatId: Int) : Resource<Void>
 
 }

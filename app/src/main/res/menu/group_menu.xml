@@ -1,0 +1,11 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_add_user"
+        android:title="@string/add_user"/>
+    <item
+        android:id="@+id/menu_kick_user"
+        android:title="@string/kick_user"/>
+    <item
+        android:id="@+id/deletePrivateGroup"
+        android:title="@string/Delete_Group"/>
+</menu>

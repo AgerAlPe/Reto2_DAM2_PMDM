@@ -2,11 +2,9 @@ package com.grupo2.elorchat.ui.groups
 
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -101,24 +99,29 @@ class CreateGroupActivity : AppCompatActivity() {
         }
 
         val group = Group(0, groupName, isPrivate)
+        viewModel.createGroup(group)
+        Log.i("createFunciton", "Create clicked")
+        observeCreateGroupResult()
 
-        viewModel.viewModelScope.launch {
-            val result = viewModel.createGroupFromRepository(group)
+    }
 
-            when (result.status) {
-                Resource.Status.SUCCESS -> {
-                    val groupId = result.data // Assuming the result.data is the group ID
+    private fun observeCreateGroupResult() {
+        viewModel.create.observe(this) { result ->
+            if (result != null) {
+                when (result.status) {
+                    Resource.Status.SUCCESS -> {
 
-                    // Assuming the group creation was successful, you can now join the chat
-                    if (groupId != null) {
-                        joinChat(groupId)
-
-                        handleSuccess(groupId)
+                        val groupId = result.data // Assuming the result.data is the group ID
+                        groupId?.let {
+                            showToast("Group created successfully")
+                            joinChat(groupId)
+                            finish()
+                        }
                     }
 
+                    Resource.Status.ERROR -> handleError()
+                    Resource.Status.LOADING -> handleLoading()
                 }
-                Resource.Status.ERROR -> handleError()
-                Resource.Status.LOADING -> handleLoading()
             }
         }
     }
@@ -134,7 +137,7 @@ class CreateGroupActivity : AppCompatActivity() {
         Log.i("JOINCHATuserId", userRoles.id.toString())
         Log.i("JOINCHATGroupId", groupId.toString())
 
-        val chatUser = ChatUser(userRoles.id, groupId, true)
+        val chatUser = ChatUser(userRoles.id!!, groupId, true)
         viewModel.joinChat(chatUser)
     }
 

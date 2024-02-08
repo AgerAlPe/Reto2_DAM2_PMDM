@@ -22,7 +22,7 @@
     <string name="fctDualString" translatable="false">FCT/DUAL</string>
     <string name="rememberMe">Remember Me</string>
     <string name="acceptButtonString">Accept</string>
-    <string name="registerButtonString">Register</string>
+    <string name="register">Register</string>
     <string name="nameString">NAME</string>
     <string name="surnameString">SURNAME</string>
     <string name="login">Login</string>
@@ -59,5 +59,53 @@
     <string name="private_group">PRIVATE</string>
     <string name="public_group">PUBLIC</string>
     <string name="settings">SETTINGS</string>
+    <string name="confirm_logout_title">Logout</string>
+    <string name="confirm_logout_message">Are you sure you want to log out?</string>
+    <string name="positive_button_yes">Yes</string>
+    <string name="negative_button_no">No</string>
+    <string name="closing_session">Closing session...</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="member_since">Member since:</string>
+    <string name="usersurname">UserSurname</string>
+    <string name="username">UserName</string>
+    <string name="role">Role</string>
+    <string name="close_session">Close Session</string>
+    <string name="select_language">Select Language</string>
+    <string name="old_password">Old Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="image_for_attaching_files">Image for attaching photos, files, and locations in the message</string>
+    <string name="leave_chat">Leave Chat</string>
+    <string name="send_message">Send Message</string>
+    <string name="say_something">Say something...</string>
+    <string name="group_name">Group Name</string>
+    <string name="create_group">Create Group</string>
+    <string name="button_to_create_chat_groups">Button to create chat groups</string>
+    <string name="group_image">Group image</string>
+    <string name="this_is_this_group_s_last_message">This is this group\'s last message</string>
+    <string name="join">Join</string>
+    <string name="user_icon">User Icon</string>
+    <string name="enter_your_icon">Enter your icon</string>
+    <string name="enter_your_email">Enter your email</string>
+    <string name="confirm_your_name">Confirm your name</string>
+    <string name="confirm_your_surnames">Confirm your surnames</string>
+    <string name="confirm_your_phone_number">Confirm your phone number</string>
+    <string name="confirm_your_dni_id">Confirm your DNI~ID</string>
+    <string name="confirm_your_direction_of_residence">Confirm your direction of residence</string>
+    <string name="enter_your_new_password">Enter your new password</string>
+    <string name="repeat_your_new_password">Repeat your new password</string>
+    <string name="cycle_name">Cycle name</string>
+    <string name="year_to_course">Year to course</string>
+    <string name="internship_type">Internship type</string>
+    <string name="english">English</string>
+    <string name="spanish">Spanish</string>
+    <string name="basque">Basque</string>
+    <string name="light_mode">Light mode</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="select_app_mode">Select App Mode</string>
+    <string name="send_photo">Send Photo</string>
+    <string name="send_coordinates">Send GPS Coordinates</string>
+    <string name="send_file">Send File</string>    <string name="add_user">Add User</string>
+    <string name="kick_user">Kick User</string>
+    <string name="Delete_Group">Delete Group</string>
 
 </resources>

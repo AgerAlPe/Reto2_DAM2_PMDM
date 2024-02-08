@@ -1,42 +1,51 @@
 package com.grupo2.elorchat.ui.users.login
 
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
+
 import android.os.IBinder
 import android.provider.Settings
+
 import android.util.Log
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
 import com.grupo2.elorchat.ElorChat
+import com.grupo2.elorchat.ElorChat.Companion.userPreferences
 import com.grupo2.elorchat.R
-import androidx.appcompat.app.AppCompatActivity;
 import com.grupo2.elorchat.data.LoginUser
 import com.grupo2.elorchat.data.database.AppDatabase
 import com.grupo2.elorchat.data.database.entities.UserEntity
+import com.grupo2.elorchat.data.database.repository.UserRepository
 import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.socket.SocketService
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
+import com.grupo2.elorchat.utils.LanguageManager
 import com.grupo2.elorchat.utils.Resource
+import com.grupo2.elorchat.utils.ThemeManager
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
 
     private val dataStoreManager by lazy { DataStoreManager.getInstance(ElorChat.context) }
-
-    private val userRepository = RemoteUserDataSource()
-    private val viewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
+    @Inject
+    lateinit var userRepository: UserRepository
+    private val userDataRepository = RemoteUserDataSource()
+    private val viewModel: LoginViewModel by viewModels()
 
     private val socketServiceIntent by lazy {
         Intent(this, SocketService::class.java).apply {
@@ -57,6 +66,13 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        userPreferences.fetchAppMode()?.let { mode ->
+            ThemeManager.applyAppMode(mode, this as AppCompatActivity, userPreferences)
+        }
+
+
+
+
         setContentView(R.layout.activity_login)
 
         val btnLogin = findViewById<Button>(R.id.buttonAccept)
@@ -65,6 +81,10 @@ class LoginActivity : AppCompatActivity() {
         val chBox = findViewById<CheckBox>(R.id.checkBox)
 
         val btnChangePassword = findViewById<Button>(R.id.retrievePassButton)
+
+        val androidId = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID)
+
+        Log.i("androidToken", androidId)
 
         var loginUser = LoginUser("", "")
 
@@ -104,7 +124,7 @@ class LoginActivity : AppCompatActivity() {
                                 viewModel.getUserData(loginUser.email)
 
                                 startService(socketServiceIntent)
-                                bindService(socketServiceIntent, socketServiceConnection, Context.BIND_AUTO_CREATE)
+                                bindService(socketServiceIntent, socketServiceConnection, BIND_AUTO_CREATE)
                             } else {
                                 Toast.makeText(this, "Authentication failed. Token is null.", Toast.LENGTH_SHORT).show()
                             }
@@ -125,18 +145,9 @@ class LoginActivity : AppCompatActivity() {
             when (userDataResult.status) {
                 Resource.Status.SUCCESS -> {
                     userDataResult.data?.let { userData ->
-                        // Convert User to UserEntity
-                        val userEntity = UserEntity(
-                            id = userData.id ?: 0,
-                            name = userData.name,
-                            email = userData.email,
-                            roles = userData.roles
-                        )
-                        Log.i("AddedUserToRoom", "User added to Room: $userEntity")
 
-                        // Save UserEntity to Room database
                         lifecycleScope.launch(Dispatchers.IO) {
-                            AppDatabase.getInstance(applicationContext).getUserDao().insertUser(userEntity)
+                            userRepository.insertUser(userData)
                         }
 
                         // Move the navigation logic outside this block
