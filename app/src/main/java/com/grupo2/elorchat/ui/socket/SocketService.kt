@@ -46,7 +46,7 @@ class SocketService() : Service(), ViewModelStoreOwner {
 
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
-    private val SOCKET_HOST = "http://10.0.2.2:8085/"
+    private val SOCKET_HOST = "http://10.5.7.89:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private val mBinder: IBinder = SocketBinder()
@@ -158,10 +158,12 @@ class SocketService() : Service(), ViewModelStoreOwner {
         serviceScope.launch {
             try {
                 val messageEntity = MessageEntity(
+                    1,
                     message = message,
                     userId = userId,
                     chatId = chatId,
-                    createdAt = getCurrentDateTime()
+                    createdAt = getCurrentDateTime(),
+                    1
                 )
                 messageRepository.insertMessageEntity(messageEntity)
                 viewModel.fetchRoomMessages(chatId)

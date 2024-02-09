@@ -110,8 +110,8 @@ class GroupViewModel @Inject constructor(
 
 
     init {
-        updateGroupList()
-        getAdminGroups()
+        //updateGroupList()
+        //getAdminGroups()
     }
 
     private val _joinChatListener = MutableLiveData<Resource<ChatUser>>()
@@ -128,13 +128,13 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val userId = appDatabase.getUserDao().getAllUser().firstOrNull()?.id
-                val localGroups = userId?.let { chatUserRepository.getChatsForUser(it) }?.data.orEmpty()
+                //val localGroups = userId?.let { chatUserRepository.getChatsForUser(it) }?.data.orEmpty()
                 val allGroupsFromRepository = getAllGroupsFromRepository()
                 val allUserGroups = userId?.let { getAllUserGroupsFromRepository(it) }
 
                 val updatedGroups = mutableListOf<Group>()
                 val allGroupIds = mutableSetOf<Int>()
-
+                /*
                 allUserGroups?.data?.forEach { group ->
                     allGroupIds.add(group.id)
                     group.isUserOnGroup = true
@@ -155,7 +155,7 @@ class GroupViewModel @Inject constructor(
                 filterPublicGroups()
                 getAdminGroups()
 
-                _groups.postValue(allGroups)
+                _groups.postValue(allGroups)*/
             } catch (e: Exception) {
                 Log.e(TAG, "Exception while updating group list: ${e.message}")
             }
@@ -167,16 +167,16 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 // Filter private groups from originalPrivateGroups
-                val newPrivateGroups = originalPrivateGroups.filter { it.isUserOnGroup }
+              /*  val newPrivateGroups = originalPrivateGroups.filter { it.isUserOnGroup }
 
                 // Insert filtered private groups into the database
                 val privateGroupsEntities = newPrivateGroups.map {
-                    GroupEntity(it.id, it.name, it.isPrivate)
+                    GroupEntity(it.id, it.name, it.isPrivate, it.id)
                 }
                 appDatabase.getGroupDao().insertAll(privateGroupsEntities)
 
                 // Update private groups LiveData
-                _privateGroups.value = Resource.success(newPrivateGroups)
+                _privateGroups.value = Resource.success(newPrivateGroups)*/
             } catch (e: Exception) {
                 _privateGroups.value = Resource.error(
                     e.message ?: "Error filtering private groups",
@@ -308,7 +308,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _leaveChatResult.value = Resource.loading()
-                chatUserRepository.deleteChatUsersForChatAndUser(chatId, userId)
+                chatUserRepository.deleteUserFromGroup(chatId, userId)
                 leaveChatFromRepo(userId, chatId)
                 _leaveChatResult.value = Resource.success(Unit)
                 updateGroupList()

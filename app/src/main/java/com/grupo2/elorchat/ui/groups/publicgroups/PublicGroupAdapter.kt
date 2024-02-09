@@ -55,15 +55,12 @@ class PublicGroupAdapter(
             }
 
             // Log the values for debugging
-            Log.d(
-                "PublicGroupAdapter",
-                "Group ID: ${group.id}, Name: ${group.name}, isUserOnGroup: ${group.isUserOnGroup}"
-            )
+
 
             // Check if the user is already in the group
-            binding.joinButton.visibility = if (group.isUserOnGroup) View.GONE else View.VISIBLE
+           // binding.joinButton.visibility = if (group.isUserOnGroup) View.GONE else View.VISIBLE
             binding.joinButton.setOnClickListener {
-                group.isUserOnGroup = true
+                //group.isUserOnGroup = true
                 binding.joinButton.visibility = View.GONE
                 onJoinButtonClickListener(group)
             }

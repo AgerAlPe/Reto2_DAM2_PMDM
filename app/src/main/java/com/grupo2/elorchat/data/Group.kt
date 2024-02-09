@@ -7,11 +7,7 @@ import kotlinx.parcelize.Parcelize
 class Group (
     val id: Int,
     val name: String,
-    val isPrivate: Boolean,
-    var isUserOnGroup: Boolean = false  // Provide a default value
+    val isPrivate: Boolean
 ): Parcelable {
 
-    override fun toString(): String {
-        return "Group(id=$id, name='$name', isPrivate=$isPrivate, isUserOnGroup=$isUserOnGroup)"
-    }
 }

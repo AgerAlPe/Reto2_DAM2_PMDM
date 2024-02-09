@@ -20,6 +20,13 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
         RetrofitClient.apiInterface.getMessagesFromGroup(groupId)
     }
 
+    override suspend fun getPublicGroups() = getResult {
+        RetrofitClient.apiInterface.getPublicGroups()
+    }
+
+    override suspend fun getChatUser(userId : Int) = getResult {
+        RetrofitClient.apiInterface.getChatUser(userId)
+    }
 
     override suspend fun joinChat(chatUser: ChatUser) = getResult{
         RetrofitClient.apiInterface.joinChat(chatUser)

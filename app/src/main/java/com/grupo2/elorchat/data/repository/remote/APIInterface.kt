@@ -26,6 +26,10 @@ interface APIInterface {
 
     @GET("chats")
     suspend fun getGroups(): Response<List<Group>>
+    @GET("chats/publicChats")
+    suspend fun getPublicGroups(): Response<List<Group>>
+    @GET("chats/user/{userId}")
+    suspend fun getChatUser(@Path("userId") userId : Int): Response<List<ChatUser>>
 
     @GET("users/byEmail/{email}")
     suspend fun getUserByEmail(@Path("email") userEmail : String): Response<User>

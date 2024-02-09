@@ -22,6 +22,11 @@ class GroupRepository @Inject constructor(private val groupDao: GroupDao) {
         return groupDao.getAllUserGroup(userId).map { it.toGroup() }
     }
 
+    suspend fun insertGroup(group: Group) {
+        val groupEntity = group.toGroupEntity()
+        groupDao.insert(groupEntity)
+    }
+
     suspend fun insertGroups(groups: List<Group>) {
         val groupEntities = groups.map { it.toGroupEntity() }
         groupDao.insertAll(groupEntities)
@@ -31,11 +36,5 @@ class GroupRepository @Inject constructor(private val groupDao: GroupDao) {
         val groupEntity = groupDao.getGroupById(groupId)
         return groupEntity?.toGroup()
     }
-
-//    suspend fun deleteGroup(groupId: Int) : Void?{
-//        groupDao.deleteGroup(groupId)
-//        return null
-//    }
 }
-
 
