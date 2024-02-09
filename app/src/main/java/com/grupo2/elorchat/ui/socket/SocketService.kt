@@ -5,16 +5,17 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStore
 import com.google.gson.Gson
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
-import com.grupo2.elorchat.data.database.AppDatabase
-import com.grupo2.elorchat.data.database.dao.MessageDao
 import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.database.repository.MessageRepository
 import com.grupo2.elorchat.data.socket.SocketEvents
 import com.grupo2.elorchat.data.socket.SocketMessageReq
-import com.grupo2.elorchat.utils.Resource
+import com.grupo2.elorchat.ui.groups.GroupViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import io.socket.client.IO
 import io.socket.client.Socket
@@ -30,11 +31,19 @@ import java.time.LocalDateTime
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
+import androidx.lifecycle.ViewModelStoreOwner
+
 
 @AndroidEntryPoint
-class SocketService : Service() {
-    private lateinit var serviceScope: CoroutineScope
-    private lateinit var socketViewModel: SocketViewModel
+class SocketService() : Service(), ViewModelStoreOwner {
+
+
+    private val viewModel: SocketViewModel by lazy {
+        ViewModelProvider(this).get(SocketViewModel::class.java)
+    }
+
+    private val serviceScope = CoroutineScope(Dispatchers.Default)
+
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
     private val SOCKET_HOST = "http://10.0.2.2:8085/"
@@ -44,7 +53,6 @@ class SocketService : Service() {
 
     @Inject
     lateinit var messageRepository: MessageRepository
-
 
     inner class SocketBinder : Binder() {
         fun getService(): SocketService = this@SocketService
@@ -56,7 +64,6 @@ class SocketService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        serviceScope = CoroutineScope(Dispatchers.Default)
         startSocket()
     }
 
@@ -74,7 +81,7 @@ class SocketService : Service() {
         connect()
     }
 
-    fun connect() {
+    private fun connect() {
         Log.i(TAG, "Connecting to the socket")
         mSocket.connect()
         Log.i(TAG, "Socket connected")
@@ -105,10 +112,8 @@ class SocketService : Service() {
         }
     }
 
-    // esto es cuando recibo el mensaje
     private fun onNewMessage(): Emitter.Listener {
         return Emitter.Listener {
-            // en teoria deberia ser siempre jsonObject, obviamente si siempre lo gestionamos asi
             if (it[0] is JSONObject) {
                 onNewMessageJsonObject(it[0])
             }
@@ -116,70 +121,59 @@ class SocketService : Service() {
     }
 
     private fun onNewMessageJsonObject(data: Any) {
-        Log.i(TAG, "Mensaje que envias: " + data.toString())
+        Log.i(TAG, "Message received: $data")
         try {
             val jsonObject = data as JSONObject
             val jsonObjectString = jsonObject.toString()
 
-            // Assuming you have a MessageResponse class for deserialization
             val message = Gson().fromJson(jsonObjectString, Message::class.java)
             message.createdAt = LocalDateTime.now().toString()
-            // Creating a Message instance from MessageResponse
-            Log.i(TAG, "Fecha: " + message.createdAt)
+            Log.i(TAG, "Date: ${message.createdAt}")
 
             updateMessageListWithNewMessage(message)
         } catch (ex: Exception) {
-            Log.e(TAG, "onNewMessageJsonObject " + ex.message ?: "Unknown error")
+            Log.e(TAG, "Error processing new message: ${ex.message ?: "Unknown error"}")
         }
     }
 
     private fun updateMessageListWithNewMessage(incomingMessage: Message) {
         try {
-            Log.i(TAG, incomingMessage.toString())
-                serviceScope.launch {
-                    withContext(Dispatchers.IO) {
-                        messageRepository.insertMessage(incomingMessage)
-                        Log.i(TAG, "Añadido a Room: " + incomingMessage.toString())
-                    }
-                    EventBus.getDefault().post(incomingMessage)
+            Log.i(TAG, "Incoming message: $incomingMessage")
+            serviceScope.launch {
+                withContext(Dispatchers.IO) {
+                    messageRepository.insertMessage(incomingMessage)
+                    Log.i(TAG, "Added to Room: $incomingMessage")
                 }
+                EventBus.getDefault().post(incomingMessage)
+            }
         } catch (ex: Exception) {
-            Log.e(TAG, ex.message ?: "Unknown error")
+            Log.e(TAG, "Error updating message list: ${ex.message ?: "Unknown error"}")
         }
     }
 
-    // yo soy quien envia este mensaje
-    fun sendMessage(message: String, groupName: String, userId : Int , chatId : Int) {
-        // Send message through the socket
-        // val jsonObject = createMessageJsonObject(message)
-        Log.d(TAG, "sendMessage a enviar $message $groupName")
+    fun sendMessage(message: String, groupName: String, userId: Int, chatId: Int) {
+        Log.d(TAG, "Sending message: $message to group: $groupName")
         val socketMessage = SocketMessageReq(groupName, message)
         val jsonObject = JSONObject(Gson().toJson(socketMessage))
         serviceScope.launch {
             try {
-                try {
-                    val messageEntity = MessageEntity(
-                        message = message,
-                        userId = userId,
-                        chatId = chatId,
-                        createdAt = getCurrentDateTime() // Assuming you have a function to get the current date and time
-                    )
-                    messageRepository.insertMessageEntity(messageEntity)
-                    socketViewModel.fetchRoomMessages(chatId)
-                } catch (e: Exception) {
-                    // Handle exceptions
-                    Log.e(TAG, "Error inserting message entity: ${e.message}")
-                } // Assuming messages is the parameter required by insertMessages() function
+                val messageEntity = MessageEntity(
+                    message = message,
+                    userId = userId,
+                    chatId = chatId,
+                    createdAt = getCurrentDateTime()
+                )
+                messageRepository.insertMessageEntity(messageEntity)
+                viewModel.fetchRoomMessages(chatId)
             } catch (e: Exception) {
-                // Handle exceptions
-                Log.e(TAG, "Error inserting messages: ${e.message}")
+                Log.e(TAG, "Error sending message: ${e.message}")
             }
         }
         mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
-        Log.d(TAG, "sendMessage enviado")
+        Log.d(TAG, "Message sent")
     }
 
-    fun getCurrentDateTime(): String {
+    private fun getCurrentDateTime(): String {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDate = Date()
         return dateFormat.format(currentDate)
@@ -194,9 +188,7 @@ class SocketService : Service() {
     }
 
     private fun onJoinRoomString(data: String) {
-        // Handle the data received when a user joins a room
         Log.i(TAG, "User joined a room: $data")
-        // You can process the data or perform any action as needed
     }
 
     private fun onLeftRoom(): Emitter.Listener {
@@ -208,17 +200,9 @@ class SocketService : Service() {
     }
 
     private fun onLeftRoomString(data: String) {
-        // Handle the data received when a user joins a room
         Log.i(TAG, "User left a room: $data")
-        // You can process the data or perform any action as needed
     }
-/*
-    private fun createMessageJsonObject(message: String): JSONObject {
-        // Create and return a JSON object for the message
-        // Customize this method based on your message format
-        return JSONObject().put("message", message)
-    }
-*/
+
     override fun onDestroy() {
         super.onDestroy()
         disconnectSocket()
@@ -228,5 +212,9 @@ class SocketService : Service() {
         Log.i(TAG, "Disconnecting socket")
         mSocket.disconnect()
         Log.i(TAG, "Socket disconnected")
+    }
+
+    override val viewModelStore: ViewModelStore by lazy {
+        ViewModelStore()
     }
 }

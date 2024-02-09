@@ -69,7 +69,7 @@ class SocketActivity() : ComponentActivity() {
     lateinit var messageRepository: MessageRepository
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
-    private val socketViewModelt: SocketViewModel by viewModels()
+    private val socketViewModel: SocketViewModel by viewModels()
 
     private lateinit var socketService: SocketService
     private var isBind = false
@@ -295,7 +295,7 @@ class SocketActivity() : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    socketViewModelt.leaveRoom(groupName)
+                    socketViewModel.leaveRoom(groupName)
 //                  groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
 
@@ -306,7 +306,7 @@ class SocketActivity() : ComponentActivity() {
             }
         }
 
-        socketViewModelt.leave.observe(this, Observer { result ->
+        socketViewModel.leave.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
