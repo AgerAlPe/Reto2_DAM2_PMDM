@@ -40,6 +40,7 @@ import com.grupo2.elorchat.data.repository.remote.RemoteGroupDataSource
 import com.grupo2.elorchat.data.repository.remote.RemoteSocketDataSource
 import com.grupo2.elorchat.databinding.ActivitySocketBinding
 import com.grupo2.elorchat.ui.groups.GroupViewModel
+import com.grupo2.elorchat.ui.groups.publicgroups.PublicGroupAdapter
 import com.grupo2.elorchat.utils.Resource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -67,6 +68,7 @@ class SocketActivity() : ComponentActivity() {
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
     private val groupViewModel: GroupViewModel by viewModels()
     private val socketViewModelt: SocketViewModel by viewModels()
+    private lateinit var groupListAdapter: PublicGroupAdapter
 
     private lateinit var socketService: SocketService
     private var isBind = false
@@ -97,6 +99,10 @@ class SocketActivity() : ComponentActivity() {
         groupName = intent.getStringExtra("groupName") ?: ""
 
         binding.toolbar.title = groupName
+
+        // Initialize messageDao here
+        // messageDao = AppDatabase.getInstance(application).getMessageDao()
+
 
         messageAdapter = MessageAdapter()
 
@@ -242,11 +248,22 @@ class SocketActivity() : ComponentActivity() {
         binding.leaveButton.setOnClickListener {
             Log.d("ButtonClickListener", "Leave Chat button clicked")
 
+            // UI update logic before function call
+            // Find the position of the updated group in the adapter
+            val position = groupListAdapter.currentList.indexOfFirst { it.id == groupId }
+
+            if (position != -1) {
+                // Update the specific Group object in the adapter
+                groupListAdapter.currentList[position].isUserOnGroup = false
+
+                // Notify the adapter about the change
+                groupListAdapter.notifyItemChanged(position)
+            }
+
             lifecycleScope.launch {
                 try {
                     socketViewModelt.leaveRoom(groupName)
 //                  groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
-
 
                 } catch (e: Exception) {
                     // Handle exceptions if any
