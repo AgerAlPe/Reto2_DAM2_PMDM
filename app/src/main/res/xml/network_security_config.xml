@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
-        <!--<domain includeSubdomains="true">10.5.7.204</domain>-->
-
-        <domain includeSubdomains="true">10.5.7.37</domain>
+        <domain includeSubdomains="true">10.5.7.204</domain>
+        <domain includeSubdomains="true">10.5.7.89</domain>
     </domain-config>
     <domain-config cleartextTrafficPermitted="false"> <!-- asi no permite peticiones HTTP, unicamente https-->
         <domain includeSubdomains="true">10.0.2.2</domain>

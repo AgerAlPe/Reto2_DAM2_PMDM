@@ -50,7 +50,12 @@ class SocketViewModel @Inject constructor(
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
+    val joined : LiveData<Resource<Void>> get() = _joined
+
     private val _joined = MutableLiveData<Resource<Void>>()
+
+
+    val leave : LiveData<Resource<Void>> get() = _leave
 
     private val _leave = MutableLiveData<Resource<Void>>()
 

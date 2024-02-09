@@ -143,7 +143,7 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
 
                     socketViewModel.joinRoom(group.name, false)
 
-                    viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
+                    socketViewModel.joined.observe(this@PublicGroupsFragment, Observer { result ->
                         when (result.status) {
                             Resource.Status.SUCCESS -> {
                                 Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()

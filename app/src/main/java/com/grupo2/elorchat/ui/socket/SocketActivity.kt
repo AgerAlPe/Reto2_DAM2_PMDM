@@ -262,11 +262,8 @@ class SocketActivity() : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    val userId = appDatabase.getUserDao().getAllUser().first().id
-
-//                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
-
                     socketViewModelt.leaveRoom(groupName)
+//                  groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
                 } catch (e: Exception) {
                     // Handle exceptions if any
@@ -275,7 +272,7 @@ class SocketActivity() : ComponentActivity() {
             }
         }
 
-        groupViewModel.leaveChatResult.observe(this, Observer { result ->
+        socketViewModelt.leave.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
