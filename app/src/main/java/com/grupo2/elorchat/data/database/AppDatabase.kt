@@ -14,7 +14,7 @@ import com.grupo2.elorchat.data.database.entities.GroupEntity
 import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.database.entities.UserEntity
 
-@Database(entities = [UserEntity::class, MessageEntity::class, GroupEntity::class, ChatUserEntity::class], version = 2, exportSchema = false)
+@Database(entities = [UserEntity::class, MessageEntity::class, GroupEntity::class, ChatUserEntity::class], version = 3, exportSchema = false)
 @TypeConverters(RoleListConverter::class)
 abstract class AppDatabase : RoomDatabase() {
 

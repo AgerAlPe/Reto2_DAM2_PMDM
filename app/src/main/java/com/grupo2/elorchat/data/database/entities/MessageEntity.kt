@@ -13,7 +13,7 @@ import java.util.Locale
 @Entity(tableName = "message_table")
 data class MessageEntity(
     @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "id") val id: Int? = 0,
+    @ColumnInfo(name = "id") val id: Int = 0,
     @ColumnInfo(name = "message") val message: String,
     @ColumnInfo(name = "user_id") val userId: Int,
     @ColumnInfo(name = "chat_id") val chatId: Int,
@@ -33,7 +33,7 @@ suspend fun MessageEntity.toMessage(userRepository: UserRepository): Message {
 
 fun Message.toMessageEntity(): MessageEntity {
     return MessageEntity(
-        id = this.id,
+        id = this.id ?: 0, // Provide a default value if id is null
         message = this.message,
         userId = this.userId,
         chatId = this.chatId,

@@ -80,6 +80,10 @@ class GroupViewModel @Inject constructor(
     val privateGroups: MutableLiveData<Resource<List<Group>>?> get() = _privateGroups
     val publicGroups: MutableLiveData<Resource<List<Group>>?> get() = _publicGroups
 
+    val publicRoomGrops : MutableLiveData<Resource<List<Group>>?> get() = _publicRoomGroups
+
+    private val _publicRoomGroups = MutableLiveData<Resource<List<Group>>?>()
+
     private var originalPublicGroups: List<Group> = emptyList()
     private var originalPrivateGroups: List<Group> = emptyList()
 
@@ -89,6 +93,21 @@ class GroupViewModel @Inject constructor(
     companion object {
         private const val TAG = "GroupViewModel"
     }
+
+
+    suspend fun RoomGroups() {
+        val groups: List<Group> = roomGroupRepository.getAllPublicGroups()
+        val resource: Resource<List<Group>> = Resource.success(groups)
+        _publicRoomGroups.value = resource
+    }
+
+    // Example of calling RoomGroups from a coroutine scope
+    fun someCoroutineFunction() {
+        viewModelScope.launch {
+            RoomGroups()
+        }
+    }
+
 
     init {
         updateGroupList()

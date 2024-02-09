@@ -2,6 +2,7 @@ package com.grupo2.elorchat.data.database.repository
 
 import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.database.dao.MessageDao
+import com.grupo2.elorchat.data.database.entities.MessageEntity
 import com.grupo2.elorchat.data.database.entities.toMessage
 import com.grupo2.elorchat.data.database.entities.toMessageEntity
 import javax.inject.Inject
@@ -30,4 +31,14 @@ class MessageRepository @Inject constructor(
         val messageEntity = message.toMessageEntity()
         messageDao.insertMessage(messageEntity)
     }
+
+    suspend fun insertMessageEntity(message: MessageEntity) {
+        messageDao.insertMessage(message)
+    }
+
+    suspend fun getAllGroupMessages(groupId: Int): List<Message> {
+        val messageEntities = messageDao.getAllGroupMessages(groupId)
+        return messageEntities.map { it.toMessage(userRepository) }
+    }
+
 }

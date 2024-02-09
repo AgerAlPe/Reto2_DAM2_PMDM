@@ -61,10 +61,11 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
             onJoinButtonClickListener = ::onJoinButtonClickItem,
             viewModel
         )
+        viewModel.someCoroutineFunction()
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.publicGroups.observe(viewLifecycleOwner, Observer {
+        viewModel.publicRoomGrops.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {

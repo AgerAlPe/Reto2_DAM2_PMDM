@@ -51,6 +51,7 @@ import java.util.Base64
 import javax.inject.Inject
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import androidx.core.app.ActivityCompat
+import com.grupo2.elorchat.data.database.repository.UserRepository
 
 
 @AndroidEntryPoint
@@ -62,6 +63,8 @@ class SocketActivity() : ComponentActivity() {
     private val groupRepository = RemoteGroupDataSource()
     private val socketRepository = RemoteSocketDataSource()
     private lateinit var groupName: String
+    @Inject
+    lateinit var userRepository: UserRepository
     @Inject
     lateinit var messageRepository: MessageRepository
     private val viewModel: SocketViewModel by viewModels { SocketViewModelFactory(groupRepository, messageRepository, socketRepository, groupName) }
@@ -78,6 +81,10 @@ class SocketActivity() : ComponentActivity() {
 
     private lateinit var locationManager: LocationManager
 
+    var userId: Int? = null
+
+    var userName : String? = null
+
 
 
     @Inject
@@ -92,10 +99,25 @@ class SocketActivity() : ComponentActivity() {
         val binding = ActivitySocketBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        lifecycleScope.launch {
+            try {
+                val users = userRepository.getAllUsers() // Assuming getAllUsers() is a suspending function
+                userId = users.firstOrNull()?.id
+                if (userId == null) {
+                    Log.e(TAG, "No user found.")
+                }
+                userName = users.firstOrNull()?.name
+                if (userName == null) {
+                    Log.e(TAG, "No user found.")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error getting users: ${e.message}")
+            }
+        }
         // Retrieve data from the intent
         groupId = intent.getStringExtra("idGroup")?.toInt()
         groupName = intent.getStringExtra("groupName") ?: ""
-
         binding.toolbar.title = groupName
 
         messageAdapter = MessageAdapter()
@@ -115,7 +137,9 @@ class SocketActivity() : ComponentActivity() {
             showPopupMenu(view)
         }
 
-        viewModel.messages.observe(this) { result ->
+        groupId?.let { viewModel.fetchRoomMessages(it) }
+
+        viewModel.roomMessages.observe(this) { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     result.data?.let { data ->
@@ -159,7 +183,22 @@ class SocketActivity() : ComponentActivity() {
                 R.id.send_coordinates -> {
                     sendCoordinates { coordinates ->
                         // Send the coordinates as the message content
-                        socketService.sendMessage(coordinates, groupName)
+                        lifecycleScope.launch {
+                            try {
+                                val users = userRepository.getAllUsers() // Assuming getAllUsers() is a suspending function
+                                val userId = users.firstOrNull()?.id
+                                if (userId != null) {
+                                    groupId?.let {
+                                        socketService.sendMessage(coordinates, groupName,
+                                            it, userId)
+                                    }
+                                } else {
+                                    Log.e(TAG, "No user found.")
+                                }
+                            } catch (e: Exception) {
+                                Log.e(TAG, "Error getting users: ${e.message}")
+                            }
+                        }
                     }
                     return@setOnMenuItemClickListener true
                 }
@@ -232,10 +271,22 @@ class SocketActivity() : ComponentActivity() {
         // Check if an image is selected
         if (localBase64Image != null) {
             // Send the message with the image data
-            socketService.sendMessage(localBase64Image, groupName)
+            groupId?.let { it1 ->
+                userId?.let { it2 ->
+                    socketService.sendMessage(localBase64Image, groupName,
+                        it1, it2
+                    )
+                }
+            }
         } else {
             // Send the message without the image data
-            socketService.sendMessage(messageContent, groupName)
+            groupId?.let { it1 ->
+                userId?.let { it2 ->
+                    socketService.sendMessage(messageContent, groupName,
+                        it1, it2
+                    )
+                }
+            }
         }
     }
 
@@ -292,7 +343,13 @@ class SocketActivity() : ComponentActivity() {
                     if (bitmap != null) {
                         val base64Image = bitmapToBase64(bitmap)
                         // Send the message with the image data
-                        socketService.sendMessage(base64Image, groupName)
+                        groupId?.let {
+                            userId?.let { it1 ->
+                                socketService.sendMessage(base64Image, groupName,
+                                    it, it1
+                                )
+                            }
+                        }
                     } else {
                         // Handle the case where bitmap is null
                         Toast.makeText(this, "Failed to decode image data", Toast.LENGTH_SHORT).show()
@@ -308,7 +365,13 @@ class SocketActivity() : ComponentActivity() {
                     if (byteArray != null) {
                         val base64File = Base64.getEncoder().encodeToString(byteArray)
                         // Send the message with the file data
-                        socketService.sendMessage(base64File, groupName)
+                        groupId?.let {
+                            userId?.let { it1 ->
+                                socketService.sendMessage(base64File, groupName,
+                                    it, it1
+                                )
+                            }
+                        }
                     } else {
                         // Handle the case where byteArray is null
                         Toast.makeText(this, "Failed to read file data", Toast.LENGTH_SHORT).show()

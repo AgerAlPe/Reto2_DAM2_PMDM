@@ -38,7 +38,7 @@ class SocketViewModel @Inject constructor(
     private val groupRepository: CommonGroupRepository,
 
     private val groupName: String?,
-    private val messageRepository: MessageRepository,
+    private val messageRoomRepository: MessageRepository,
     private val socketRepository: CommonSocketRepository,
 ) : ViewModel() {
 
@@ -58,6 +58,25 @@ class SocketViewModel @Inject constructor(
     val leave : LiveData<Resource<Void>> get() = _leave
 
     private val _leave = MutableLiveData<Resource<Void>>()
+
+    private val _roomMessages = MutableLiveData<Resource<List<Message>>>()
+
+    val roomMessages : LiveData<Resource<List<Message>>> get() = _roomMessages
+
+
+    fun fetchRoomMessages(groupId: Int) {
+        viewModelScope.launch {
+            _roomMessages.value = Resource.loading() // Notify loading state
+            try {
+                val messages = messageRoomRepository.getAllGroupMessages(groupId)
+                _roomMessages.value = Resource.success(messages)
+            } catch (e: Exception) {
+                _roomMessages.value = Resource.error(e.message ?: "An error occurred")
+            }
+        }
+    }
+
+
 
     fun thisGroupsMessages(groupId : Int) {
         Log.i(TAG, "Id Grupo: " + groupId)

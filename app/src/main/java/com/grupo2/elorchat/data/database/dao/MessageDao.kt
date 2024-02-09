@@ -19,4 +19,7 @@ interface MessageDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertMessage(messageEntity: MessageEntity)
+
+    @Query("SELECT * FROM message_table WHERE chat_id = :groupId")
+    suspend fun getAllGroupMessages(groupId: Int): List<MessageEntity>
 }

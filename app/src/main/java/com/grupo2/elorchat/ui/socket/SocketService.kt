@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.grupo2.elorchat.ElorChat
 import com.grupo2.elorchat.data.Message
@@ -26,15 +25,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.greenrobot.eventbus.EventBus
 import org.json.JSONObject
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class SocketService : Service() {
     private lateinit var serviceScope: CoroutineScope
+    private lateinit var socketViewModel: SocketViewModel
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
-    private val SOCKET_HOST = "http://10.5.7.37:8085/"
+    private val SOCKET_HOST = "http://10.0.2.2:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private val mBinder: IBinder = SocketBinder()
@@ -146,14 +149,40 @@ class SocketService : Service() {
     }
 
     // yo soy quien envia este mensaje
-    fun sendMessage(message: String, groupName: String) {
+    fun sendMessage(message: String, groupName: String, userId : Int , chatId : Int) {
         // Send message through the socket
         // val jsonObject = createMessageJsonObject(message)
         Log.d(TAG, "sendMessage a enviar $message $groupName")
         val socketMessage = SocketMessageReq(groupName, message)
         val jsonObject = JSONObject(Gson().toJson(socketMessage))
+        serviceScope.launch {
+            try {
+                try {
+                    val messageEntity = MessageEntity(
+                        message = message,
+                        userId = userId,
+                        chatId = chatId,
+                        createdAt = getCurrentDateTime() // Assuming you have a function to get the current date and time
+                    )
+                    messageRepository.insertMessageEntity(messageEntity)
+                    socketViewModel.fetchRoomMessages(chatId)
+                } catch (e: Exception) {
+                    // Handle exceptions
+                    Log.e(TAG, "Error inserting message entity: ${e.message}")
+                } // Assuming messages is the parameter required by insertMessages() function
+            } catch (e: Exception) {
+                // Handle exceptions
+                Log.e(TAG, "Error inserting messages: ${e.message}")
+            }
+        }
         mSocket.emit(SocketEvents.ON_SEND_MESSAGE.value, jsonObject)
         Log.d(TAG, "sendMessage enviado")
+    }
+
+    fun getCurrentDateTime(): String {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentDate = Date()
+        return dateFormat.format(currentDate)
     }
 
     private fun onJoinRoom(): Emitter.Listener {
