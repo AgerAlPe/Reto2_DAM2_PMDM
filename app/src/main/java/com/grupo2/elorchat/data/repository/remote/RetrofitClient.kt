@@ -11,7 +11,7 @@ object RetrofitClient {
     // esta es la ip a la que vamos a hacer peticiones (es localhost pero desde el emulador no deja)
     // NOTE acordarse de que hace falta actualizar el manifest
   
-    private const val API_URI = "http://10.5.7.37:8080/api/"
+    private const val API_URI = "http://10.5.7.89:8080/api/"
 
     var client = OkHttpClient.Builder().addInterceptor { chain ->
         val authToken = ElorChat.userPreferences.fetchAuthToken()

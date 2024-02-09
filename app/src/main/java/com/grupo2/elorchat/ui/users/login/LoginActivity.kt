@@ -14,6 +14,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.lifecycleScope
@@ -36,7 +37,11 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import javax.inject.Inject
+import com.android.volley.Request
+import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.Volley
 
 @AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
@@ -100,9 +105,9 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        //TODO ESTE BOTON NECESITA REDIRIGIRTE
-        btnChangePassword.setOnClickListener {
 
+        btnChangePassword.setOnClickListener {
+            showPasswordResetDialog()
         }
 
         btnLogin.setOnClickListener {
@@ -171,6 +176,55 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun showPasswordResetDialog() {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        val dialogLayout = inflater.inflate(R.layout.dialog_add_user, null)
+        val editTextEmail = dialogLayout.findViewById<EditText>(R.id.editTextEmail)
+
+        with(builder) {
+            setTitle("Reset Password")
+            setView(dialogLayout)
+            setPositiveButton("Reset") { dialog, _ ->
+                val email = editTextEmail.text.toString()
+                if (email.isNotEmpty()) {
+                    // Send password reset request
+                    sendPasswordResetRequest(email)
+                } else {
+                    Toast.makeText(this@LoginActivity, "Email cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+                dialog.dismiss()
+            }
+            setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            show()
+        }
+    }
+
+    private fun sendPasswordResetRequest(email: String) {
+        val requestBody = JSONObject().apply {
+            put("email", email)
+        }
+
+        val request = JsonObjectRequest(
+            Request.Method.POST,
+            "http://10.5.7.204/api/password/reset",
+            requestBody,
+            { response ->
+                Log.i("responseChangePass", "$response")
+                Toast.makeText(this, "Password reset link sent successfully", Toast.LENGTH_SHORT).show()
+            },
+            { error ->
+                Log.i("responseChangePass", "$error")
+                Toast.makeText(this, "Error sending password reset link: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        )
+
+        // Add the request to the RequestQueue
+        Volley.newRequestQueue(this).add(request)
     }
 
     override fun onDestroy() {

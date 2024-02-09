@@ -95,4 +95,7 @@
     <string name="send_photo">Argazkia Bidali</string>
     <string name="send_coordinates">GPS Koordenadak Bidali</string>
     <string name="send_file">Fitxategia Bidali</string>
+    <string name="add_user">Erabiltzailea gehitu</string>
+    <string name="kick_user">Erabiltzailea kanpo bota</string>
+    <string name="returnButton">Bueltatu</string>
 </resources>
