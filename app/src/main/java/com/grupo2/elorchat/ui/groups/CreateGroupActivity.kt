@@ -99,25 +99,29 @@ class CreateGroupActivity : AppCompatActivity() {
         }
 
         val group = Group(0, groupName, isPrivate)
+        viewModel.createGroup(group)
+        Log.i("createFunciton", "Create clicked")
+        observeCreateGroupResult()
 
-        viewModel.viewModelScope.launch {
-            val result = viewModel.createGroupFromRepository(group)
+    }
 
-            when (result.status) {
-                Resource.Status.SUCCESS -> {
+    private fun observeCreateGroupResult() {
+        viewModel.create.observe(this) { result ->
+            if (result != null) {
+                when (result.status) {
+                    Resource.Status.SUCCESS -> {
 
-                    val groupId = result.data // Assuming the result.data is the group ID
-                    viewModel.updateGroupList()
-                    // Assuming the group creation was successful, you can now join the chat
-                    if (groupId != null) {
-                        joinChat(groupId)
-
-                        handleSuccess(groupId)
+                        val groupId = result.data // Assuming the result.data is the group ID
+                        groupId?.let {
+                            showToast("Group created successfully")
+                            joinChat(groupId)
+                            finish()
+                        }
                     }
 
+                    Resource.Status.ERROR -> handleError()
+                    Resource.Status.LOADING -> handleLoading()
                 }
-                Resource.Status.ERROR -> handleError()
-                Resource.Status.LOADING -> handleLoading()
             }
         }
     }

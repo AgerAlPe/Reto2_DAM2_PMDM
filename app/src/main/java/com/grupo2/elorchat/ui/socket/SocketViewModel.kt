@@ -50,7 +50,12 @@ class SocketViewModel @Inject constructor(
     private val _connected = MutableLiveData<Resource<Boolean>>()
     val connected : LiveData<Resource<Boolean>> get() = _connected
 
+    val joined : LiveData<Resource<Void>> get() = _joined
+
     private val _joined = MutableLiveData<Resource<Void>>()
+
+
+    val leave : LiveData<Resource<Void>> get() = _leave
 
     private val _leave = MutableLiveData<Resource<Void>>()
 
@@ -77,27 +82,27 @@ class SocketViewModel @Inject constructor(
         }
     }
 
-    fun joinRoom(room : String, userId : Int) {
+    fun joinRoom(room : String, isAdmin : Boolean) {
         viewModelScope.launch {
-            _joined.value = joinSocketRoom(room , userId)
+            _joined.value = joinSocketRoom(room , isAdmin)
         }
     }
 
-    fun leaveRoom(room : String, userId : Int) {
+    fun leaveRoom(room : String) {
         viewModelScope.launch {
-            //_leave.value = leaveSocketRoom(room , userId)
+            _leave.value = leaveSocketRoom(room)
         }
     }
 
-    private suspend fun joinSocketRoom(room : String, userId : Int): Resource<Void> {
+    private suspend fun joinSocketRoom(room : String, isAdmin : Boolean): Resource<Void> {
         return withContext(Dispatchers.IO) {
-            socketRepository.joinRoom(room , userId)
+            socketRepository.joinRoom(room , isAdmin)
         }
     }
 
-    private suspend fun leaveSocketRoom(room : String, userId : Int): Resource<Void> {
+    private suspend fun leaveSocketRoom(room : String): Resource<Void> {
         return withContext(Dispatchers.IO) {
-            socketRepository.leaveRoom(room , userId)
+            socketRepository.leaveRoom(room)
         }
     }
 

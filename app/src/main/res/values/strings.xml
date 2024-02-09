@@ -108,5 +108,6 @@
     <string name="add_user">Add User</string>
     <string name="kick_user">Kick User</string>
     <string name="returnButton">RETURN</string>
+    <string name="Delete_Group">Delete Group</string>
 
 </resources>

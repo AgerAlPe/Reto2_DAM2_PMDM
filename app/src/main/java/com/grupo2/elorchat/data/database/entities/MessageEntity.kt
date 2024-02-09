@@ -40,3 +40,10 @@ fun Message.toMessageEntity(): MessageEntity {
         createdAt = this.createdAt
     )
 }
+
+private fun getCurrentFormattedDate(createdAt: String): String {
+    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", Locale.getDefault())
+    val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    val date = inputFormat.parse(createdAt)
+    return outputFormat.format(date)
+}

@@ -31,6 +31,11 @@ class GroupRepository @Inject constructor(private val groupDao: GroupDao) {
         val groupEntity = groupDao.getGroupById(groupId)
         return groupEntity?.toGroup()
     }
+
+//    suspend fun deleteGroup(groupId: Int) : Void?{
+//        groupDao.deleteGroup(groupId)
+//        return null
+//    }
 }
 
 

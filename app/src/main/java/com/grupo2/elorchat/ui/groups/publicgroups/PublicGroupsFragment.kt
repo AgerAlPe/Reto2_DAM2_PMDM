@@ -58,7 +58,8 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
 
         groupListAdapter = PublicGroupAdapter(
             onGroupClickListener = ::onGroupsListClickItem,
-            onJoinButtonClickListener = ::onJoinButtonClickItem
+            onJoinButtonClickListener = ::onJoinButtonClickItem,
+            viewModel
         )
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
@@ -138,11 +139,11 @@ class PublicGroupsFragment @Inject constructor() : Fragment() {
 
                 if (userId != null) {
 
-                    viewModel.joinChat(ChatUser(userId, group.id, false))
+//                    viewModel.joinChat(ChatUser(userId, group.id, false))
 
-                    socketViewModel.joinRoom(group.name, userId)
+                    socketViewModel.joinRoom(group.name, false)
 
-                    viewModel.joinChat.observe(this@PublicGroupsFragment, Observer { result ->
+                    socketViewModel.joined.observe(this@PublicGroupsFragment, Observer { result ->
                         when (result.status) {
                             Resource.Status.SUCCESS -> {
                                 Toast.makeText(requireContext(), "Successfully joined the chat", Toast.LENGTH_SHORT).show()

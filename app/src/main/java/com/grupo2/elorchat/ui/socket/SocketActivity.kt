@@ -99,6 +99,7 @@ class SocketActivity() : ComponentActivity() {
         binding.toolbar.title = groupName
 
         messageAdapter = MessageAdapter()
+
         binding.listMessages.adapter = messageAdapter
 
         if (groupId != null) {
@@ -108,7 +109,6 @@ class SocketActivity() : ComponentActivity() {
         val addMessageImageView: ImageView = findViewById(R.id.addMessageImageView)
 
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
 
 
         addMessageImageView.setOnClickListener { view ->
@@ -244,11 +244,10 @@ class SocketActivity() : ComponentActivity() {
 
             lifecycleScope.launch {
                 try {
-                    val userId = appDatabase.getUserDao().getAllUser().first().id
+                    socketViewModelt.leaveRoom(groupName)
+//                  groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    groupId?.let { it1 -> groupViewModel.leaveChat(userId!!, it1) }
 
-                    socketViewModelt.leaveRoom(groupName, userId!!)
                 } catch (e: Exception) {
                     // Handle exceptions if any
                     Log.e("ButtonClickListener", "Error getting user ID: ${e.message}")
@@ -256,7 +255,7 @@ class SocketActivity() : ComponentActivity() {
             }
         }
 
-        groupViewModel.leaveChatResult.observe(this, Observer { result ->
+        socketViewModelt.leave.observe(this, Observer { result ->
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     Toast.makeText(this, "Successfully left the chat", Toast.LENGTH_SHORT).show()
@@ -375,8 +374,14 @@ class SocketActivity() : ComponentActivity() {
     }
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onNotificationMessage(message: Message) {
-        // Notify the ViewModel about the new message
-        viewModel.onNewMessageReceived(message)
+        // Check if the received message is from the current group
+        if (message.chatId == groupId) {
+            // Notify the ViewModel about the new message
+            viewModel.onNewMessageReceived(message)
+        } else {
+            // Optionally, you can ignore messages from other groups or handle them differently
+            Log.d(TAG, "Received a message from a different group: ${message}")
+        }
     }
 
     private var serviceConnection: ServiceConnection = object : ServiceConnection {

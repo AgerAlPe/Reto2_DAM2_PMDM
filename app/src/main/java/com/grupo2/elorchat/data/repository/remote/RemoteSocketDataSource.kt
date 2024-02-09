@@ -5,12 +5,12 @@ import com.grupo2.elorchat.utils.Resource
 
 class RemoteSocketDataSource: BaseDataSource(), CommonSocketRepository {
 
-    override suspend fun joinRoom(room: String, userId: Int) = getResult {
-        RetrofitClient.apiInterface.joinRoomSocket(room, userId)
+    override suspend fun joinRoom(room: String, isAdmin: Boolean) = getResult {
+        RetrofitClient.apiInterface.joinRoomSocket(room, isAdmin)
     }
 
-    override suspend fun leaveRoom(room: String, userId: Int) = getResult {
-        RetrofitClient.apiInterface.leaveRoomSocket(room, userId)
+    override suspend fun leaveRoom(room: String) = getResult {
+        RetrofitClient.apiInterface.leaveRoomSocket(room)
     }
 
 }
