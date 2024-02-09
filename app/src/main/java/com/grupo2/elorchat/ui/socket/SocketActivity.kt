@@ -143,6 +143,7 @@ class SocketActivity() : ComponentActivity() {
             when (result.status) {
                 Resource.Status.SUCCESS -> {
                     result.data?.let { data ->
+                        Log.d("dataRoom", "Received data: $data")
                         messageAdapter.submitList(data)
                     }
                 }
@@ -458,5 +459,11 @@ class SocketActivity() : ComponentActivity() {
             isBind = false
         }
     }
+
+    fun updateFromActivityRoomList(){
+        groupId?.let { viewModel.fetchRoomMessages(it) }
+
+    }
+
 
 }

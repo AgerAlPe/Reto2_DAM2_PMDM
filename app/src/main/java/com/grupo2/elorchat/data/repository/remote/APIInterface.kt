@@ -39,6 +39,9 @@ interface APIInterface {
     @GET("messages/{id}")
     suspend fun getMessagesFromGroup(@Path("id") chatId : Int) : Response<List<Message>>
 
+    @GET("messages")
+    suspend fun getAllMessages() : Response<List<Message>>
+
     @POST("chats/joinChat")
     suspend fun joinChat(@Body chatUser : ChatUser) : Response<ChatUser>
 
@@ -68,5 +71,8 @@ interface APIInterface {
 
     @DELETE("chats/{chatId}")
     suspend fun deleteGroup(@Path("chatId") chatId : Int ) : Response<Void>
+
+    @POST("messages")
+    suspend fun createMessage(@Body message: Message) : Response<Message>
 
 }

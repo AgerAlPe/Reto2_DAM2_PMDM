@@ -4,6 +4,7 @@ import com.grupo2.elorchat.data.ChangePasswordRequest
 import com.grupo2.elorchat.data.ChatUser
 import com.grupo2.elorchat.data.ChatUserEmailRequest
 import com.grupo2.elorchat.data.Group
+import com.grupo2.elorchat.data.Message
 import com.grupo2.elorchat.data.repository.CommonGroupRepository
 
 
@@ -20,6 +21,13 @@ class RemoteGroupDataSource: BaseDataSource(), CommonGroupRepository {
         RetrofitClient.apiInterface.getMessagesFromGroup(groupId)
     }
 
+    override suspend fun getAllMessages() = getResult {
+        RetrofitClient.apiInterface.getAllMessages()
+    }
+
+    override suspend fun createMessage(message : Message) = getResult {
+        RetrofitClient.apiInterface.createMessage(message)
+    }
 
     override suspend fun joinChat(chatUser: ChatUser) = getResult{
         RetrofitClient.apiInterface.joinChat(chatUser)

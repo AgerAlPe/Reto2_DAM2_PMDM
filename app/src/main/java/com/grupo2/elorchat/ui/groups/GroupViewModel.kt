@@ -84,8 +84,14 @@ class GroupViewModel @Inject constructor(
 
     private val _publicRoomGroups = MutableLiveData<Resource<List<Group>>?>()
 
+    val privateRoomGroups : MutableLiveData<Resource<List<Group>>?> get() = _privateRoomGroups
+
+    private val _privateRoomGroups = MutableLiveData<Resource<List<Group>>?>()
+
+
     private var originalPublicGroups: List<Group> = emptyList()
     private var originalPrivateGroups: List<Group> = emptyList()
+
 
     private val _leaveChatResult = MutableLiveData<Resource<Unit>>()
     val leaveChatResult: LiveData<Resource<Unit>> get() = _leaveChatResult
@@ -101,6 +107,12 @@ class GroupViewModel @Inject constructor(
         _publicRoomGroups.value = resource
     }
 
+    suspend fun PrivateRoomGroups() {
+        val groups: List<Group> = roomGroupRepository.getAllPrivateGroups()
+        val resource: Resource<List<Group>> = Resource.success(groups)
+        _privateRoomGroups.value = resource
+    }
+
     // Example of calling RoomGroups from a coroutine scope
     fun someCoroutineFunction() {
         viewModelScope.launch {
@@ -108,6 +120,11 @@ class GroupViewModel @Inject constructor(
         }
     }
 
+    fun someCoroutineFunctionPrivate() {
+        viewModelScope.launch {
+            PrivateRoomGroups()
+        }
+    }
 
     init {
         updateGroupList()
@@ -247,16 +264,21 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = createGroupFromRepository(group)
+                roomGroupRepository.createGroup(group)
                 if (result.status == Resource.Status.SUCCESS) {
                     // If group creation was successful, update the list of groups
                     updateGroupList()
                     updateGroupsLists()
-                    if (!group.isPrivate){
+
+                    // Add the group to the appropriate list based on its type
+                    if (!group.isPrivate) {
+
                         addGroupToPublicList(group)
-                    }else {
+                    // Add group to room
+                    } else {
+
                         addGroupToPrivateList(group)
                     }
-
                 }
                 _create.value = result
             } catch (e: Exception) {
@@ -409,6 +431,7 @@ class GroupViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val result = deleteGroupFromRepo(groupId)
+                groupRepository.deleteGroup(groupId)
                 if (result.status == Resource.Status.SUCCESS) {
 //                    deleteGroupFromDao(groupId)
                     // If group deletion was successful, update the list of groups

@@ -46,13 +46,15 @@ class SocketService() : Service(), ViewModelStoreOwner {
 
     private val TAG = "SocketService"
     private lateinit var mSocket: Socket
-    private val SOCKET_HOST = "http://10.0.2.2:8085/"
+    private val SOCKET_HOST = "http://10.5.7.89:8085/"
     private val AUTHORIZATION_HEADER = "Authorization"
 
     private val mBinder: IBinder = SocketBinder()
 
     @Inject
     lateinit var messageRepository: MessageRepository
+
+    private val socketActivity: SocketActivity = SocketActivity()
 
     inner class SocketBinder : Binder() {
         fun getService(): SocketService = this@SocketService
@@ -86,6 +88,7 @@ class SocketService() : Service(), ViewModelStoreOwner {
         mSocket.connect()
         Log.i(TAG, "Socket connected")
     }
+
 
     private fun createSocketOptions(): IO.Options {
         val options = IO.Options()
@@ -159,12 +162,12 @@ class SocketService() : Service(), ViewModelStoreOwner {
             try {
                 val messageEntity = MessageEntity(
                     message = message,
-                    userId = userId,
-                    chatId = chatId,
+                    chatId = userId,
+                    userId = chatId,
                     createdAt = getCurrentDateTime()
                 )
                 messageRepository.insertMessageEntity(messageEntity)
-                viewModel.fetchRoomMessages(chatId)
+                socketActivity.updateFromActivityRoomList()
             } catch (e: Exception) {
                 Log.e(TAG, "Error sending message: ${e.message}")
             }

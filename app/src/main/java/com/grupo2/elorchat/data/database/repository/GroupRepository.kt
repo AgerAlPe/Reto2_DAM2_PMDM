@@ -32,10 +32,17 @@ class GroupRepository @Inject constructor(private val groupDao: GroupDao) {
         return groupEntity?.toGroup()
     }
 
-//    suspend fun deleteGroup(groupId: Int) : Void?{
-//        groupDao.deleteGroup(groupId)
-//        return null
-//    }
+    suspend fun createGroup(group: Group) {
+        // Convert the Group object to a GroupEntity before inserting it into the database
+        val groupEntity = group.toGroupEntity()
+
+        // Call the insertAll method in the DAO to insert the group into the database
+        groupDao.insertGroup(groupEntity)
+    }
+
+    suspend fun deleteGroup(groupId: Int) {
+        groupDao.deleteGroup(groupId)
+    }
 }
 
 

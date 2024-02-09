@@ -51,7 +51,9 @@ class PrivateGroupsFragment : Fragment() {
         binding.groupsList.adapter = groupListAdapter
         binding.groupsList.layoutManager = LinearLayoutManager(requireContext())
 
-        viewModel.privateGroups.observe(viewLifecycleOwner) {
+        viewModel.someCoroutineFunctionPrivate()
+
+        viewModel.privateRoomGroups.observe(viewLifecycleOwner) {
             if (it != null) {
                 when (it.status) {
                     Resource.Status.SUCCESS -> {
@@ -101,10 +103,10 @@ class PrivateGroupsFragment : Fragment() {
     }
 
     private fun onGroupsListClickItem(group: Group) {
-        if (!group.isUserOnGroup) {
-            Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
-            return
-        }
+//        if (!group.isUserOnGroup) {
+//            Toast.makeText(requireContext(), "You are not joined to this group", Toast.LENGTH_SHORT).show()
+//            return
+//        }
 
         val intent = Intent(requireContext(), SocketActivity::class.java).apply {
             putExtra("idGroup", group.id.toString())

@@ -28,6 +28,7 @@ import com.grupo2.elorchat.data.preferences.DataStoreManager
 import com.grupo2.elorchat.data.repository.remote.RemoteUserDataSource
 import com.grupo2.elorchat.ui.groups.GroupActivity
 import com.grupo2.elorchat.ui.socket.SocketService
+import com.grupo2.elorchat.ui.socket.SocketViewModel
 import com.grupo2.elorchat.ui.users.register.RegisterActivity
 import com.grupo2.elorchat.utils.LanguageManager
 import com.grupo2.elorchat.utils.Resource
@@ -46,6 +47,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var userRepository: UserRepository
     private val userDataRepository = RemoteUserDataSource()
     private val viewModel: LoginViewModel by viewModels()
+    private val socketViewModel: SocketViewModel by viewModels()
 
     private val socketServiceIntent by lazy {
         Intent(this, SocketService::class.java).apply {
@@ -110,6 +112,7 @@ class LoginActivity : AppCompatActivity() {
 
             viewModel.loginOfUser(loginUser)
 
+
             viewModel.loggedUser.observe(this) { result ->
                 when (result.status) {
                     Resource.Status.SUCCESS -> {
@@ -117,16 +120,30 @@ class LoginActivity : AppCompatActivity() {
                             if (data.accessToken != null) {
                                 ElorChat.userPreferences.saveAuthToken(data.accessToken)
 
+
                                 lifecycleScope.launch(Dispatchers.IO) {
-                                    dataStoreManager.saveValues(email.text.toString(), pass.text.toString(), chBox.isChecked)
+                                    dataStoreManager.saveValues(
+                                        email.text.toString(),
+                                        pass.text.toString(),
+                                        chBox.isChecked
+                                    )
                                 }
 
                                 viewModel.getUserData(loginUser.email)
 
+
                                 startService(socketServiceIntent)
-                                bindService(socketServiceIntent, socketServiceConnection, BIND_AUTO_CREATE)
+                                bindService(
+                                    socketServiceIntent,
+                                    socketServiceConnection,
+                                    BIND_AUTO_CREATE
+                                )
                             } else {
-                                Toast.makeText(this, "Authentication failed. Token is null.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Authentication failed. Token is null.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                     }

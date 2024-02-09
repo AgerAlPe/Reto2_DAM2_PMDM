@@ -63,7 +63,6 @@ class SocketViewModel @Inject constructor(
 
     val roomMessages : LiveData<Resource<List<Message>>> get() = _roomMessages
 
-
     fun fetchRoomMessages(groupId: Int) {
         viewModelScope.launch {
             _roomMessages.value = Resource.loading() // Notify loading state
@@ -72,6 +71,60 @@ class SocketViewModel @Inject constructor(
                 _roomMessages.value = Resource.success(messages)
             } catch (e: Exception) {
                 _roomMessages.value = Resource.error(e.message ?: "An error occurred")
+            }
+        }
+    }
+
+    fun createNewMessage(message: Message) {
+        viewModelScope.launch {
+            try {
+                groupRepository.createMessage(message)
+            } catch (e: Exception) {
+                // Handle the exception as needed, such as logging or displaying an error message
+                Log.e(TAG, "Error creating message: ${e.message}")
+            }
+        }
+    }
+
+    fun checkAndUpdateMessages() {
+        viewModelScope.launch {
+            val roomMessages = messageRoomRepository.getAllMessages()
+            val messagesResult = groupRepository.getAllMessages()
+
+            val messages = messagesResult.data
+
+            if (messages != null) {
+                val lastRoomMessageCreatedAt = roomMessages.lastOrNull()?.createdAt ?: return@launch
+                val lastMessageCreatedAt = messages.lastOrNull()?.createdAt ?: return@launch
+
+                if (lastRoomMessageCreatedAt > lastMessageCreatedAt) {
+                    createMessages(roomMessages)
+                }
+            } else {
+                // Handle errors if necessary
+                val errorMessage = "Error fetching messages"
+                _messages.value = Resource.error(errorMessage)
+                _roomMessages.value = Resource.error(errorMessage)
+            }
+        }
+    }
+
+    private fun createMessages(roomMessages: List<Message>) {
+        // Perform whatever action you need to create messages in the database
+        // For example, assuming you have a function createMessage in your MessageRepository
+        // you can iterate through roomMessages and create messages one by one
+        for (roomMessage in roomMessages) {
+            createNewMessage(roomMessage)
+        }
+    }
+
+    fun createMessage(message: Message) {
+        viewModelScope.launch {
+            try {
+                groupRepository.createMessage(message)
+            } catch (e: Exception) {
+                // Handle the exception as needed, such as logging or displaying an error message
+                Log.e(TAG, "Error creating message: ${e.message}")
             }
         }
     }
